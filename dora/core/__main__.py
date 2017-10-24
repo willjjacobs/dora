@@ -1,5 +1,5 @@
 """
-Entrypoint module
+Entrypoint module if dora.core is called from the command line.
 """
 
 import sys

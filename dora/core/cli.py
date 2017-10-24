@@ -16,3 +16,4 @@ def main(args=None):
     """Entry Point."""
     args = parser.parse_args(args=args)
     print(args.names)
+    print('Exiting the dora.core module cli')
