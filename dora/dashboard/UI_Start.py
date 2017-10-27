@@ -11,13 +11,14 @@ Author: Jan Bodnar
 Website: zetcode.com
 Last edited: August 2017
 """
-
+from util import *
+import cv2
 import sys
 from PyQt5.QtWidgets import (QMainWindow, QAction, QTabWidget,
                              QVBoxLayout, QHBoxLayout, qApp, QApplication,
                              QWidget, QLineEdit, QPushButton, QMessageBox)
-from PyQt5.QtCore import QCoreApplication, pyqtSlot
-from PyQt5.QtGui import QIcon
+from PyQt5.QtCore import QCoreApplication, pyqtSlot, QSettings
+from PyQt5.QtGui import QIcon, QImage
 from PyQt5.QtGui import QFont
 
 
@@ -25,15 +26,47 @@ class Window(QMainWindow):
 
     def __init__(self):
         super().__init__()
+<<<<<<< HEAD
+<<<<<<< HEAD
+        self.settings = QSettings("CS-506", "DORA")
+        open_event(self.settings)
+        
+        self.initUI()
+        
+    @pyqtSlot()    
+    def app_quit(self):
+        print("Quitting")
+        close_event(self.settings)
+        QCoreApplication.quit() 
+        
+=======
 
         self.initUI()
 
 
 
+>>>>>>> 5708800a3a55085efd893db7e53d9fdf36316576
+=======
+
+        self.initUI()
+
+
+
+>>>>>>> 5708800a3a55085efd893db7e53d9fdf36316576
     def initUI(self):
+        #Create tabs
         self.table_widget = tabWidget(self)
         self.setCentralWidget(self.table_widget)
+<<<<<<< HEAD
+<<<<<<< HEAD
+        
+        
+=======
 
+>>>>>>> 5708800a3a55085efd893db7e53d9fdf36316576
+=======
+
+>>>>>>> 5708800a3a55085efd893db7e53d9fdf36316576
         menubar = self.menuBar() #Create Menu Bar
         doraMenu = menubar.addMenu('&DORA') #Create DORA Menu
 
@@ -45,10 +78,23 @@ class Window(QMainWindow):
 
         creditsAct = QAction('&Credits', self) #Add Credits to DORA
         doraMenu.addAction(creditsAct)
+<<<<<<< HEAD
+<<<<<<< HEAD
+        
+        #Create File Menu
+        fileMenu = menubar.addMenu('&File') 
+        
+=======
+=======
+>>>>>>> 5708800a3a55085efd893db7e53d9fdf36316576
 
 
         fileMenu = menubar.addMenu('&File') #Create File Menu
 
+<<<<<<< HEAD
+>>>>>>> 5708800a3a55085efd893db7e53d9fdf36316576
+=======
+>>>>>>> 5708800a3a55085efd893db7e53d9fdf36316576
         loadHardwareProfileAct = QAction('&Load Hardware Profile', self)
         fileMenu.addAction(loadHardwareProfileAct)
 
@@ -67,12 +113,25 @@ class Window(QMainWindow):
         exitAct = QAction('&Exit', self)
         exitAct.setShortcut('Ctrl+Q')
         exitAct.setStatusTip('Exit application')
-        exitAct.triggered.connect(app.quit)
+        exitAct.triggered.connect(self.app_quit)
         fileMenu.addAction(exitAct)
+<<<<<<< HEAD
+<<<<<<< HEAD
+        
+        #Create Window Menu
+        windowMenu = menubar.addMenu('&Window') 
+        
+=======
+=======
+>>>>>>> 5708800a3a55085efd893db7e53d9fdf36316576
 
 
         windowMenu = menubar.addMenu('&Window') #Create Window Menu
 
+<<<<<<< HEAD
+>>>>>>> 5708800a3a55085efd893db7e53d9fdf36316576
+=======
+>>>>>>> 5708800a3a55085efd893db7e53d9fdf36316576
         RGB_visual_act = QAction('&RGB', self)
         windowMenu.addAction(RGB_visual_act)
 
@@ -84,10 +143,23 @@ class Window(QMainWindow):
 
         datatable_act = QAction('Data Table', self)
         windowMenu.addAction(datatable_act)
+<<<<<<< HEAD
+<<<<<<< HEAD
+        
+        #Create Settings Menu
+        settingsMenu = menubar.addMenu('&Settings') 
+       
+=======
+=======
+>>>>>>> 5708800a3a55085efd893db7e53d9fdf36316576
 
 
         settingsMenu = menubar.addMenu('&Settings') #Create Settings Menu
 
+<<<<<<< HEAD
+>>>>>>> 5708800a3a55085efd893db7e53d9fdf36316576
+=======
+>>>>>>> 5708800a3a55085efd893db7e53d9fdf36316576
         preferences_act = QAction('&Preferences', self)
         settingsMenu.addAction(preferences_act)
 
@@ -101,14 +173,22 @@ class Window(QMainWindow):
 
         self.show()
 
+<<<<<<< HEAD
+<<<<<<< HEAD
+        
+=======
 
+>>>>>>> 5708800a3a55085efd893db7e53d9fdf36316576
+=======
+
+>>>>>>> 5708800a3a55085efd893db7e53d9fdf36316576
 class tabWidget(QWidget):
 
     def __init__(self, parent):
         super(QWidget, self).__init__(parent)
         self.layout = QVBoxLayout(self)
         self.layout.addStretch(1)
-        self.setGeometry
+        
           # Initialize tab screen
         self.tabs = QTabWidget()
         self.tab_tools = QWidget()
@@ -167,14 +247,33 @@ class tabWidget(QWidget):
         print("\n")
         print(self.console_input.text())
         self.console_input.setText("")
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> 5708800a3a55085efd893db7e53d9fdf36316576
 
     @pyqtSlot()
     def on_click(self):
         print("\n")
+>>>>>>> 5708800a3a55085efd893db7e53d9fdf36316576
 
-        for currentQTableWidgetItem in self.tableWidget.selectedItems():
-            print(currentQTableWidgetItem.row(), currentQTableWidgetItem.column(), currentQTableWidgetItem.text())
+def ui_main():
+  global app # make available elsewhere - only need to declare global if we assign
+  app = QApplication(sys.argv)
+  window = Window()
+  app.aboutToQuit.connect(app.deleteLater)
+  sys.exit(app.exec_())     
+    
 
+<<<<<<< HEAD
+<<<<<<< HEAD
+    
+if __name__ == '__main__':
+  app = QApplication(sys.argv)
+  window = Window()
+  app.aboutToQuit.connect(app.deleteLater)
+=======
 
 def ui_main():
   global app # make available elsewhere - only need to declare global if we assign
@@ -184,8 +283,23 @@ def ui_main():
   sys.exit(app.exec_())
 
 if __name__ == '__main__':
+=======
+
+def ui_main():
+  global app # make available elsewhere - only need to declare global if we assign
+  app = QApplication(sys.argv)
+  app.aboutToQuit.connect(app.deleteLater)
+  ex = Window()
+  sys.exit(app.exec_())
+
+if __name__ == '__main__':
+>>>>>>> 5708800a3a55085efd893db7e53d9fdf36316576
     # ui_main()
   app = QApplication(sys.argv)
   app.aboutToQuit.connect(app.deleteLater)
   ex = Window()
+<<<<<<< HEAD
+>>>>>>> 5708800a3a55085efd893db7e53d9fdf36316576
+=======
+>>>>>>> 5708800a3a55085efd893db7e53d9fdf36316576
   sys.exit(app.exec_())
