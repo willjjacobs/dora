@@ -15,22 +15,6 @@ class Neural_network:
     def __init__(self, nn_file):
         pass
 
-import argparse
-
-parser = argparse.ArgumentParser(description='Command description.')
-parser.add_argument(
-        'names',
-        metavar='NAME',
-        nargs=argparse.ZERO_OR_MORE,
-        help='A name of something.')
-
-
-def main(args=None):
-    """Entry Point."""
-    args = parser.parse_args(args=args)
-    print(args.names)
-    print('Exiting the dora.core module cli')
-
 class Core:
     objects = ["Tennis Ball", "Rock", "Cliff"]
     visions = dict()
