@@ -2,14 +2,27 @@
 Module that contains the command line app.
 This is the primary entry point.
 """
+
+class Vision_input:
+    def __init__(self, camera):
+        pass
+
+class Dashboard:
+    def __init__(self, ip_addr):
+        pass
+
+class Neural_network:
+    def __init__(self, nn_file):
+        pass
+
 import argparse
 
 parser = argparse.ArgumentParser(description='Command description.')
 parser.add_argument(
-    'names',
-    metavar='NAME',
-    nargs=argparse.ZERO_OR_MORE,
-    help='A name of something.')
+        'names',
+        metavar='NAME',
+        nargs=argparse.ZERO_OR_MORE,
+        help='A name of something.')
 
 
 def main(args=None):
@@ -18,19 +31,20 @@ def main(args=None):
     print(args.names)
     print('Exiting the dora.core module cli')
 
-"""def Core:
-       objects = ["Tennis Ball", "Rock", "Cliff"]
-       visions = dict()
-       visions["webcam"] = Vision_input("webcam")
-       visions["kinect"] = Vision_input("kinect")
-       neurals = dict()
-       dashes = dict()
+class Core:
+    objects = ["Tennis Ball", "Rock", "Cliff"]
+    visions = dict()
+    visions["webcam"] = Vision_input("webcam")
+    visions["kinect"] = Vision_input("kinect")
+    neurals = dict()
+    dashes = dict()
 
-       __init__():
-           dashes["default"] = Dashboard(null)
-           main()
+    def __init__():
+        dashes["default"] = Dashboard(null)
+        main()
 
-        main(): handles tasks, which then return to this function when they are over
+"""
+       main(): handles tasks, which then return to this function when they are over
             while True:
                 task = dashes["default"].get_task()
                 while task != null:
@@ -81,7 +95,7 @@ def main(args=None):
             dash.push(data, overlay, depth, frame) 
             write overlay to output
 
-        
+
       infer(): uses iterator design pattern
             data_dict = dict() - dict of lists of NN_objects
             for each object in input_object_types:
@@ -94,7 +108,7 @@ def main(args=None):
                         if i.prediction !in input_object_types:
                             data[object].append(i)
             return data_dict
-            
+
         add_depth(data, depth_map): uses iterator design pattern
             adds depth value of center pixel (found by averaging top left and bottom right pixel) to each element of each object list in data
 
@@ -104,7 +118,7 @@ def main(args=None):
                 if parameters[distance]:
                     calls OpenCV to draw distances on top of rectangles
             returns edited frame
-                
+
 
         process_data(data, parameters, depth_map): adjusts data based on user specifications, uses iterator design pattern
             Sets up new empty payload with fields for each object
