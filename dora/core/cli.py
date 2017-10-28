@@ -8,6 +8,15 @@ class Vision_input:
     def __init__(self, camera):
         pass
 
+    def get_frame(self):
+        pass
+
+    def get_depth(self):
+        pass
+
+
+
+
 class Dashboard:
 
 
