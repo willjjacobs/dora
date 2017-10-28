@@ -61,61 +61,64 @@ class Core:
                    else if task is a log command:
                        task = log(task)
 
-        log(timestep, functions, parameters): provides stream of images and data to UI
-            if timestep == 0:
-                return null
-            set_networks(parameters["network"])
-            dash = get_dash(parameters["output"])
-            while True:
-                task = dash.get_task()
-                if task != null:
-                    return task
-                frame = vision[parameters["stream"]].get_frame(parameters["resolution"])
-                depth_map = vision["kinect"].get_depth()
-                data = infer(frame)
-                overlay = overlay_image(data, frame)
-                process_data(data, parameters, depth_map)
-                dash.push(data, overlay, depth, frame) 
-                time.sleep(timestep/1000)
-
-        set_networks(networks):
-            """networks is dict from file names to lists of object types"""
-            for nn_file in networks:
-                for o_type in networks[nn_file]:
-                    if neurals[o_type].name != nn_file:
-                        neurals[o_type] = Neural_network(nn_file)
-
-        get_dash(dash_ip):
-            if dash_ip !in dashes:
-                dashes[dash_ip] = Dashboard(dash_ip)
-            return dashes[dash_ip]
-
-        single(parameters):
-            dash = dashes["default"]
-            set_networks(parameters["network"])
+    """ provides stream of images and data to UI"""
+    def log(timestep, functions, parameters):
+        if timestep == 0:
+            return null
+        set_networks(parameters["network"])
+        dash = get_dash(parameters["output"])
+        while True:
+            task = dash.get_task()
+            if task != null:
+                return task
             frame = vision[parameters["stream"]].get_frame(parameters["resolution"])
             depth_map = vision["kinect"].get_depth()
             data = infer(frame)
             overlay = overlay_image(data, frame)
             process_data(data, parameters, depth_map)
             dash.push(data, overlay, depth, frame) 
-            with open(parameters["output"], "wb") as output:
-                output.write(overlay)
-            output.close()
+            time.sleep(timestep/1000)
 
-      infer(): uses iterator design pattern
-            """dict of lists of NN_objects"""
-            data_dict = dict()
-            for each object in input_object_types:
-                object_inference = neurals[object].run_inference(frame)
-                for i in object_inference:
-                    if i.prediction == object:
-                        data_dict[object].append(i)
-            wildcard_inference = neurals["*"].run_inference(frame)
-                    for i in wildcard_inference:
-                        if i.prediction !in input_object_types:
-                            data_dict[object].append(i)
-            return data_dict
+    def set_networks(networks):
+        """networks is dict from file names to lists of object types"""
+        for nn_file in networks:
+            for o_type in networks[nn_file]:
+                if neurals[o_type].name != nn_file:
+                    neurals[o_type] = Neural_network(nn_file)
+
+    def get_dash(dash_ip):
+        if dash_ip !in dashes:
+            dashes[dash_ip] = Dashboard(dash_ip)
+        return dashes[dash_ip]
+
+    def single(parameters):
+        dash = dashes["default"]
+        set_networks(parameters["network"])
+        frame = vision[parameters["stream"]].get_frame(parameters["resolution"])
+        depth_map = vision["kinect"].get_depth()
+        data = infer(frame, task["not_wildcard"])
+        overlay = overlay_image(data, frame)
+        process_data(data, parameters, depth_map)
+        dash.push(data, overlay, depth, frame) 
+        with open(parameters["output"], "wb") as output:
+            output.write(overlay)
+        output.close()
+
+  """uses iterator design pattern"""
+  def infer(frame, not_wildcard):
+      """dict of NN_objects"""
+        data_dict = dict()
+        """inefficient"""
+        for each obj in not_wildcard:
+            object_inference = neurals[obj].run_inference(frame)
+            for i in object_inference:
+                if i.prediction == obj:
+                    data_dict[obj] = i
+        wildcard_inference = neurals["*"].run_inference(frame)
+                for i in wildcard_inference:
+                    if i.prediction !in input_object_types:
+                        data_dict[obj] = i
+        return data_dict
 
 """
         add_depth(data, depth_map): uses iterator design pattern
