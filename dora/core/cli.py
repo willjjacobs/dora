@@ -1,4 +1,5 @@
 import jpeg
+import time
 """
 Module that contains the command line app.
 This is the primary entry point.
@@ -36,7 +37,7 @@ class Dashboard:
 
 
     def get_task(self):
-        return task
+        return self.task
 
 
 
@@ -53,80 +54,80 @@ class Core:
     neurals = dict()
     dashes = dict()
 
-    def __init__():
-        dashes["default"] = Dashboard(null)
-        main()
+    def __init__(self):
+        self.dashes["default"] = Dashboard(None)
+        self.main()
 
     """handles tasks, which then return to this function when they are over"""
-    def main():
+    def main(self):
         while True:
-            task = dashes["default"].get_task()
-                while task != null:
-                    """parse command line arguments into parameters"""
-                    """if task is a single input command """
-                   if task["type"] in {"check", "distance", "number", "pixel"}:
-                       single(task)
-                        task = null
-                   else if task is a log command:
-                       task = log(task)
+            task = self.dashes["default"].get_task()
+            while task != None:
+                """parse command line arguments into parameters"""
+                """if task is a single input command """
+                if task["type"] in {"check", "distance", "number", "pixel"}:
+                    self.single(task)
+                    self.task = None
+                else:
+                    task = self.log(task)
 
     """ provides stream of images and data to UI"""
-    def log(timestep, functions, parameters):
+    def log(self,timestep, functions, parameters):
         if timestep == 0:
-            return null
-        set_networks(parameters["network"])
-        dash = get_dash(parameters["output"])
+            return None
+        self.set_networks(parameters["network"])
+        dash = self.get_dash(parameters["output"])
         while True:
             task = dash.get_task()
-            if task != null:
+            if task != None:
                 return task
-            frame = vision[parameters["stream"]].get_frame(parameters["resolution"])
-            depth_map = vision["kinect"].get_depth()
+            frame = self.vision[parameters["stream"]].get_frame(parameters["resolution"])
+            depth_map = self.vision["kinect"].get_depth()
             data = infer(frame)
-            overlay = overlay_image(data, frame)
-            process_data(data, parameters, depth_map)
-            dash.push(data, overlay, depth, frame) 
+            overlay = self.overlay_image(data, frame)
+            self.process_data(data, parameters, depth_map)
+            dash.push(data, overlay, self.depth, frame)
             time.sleep(timestep/1000)
 
-    def set_networks(networks):
+    def set_networks(self,networks):
         """networks is dict from file names to lists of object types"""
         for nn_file in networks:
             for o_type in networks[nn_file]:
-                if neurals[o_type].name != nn_file:
-                    neurals[o_type] = Neural_network(nn_file)
+                if self.neurals[o_type].name != nn_file:
+                    self.neurals[o_type] = Neural_network(nn_file)
 
-    def get_dash(dash_ip):
-        if dash_ip !in dashes:
-            dashes[dash_ip] = Dashboard(dash_ip)
-        return dashes[dash_ip]
+    def get_dash(self,dash_ip):
+        if ~ dash_ip in self.dashes:
+            self.dashes[dash_ip] = Dashboard(dash_ip)
+        return self.dashes[dash_ip]
 
-    def single(parameters):
-        dash = dashes["default"]
-        set_networks(parameters["network"])
-        frame = vision[parameters["stream"]].get_frame(parameters["resolution"])
-        depth_map = vision["kinect"].get_depth()
-        data = infer(frame, task["not_wildcard"])
-        overlay = overlay_image(data, frame)
-        process_data(data, parameters, depth_map)
-        dash.push(data, overlay, depth, frame) 
+    def single(self,parameters):
+        dash = self.dashes["default"]
+        self.set_networks(parameters["network"])
+        frame = self.vision[parameters["stream"]].get_frame(parameters["resolution"])
+        depth_map = self.vision["kinect"].get_depth()
+        data = infer(frame, self.task["not_wildcard"])
+        overlay = self.overlay_image(data, frame)
+        self.process_data(data, parameters, depth_map)
+        dash.push(data, overlay, self.depth, frame)
         with open(parameters["output"], "wb") as output:
             output.write(overlay)
         output.close()
 
-  """uses iterator design pattern"""
-  def infer(frame, not_wildcard):
-      """dict of NN_objects"""
+    """uses iterator design pattern"""
+    def infer(self,frame,not_wildcard):
+        """dict of NN_objects"""
         data_dict = dict()
         """inefficient"""
-        for each obj in not_wildcard:
-            object_inference = neurals[obj].run_inference(frame)
+        for obj in not_wildcard:
+            object_inference = self.neurals[obj].run_inference(frame)
             for i in object_inference:
                 if i.prediction == obj:
                     data_dict[obj] = i
-        wildcard_inference = neurals["*"].run_inference(frame)
-                for i in wildcard_inference:
-                    if i.prediction !in input_object_types:
-                        data_dict[obj] = i
+        wildcard_inference = self.neurals["*"].run_inference(frame)
+        for i in wildcard_inference:
+            if ~ i.prediction in not_wildcard:
+                data_dict[obj] = i
         return data_dict
 
 """
