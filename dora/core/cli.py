@@ -35,7 +35,7 @@ class Core:
                 while task != null:
                     """parse command line arguments into parameters"""
                     """if task is a single input command """
-                   if task in {"check", "distance", "number", "pixel"}:
+                   if task["type"] in {"check", "distance", "number", "pixel"}:
                        single(task)
                         task = null
                    else if task is a log command:
@@ -84,7 +84,8 @@ class Core:
             output.close()
 
       infer(): uses iterator design pattern
-            data_dict = dict() - dict of lists of NN_objects
+            """dict of lists of NN_objects"""
+            data_dict = dict()
             for each object in input_object_types:
                 object_inference = neurals[object].run_inference(frame)
                 for i in object_inference:
@@ -93,10 +94,10 @@ class Core:
             wildcard_inference = neurals["*"].run_inference(frame)
                     for i in wildcard_inference:
                         if i.prediction !in input_object_types:
-                            data[object].append(i)
+                            data_dict[object].append(i)
             return data_dict
-"""
 
+"""
         add_depth(data, depth_map): uses iterator design pattern
             adds depth value of center pixel (found by averaging top left and bottom right pixel) to each element of each object list in data
 
