@@ -9,8 +9,28 @@ class Vision_input:
         pass
 
 class Dashboard:
+
+
     def __init__(self, ip_addr):
         pass
+
+    task ={}
+
+    task['multi'] = list((1, "TennisBall"),(2,"Rock"))
+    task['file'] =  "filename"
+    task['stream'] = "STREAM"
+    task['type'] = "check"
+    task ['resolution'] = [300,320]
+    task['network'] = list(("filename", "rock"))
+    task['output'] = "filename/STREAM"
+
+
+
+    def get_task(self):
+        return task
+
+
+
 
 class Neural_network:
     def __init__(self, nn_file):
