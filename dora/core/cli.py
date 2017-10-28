@@ -17,13 +17,17 @@ class Dashboard:
     task ={}
 
     task['multi'] = list((1, "TennisBall"),(2,"Rock"))
-    task['file'] =  'filename'
-    task['stream']
+    task['file'] =  "filename"
+    task['stream'] = "STREAM"
+    task['type'] = "check"
+    task ['resolution'] = [300,320]
+    task['network'] = list(("filename", "rock"))
+    task['output'] = "filename/STREAM"
 
 
 
     def get_task(self):
-
+        return task
 
 
 
