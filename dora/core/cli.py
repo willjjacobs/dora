@@ -5,6 +5,12 @@ Module that contains the command line app.
 This is the primary entry point.
 """
 
+class Classification:
+    def __init__(self, box, score, distance):
+        self.box = box
+        self.score = score
+        self.distance = distance
+
 class Vision_input:
     def __init__(self, camera):
         pass
@@ -130,43 +136,39 @@ class Core:
                 data_dict[obj] = i
         return data_dict
 
-class Classification:
-    __init__(self, box, score, distance):
-        self.box = box
-        self.score = score
-        self.distance = distance
+
 
 #adjusts data based on user specifications
-        def process_data(data, parameters, depth_map): 
+    def process_data(data, parameters, depth_map):
 #holds classifications
-            datas = {}
+        datas = {}
 #object to be sent
-            payload = {}
-            for o in data:
-                datas[o] = []
-                for i in range(len(data[o])):
-                    if data[o].classes[i] == o:
-                        datas[o].append(Classification(data[o].boxes[i], data[o].scores[i], data[o].distance[i])
+        payload = {}
+        for o in data:
+            datas[o] = []
+            for i in range(len(data[o])):
+                if data[o].classes[i] == o:
+                    datas[o].append(Classification(data[o].boxes[i], data[o].scores[i], data[o].distance[i]))
 #remove all except for MULTI best objects
-                datas[o].sort(key = lambda c: c.score)
-                n = parameters["multi"][o]
-                datas[o] = datas[o][:n]
-                if parameters["check"]:
-                    if len(datas[o]) > 0:
-                        payload[o]["check"] = True
-                if parameters["number"]:
-                    payload[o]["number"] = len(datas[o])
-                datas[o]["list"] = []
-                for c in datas[o]:
-                    c_dict = {}
-                    if parameters["pixel"]:
-                        #c_dict["pixel"] = (c.box.upper_left + c.box.lower_right)/2
-                        c_dict["pixel"] = 0
-                    if parameters["distance"]:
-                    #TODO: use get_distance(pixel_coords, depth_map) to add distance for each pixel coordinate to payload
-                        c_dict["distance"] = 0
-                    datas[o]["list"].append(c_dict)
-            return json.dumps(payload)
+            datas[o].sort(key = lambda c: c.score)
+            n = parameters["multi"][o]
+            datas[o] = datas[o][:n]
+            if parameters["check"]:
+                if len(datas[o]) > 0:
+                    payload[o]["check"] = True
+            if parameters["number"]:
+                payload[o]["number"] = len(datas[o])
+            datas[o]["list"] = []
+            for c in datas[o]:
+                c_dict = {}
+                if parameters["pixel"]:
+                    #c_dict["pixel"] = (c.box.upper_left + c.box.lower_right)/2
+                    c_dict["pixel"] = 0
+                if parameters["distance"]:
+                #TODO: use get_distance(pixel_coords, depth_map) to add distance for each pixel coordinate to payload
+                    c_dict["distance"] = 0
+                datas[o]["list"].append(c_dict)
+        return json.dumps(payload)
 
 """
         add_depth(data, depth_map): uses iterator design pattern
