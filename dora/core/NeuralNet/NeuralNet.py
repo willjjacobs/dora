@@ -9,13 +9,18 @@ class NeuralNet:
 
     MODEL_NAME = 'ssd_mobilenet_v1_coco_11_06_2017'
     # Assumes working directory is root of git repo
-    PATH_TO_CHECKPOINT = os.path.join('dora','NeuralNet',MODEL_NAME, 'frozen_inference_graph.pb')
-    PATH_TO_LABELS = os.path.join('dora','NeuralNet','data', 'mscoco_label_map.pbtxt')
+    PATH_TO_CHECKPOINT = os.path.join('core',MODEL_NAME, 'frozen_inference_graph.pb')
+    PATH_TO_LABELS = os.path.join('core','data', 'mscoco_label_map.pbtxt')
     NUM_CLASSES = 90
 
     detection_graph = None
 
-    def __init__(self):
+    def __init__(self, graph_path=None):
+        if graph_path:
+            self.PATH_TO_CHECKPOINT = graph_path
+        self.init_network()
+
+    def init_network(self):
         self.detection_graph = tf.Graph()
         with self.detection_graph.as_default():
             od_graph_def = tf.GraphDef()
