@@ -16,6 +16,7 @@ class NeuralNet:
     detection_graph = None
 
     def __init__(self, graph_path=None, label_path = None):
+        # If no parameters are present, uses default Network
         if graph_path:
             self.PATH_TO_CHECKPOINT = graph_path
         if label_path:
