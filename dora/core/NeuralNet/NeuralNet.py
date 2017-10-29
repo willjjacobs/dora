@@ -15,9 +15,11 @@ class NeuralNet:
 
     detection_graph = None
 
-    def __init__(self, graph_path=None):
+    def __init__(self, graph_path=None, label_path = None):
         if graph_path:
             self.PATH_TO_CHECKPOINT = graph_path
+        if label_path:
+            self.PATH_TO_LABELS = label_path
         self.init_network()
 
     def init_network(self):
