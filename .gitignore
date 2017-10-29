@@ -99,3 +99,5 @@ ENV/
 
 # mypy
 .mypy_cache/
+
+dora/NeuralNet/ssd_mobilenet_v1_coco_11_06_2017/model\.ckpt\.data-00000-of-00001
