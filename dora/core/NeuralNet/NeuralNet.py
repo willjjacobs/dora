@@ -1,6 +1,7 @@
 import numpy as np
 import os
 import tensorflow as tf
+import NeuralNetDTO as DTO
 
 from utils import label_map_util
 from utils import visualization_utils as vis_util
@@ -52,7 +53,7 @@ class NeuralNet:
             [self.detection_boxes, self.detection_scores, self.detection_classes, self.num_detections],
             feed_dict={self.image_tensor: image_np_expanded})
         # Visualization of the results of a detection.
-        vis_util.visualize_boxes_and_labels_on_image_array(
+        '''vis_util.visualize_boxes_and_labels_on_image_array(
             image_np,
             np.squeeze(boxes),
             np.squeeze(classes).astype(np.int32),
@@ -60,7 +61,9 @@ class NeuralNet:
             self.category_index,
             use_normalized_coordinates=True,
             line_thickness=8)
-        return image_np
+        '''
+        dto = DTO.DTO(boxes, self.category_index, classes, scores)
+        return dto
 
     def set_network(self, path_to_graph, path_to_labels):
         self.PATH_TO_LABELS = path_to_labels
