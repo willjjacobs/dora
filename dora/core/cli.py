@@ -1,4 +1,5 @@
 import json
+from NeuralNet import NeuralNet
 import time
 """
 Module that contains the command line app.
@@ -23,7 +24,7 @@ class Vision_input:
 
 
 
-
+'''
 class Dashboard:
 
 
@@ -45,13 +46,7 @@ class Dashboard:
     def get_task(self):
         return self.task
 
-
-
-
-class Neural_network:
-    def __init__(self, nn_file):
-        pass
-
+'''
 class Core:
     objects = ["Tennis Ball", "Rock", "Cliff"]
     visions = dict()
@@ -99,8 +94,10 @@ class Core:
         """networks is dict from file names to lists of object types"""
         for nn_file in networks:
             for o_type in networks[nn_file]:
-                if self.neurals[o_type].name != nn_file:
-                    self.neurals[o_type] = Neural_network(nn_file)
+                if self.neurals[o_type].PATH_TO_CHECKPOINT != nn_file:
+                    #TODO: The below line will take time to execute. Consinder printing a message.
+                    #TODO: Also be sure to call NeuralNet.set_network if NN is already instantiated.
+                    self.neurals[o_type] = NeuralNet.NeuralNet(nn_file)
 
     def get_dash(self,dash_ip):
         if ~ dash_ip in self.dashes:
@@ -181,3 +178,5 @@ class Core:
                     calls OpenCV to draw distances on top of rectangles
             returns edited frame
 """
+
+c = Core()
