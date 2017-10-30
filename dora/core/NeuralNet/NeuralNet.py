@@ -1,7 +1,8 @@
 import numpy as np
 import os
 import tensorflow as tf
-import NeuralNetDTO as DTO
+
+import core.NeuralNet.NeuralNetDTO as DTO
 
 from utils import label_map_util
 from utils import visualization_utils as vis_util

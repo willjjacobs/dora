@@ -21,12 +21,12 @@ class NeuralNetDTO:
     def getScores(self):
     	return self.scores
 
-    def getIndex(self)
+    def getIndex(self):
     	return self.category_index
 
-    def setDitance(self, dist)
+    def setDitance(self, dist):
     	self.distance = dist
 
-    def getDistance(self)
+    def getDistance(self):
     	return self.distance
 

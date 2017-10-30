@@ -16,7 +16,7 @@ from PyQt5.QtWidgets import (QMainWindow, QAction, QTabWidget,
 from PyQt5.QtCore import QCoreApplication, pyqtSlot, QSettings, QThread, pyqtSignal, Qt
 from PyQt5.QtGui import QIcon, QImage, QPixmap, QFont
 
-from util import *
+from .util import *
 
 class Thread(QThread):
     changePixmap = pyqtSignal(QPixmap)
