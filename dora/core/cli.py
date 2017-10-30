@@ -1,5 +1,5 @@
 import json
-from core.NeuralNet import NeuralNet
+from core.neuralnet import NeuralNet
 import time
 """
 Module that contains the command line app.

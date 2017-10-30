@@ -12,11 +12,11 @@ def main():
   if sys.version_info < (3, 5):
     print("You must use Python 3.5 or greater.")
     sys.exit(1)
-  
+
   # Must be imported after that (for now?)
-#  from core import cli
+  from core import cli
   from dashboard.UI_Start import ui_main
-  
+
   if (len(sys.argv) > 1): #sys.argv[1] == "dashboard"):
     try:
       ui_main()
