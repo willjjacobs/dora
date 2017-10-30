@@ -11,8 +11,8 @@ import sys
 import cv2
 import json
 from PyQt5.QtWidgets import (QMainWindow, QAction, QTabWidget,
-                             QVBoxLayout, QHBoxLayout, qApp, QApplication,
-                             QWidget, QLineEdit, QPushButton, QMessageBox, QLabel)
+                             QVBoxLayout, QHBoxLayout, QGroupBox, QGridLayout, QDialog, qApp, QApplication,
+                             QWidget, QLineEdit, QPushButton, QMessageBox, QLabel, QFrame)
 from PyQt5.QtCore import QCoreApplication, pyqtSlot, QSettings, QThread, pyqtSignal, Qt
 from PyQt5.QtGui import QIcon, QImage, QPixmap, QFont
 
@@ -53,9 +53,28 @@ class Window(QMainWindow):
         QCoreApplication.quit() 
 
     def initUI(self):
-        #Create tabs
+        #Create Window Widgets
         self.table_widget = tabWidget(self)
+        self.vid_widget_left = vidWidgetL(self)
         self.setCentralWidget(self.table_widget)
+        
+        #Create top level frame
+        self.main_frame = QFrame(self)
+        #self.main_frame.setStyleSheet('background-color: rgba(255, 255, 255, 1);')
+        
+        mf_layout = QGridLayout()
+        mf_layout.setColumnStretch(0, 4)
+        mf_layout.setColumnStretch(1, 4)
+    
+ 
+ 
+        mf_layout.addWidget(self.table_widget,2,0,4,4)
+        mf_layout.addWidget(self.vid_widget_left,0,0,4,4)
+        
+        self.main_frame.setLayout(mf_layout)
+        
+        self.setCentralWidget(self.main_frame)
+        
 
         menubar = self.menuBar() #Create Menu Bar
         doraMenu = menubar.addMenu('&DORA') #Create DORA Menu
@@ -122,17 +141,28 @@ class Window(QMainWindow):
 
         self.setGeometry(960,100,960,540)
         self.setWindowTitle('DORA')
-        #self.setWindowIcon(QIcon('web.png'))
-
+        
         #Create Video Player
-        label = QLabel(self)
-        label.move(280, 120)
-        label.resize(640, 480)
-        th = Thread(self)
-        th.changePixmap.connect(lambda p: label.setPixmap(p))
-        th.start()
+#        left_video = QLabel(self)
+#        left_video.move(280, 120)
+#        left_video.resize(640, 100)
+#        th = Thread(self)
+#        th.changePixmap.connect(lambda p: left_video.setPixmap(p))
+#        th.start()
         self.show()
+class vidWidgetL(QWidget):
+    
+    def __init__(self, Window):
+        super(QWidget, self).__init__(Window)
+        left_video = QLabel(self)
+        left_video.move(30, 20)
+        left_video.resize(400, 300)
+        th = Thread(self)
+        th.changePixmap.connect(lambda p: left_video.setPixmap(p))
+        th.start()
+        pass
 
+        
 class tabWidget(QWidget):
 
     def __init__(self, Window):
