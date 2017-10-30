@@ -1,52 +1,8 @@
 import json
-from core.neuralnet import NeuralNet
 import time
-"""
-Module that contains the command line app.
-This is the primary entry point.
-"""
+from core.neuralnet import NeuralNet
+from core.helpers import *
 
-class Classification:
-    def __init__(self, box, score, distance):
-        self.box = box
-        self.score = score
-        self.distance = distance
-
-class Vision_input:
-    def __init__(self, camera):
-        pass
-
-    def get_frame(self):
-        pass
-
-    def get_depth(self):
-        pass
-
-
-
-'''
-class Dashboard:
-
-
-    def __init__(self, ip_addr):
-        pass
-
-    task ={}
-
-    task['multi'] = list((1, "TennisBall"),(2,"Rock"))
-    task['file'] =  "filename"
-    task['stream'] = "STREAM"
-    task['type'] = "check"
-    task ['resolution'] = [300,320]
-    task['network'] = list(("filename", "rock"))
-    task['output'] = "filename/STREAM"
-
-
-
-    def get_task(self):
-        return self.task
-
-'''
 class Core:
     objects = ["Tennis Ball", "Rock", "Cliff"]
     visions = dict()
@@ -167,16 +123,23 @@ class Core:
                 datas[o]["list"].append(c_dict)
         return json.dumps(payload)
 
-"""
-        add_depth(data, depth_map): uses iterator design pattern
-            adds depth value of center pixel (found by averaging top left and bottom right pixel) to each element of each object list in data
 
-        overlay_image(data, frame, parameters): uses iterator design pattern
+    def add_depth(data, depth_map):
+      """
+        uses iterator design pattern
+            adds depth value of center pixel (found by averaging top left and bottom right pixel) to each element of each object list in data
+      """
+      pass
+
+    def overlay_image(data, frame, parameters):
+      """uses iterator design pattern
             if parameters[pixel]:
                 calls OpenCV to draw rectangles over image based on coordinates in data
                 if parameters[distance]:
                     calls OpenCV to draw distances on top of rectangles
             returns edited frame
-"""
+      """
+      pass
 
-c = Core()
+def main(args=None):
+  c = Core()
