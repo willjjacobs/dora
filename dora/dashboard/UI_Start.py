@@ -11,9 +11,10 @@ Author: Jan Bodnar
 Website: zetcode.com
 Last edited: August 2017
 """
-from .util import *
+from util import *
 import cv2
 import sys
+import json
 from PyQt5.QtWidgets import (QMainWindow, QAction, QTabWidget,
                              QVBoxLayout, QHBoxLayout, qApp, QApplication,
                              QWidget, QLineEdit, QPushButton, QMessageBox)
@@ -26,17 +27,16 @@ class Window(QMainWindow):
 
     def __init__(self):
         super().__init__()
-        self.settings = QSettings("CS-506", "DORA")
-        open_event(self.settings)
 
+        self.settings = setup_config()
+        open_event(self.settings)
         self.initUI()
 
     @pyqtSlot()
     def app_quit(self):
         print("Quitting")
         close_event(self.settings)
-        QCoreApplication.quit()
-
+        QCoreApplication.quit() 
 
     def initUI(self):
         #Create tabs
@@ -55,8 +55,7 @@ class Window(QMainWindow):
         creditsAct = QAction('&Credits', self) #Add Credits to DORA
         doraMenu.addAction(creditsAct)
 
-        #Create File Menu
-        fileMenu = menubar.addMenu('&File')
+        fileMenu = menubar.addMenu('&File') 
 
         loadHardwareProfileAct = QAction('&Load Hardware Profile', self)
         fileMenu.addAction(loadHardwareProfileAct)
@@ -78,9 +77,9 @@ class Window(QMainWindow):
         exitAct.setStatusTip('Exit application')
         exitAct.triggered.connect(self.app_quit)
         fileMenu.addAction(exitAct)
-
+        
         #Create Window Menu
-        windowMenu = menubar.addMenu('&Window')
+        windowMenu = menubar.addMenu('&Window') 
 
         RGB_visual_act = QAction('&RGB', self)
         windowMenu.addAction(RGB_visual_act)
@@ -93,9 +92,10 @@ class Window(QMainWindow):
 
         datatable_act = QAction('Data Table', self)
         windowMenu.addAction(datatable_act)
-
+        
         #Create Settings Menu
-        settingsMenu = menubar.addMenu('&Settings')
+        settingsMenu = menubar.addMenu('&Settings') 
+
 
         preferences_act = QAction('&Preferences', self)
         settingsMenu.addAction(preferences_act)
@@ -184,9 +184,13 @@ def ui_main():
   app = QApplication(sys.argv)
   window = Window()
   app.aboutToQuit.connect(app.deleteLater)
-  sys.exit(app.exec_())
+  sys.exit(app.exec_())     
+
 
 if __name__ == '__main__':
+
+    # ui_main()
   app = QApplication(sys.argv)
-  window = Window()
+  ex = Window()
   app.aboutToQuit.connect(app.deleteLater)
+  sys.exit(app.exec_())
