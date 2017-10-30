@@ -89,9 +89,19 @@ def remove_mean(image):
 	new_image = None
 	return new_image
 
+#convert to grayscale
+#find mean pixel value of grayscale image
+#take low and high thresholds as standard deviation 
+#apply cv2.canny
 def detect_edge(image):
-	new_image = None
-	return new_image
+	grey_image = convert_greyscale(image)
+	mean_val = np.mean(grey_image)
+	std = np.std(grey_image)
+	std = std/2
+	low_thresh = mean_val-std
+	high_thresh = mean_val+std
+	edges = cv2.Canny(grey_image,low_thresh,high_thresh)
+	return edges
 
 def overlay_image(image, objs):
 	overlayed_image = None
