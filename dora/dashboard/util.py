@@ -20,6 +20,7 @@ def setup_config():
         return config
     config.setValue("first_setup", 1)
     config.setValue("test_value2", 2)
+    config.setValue("core_ip", "0.0.0.0")
     print("First Time Setup Complete")
     return config
 
@@ -58,6 +59,7 @@ def close_event(config):
     open_value = config.value("openValue")
     print('open_value = ' + str(open_value))
     
+    #WIP
 def send_task(host, port):
     server = Server(host, port)
     server.accept()
