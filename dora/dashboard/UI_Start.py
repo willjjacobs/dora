@@ -2,27 +2,38 @@
 # -*- coding: utf-8 -*-
 #Test
 """
-ZetCode PyQt5 tutorial
+DORA Dashboard main file
 
-In this example, we create a simple
-window in PyQt5.
-
-Author: Jan Bodnar
-Website: zetcode.com
-Last edited: August 2017
+Author: Wills
 """
-from util import *
-import cv2
 import sys
+
+import cv2
 import json
 from PyQt5.QtWidgets import (QMainWindow, QAction, QTabWidget,
                              QVBoxLayout, QHBoxLayout, qApp, QApplication,
-                             QWidget, QLineEdit, QPushButton, QMessageBox)
-from PyQt5.QtCore import QCoreApplication, pyqtSlot, QSettings
-from PyQt5.QtGui import QIcon, QImage
-from PyQt5.QtGui import QFont
+                             QWidget, QLineEdit, QPushButton, QMessageBox, QLabel)
+from PyQt5.QtCore import QCoreApplication, pyqtSlot, QSettings, QThread, pyqtSignal, Qt
+from PyQt5.QtGui import QIcon, QImage, QPixmap, QFont
 
+from util import *
 
+class Thread(QThread):
+    changePixmap = pyqtSignal(QPixmap)
+
+    def __init__(self, parent=None):
+        QThread.__init__(self, parent=parent)
+
+    def run(self):
+        cap = cv2.VideoCapture(0)
+        while True:
+            ret, frame = cap.read()
+            rgbImage = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            convertToQtFormat = QImage(rgbImage.data, rgbImage.shape[1], rgbImage.shape[0], QImage.Format_RGB888)
+            convertToQtFormat = QPixmap.fromImage(convertToQtFormat)
+            p = convertToQtFormat.scaled(640, 480, Qt.KeepAspectRatio)
+            self.changePixmap.emit(p)
+            
 class Window(QMainWindow):
 
     def __init__(self):
@@ -30,8 +41,11 @@ class Window(QMainWindow):
 
         self.settings = setup_config()
         open_event(self.settings)
+        
+        #TESTING CODE
+        self.task = create_task()
         self.initUI()
-
+        
     @pyqtSlot()
     def app_quit(self):
         print("Quitting")
@@ -64,6 +78,9 @@ class Window(QMainWindow):
         fileMenu.addAction(loadImageAct)
 
         load_video_stream_act = QAction('&Load Video Stream', self)
+        #load_video_stream_act.setShortcut('Ctrl+V')
+        #load_video_stream_act.setStatusTip('Connects to video stream for display')
+        #load_video_stream_act.triggered.connect(self.load_video_stream_wrapper)
         fileMenu.addAction(load_video_stream_act)
 
         load_neural_net_act = QAction('&Load Neural Net', self)
@@ -104,15 +121,22 @@ class Window(QMainWindow):
         settingsMenu.addAction(preprocessing_act)
 
         self.setGeometry(960,100,960,540)
-        self.setWindowTitle('ICON')
+        self.setWindowTitle('DORA')
         #self.setWindowIcon(QIcon('web.png'))
 
+        #Create Video Player
+        label = QLabel(self)
+        label.move(280, 120)
+        label.resize(640, 480)
+        th = Thread(self)
+        th.changePixmap.connect(lambda p: label.setPixmap(p))
+        th.start()
         self.show()
 
 class tabWidget(QWidget):
 
-    def __init__(self, parent):
-        super(QWidget, self).__init__(parent)
+    def __init__(self, Window):
+        super(QWidget, self).__init__(Window)
         self.layout = QVBoxLayout(self)
         self.layout.addStretch(1)
 
@@ -135,7 +159,9 @@ class tabWidget(QWidget):
         self.tab_tools.vlayout02.addStretch(1)
         self.tab_tools.hlayout = QHBoxLayout(self)
         self.tab_tools.hlayout.addStretch(0)
-        self.pushButton1 = QPushButton("DevTool 01")
+        
+        self.pushButton1 = QPushButton("Print Task")
+        #self.pushButton1.clicked.connect(print_task(task))
         self.pushButton2 = QPushButton("DevTool 02")
         self.pushButton3 = QPushButton("DevTool 03")
         self.pushButton4 = QPushButton("DevTool 04")
@@ -171,13 +197,14 @@ class tabWidget(QWidget):
 
     @pyqtSlot()
     def on_command(self):
-        print("\n")
-        print(self.console_input.text())
+        console_input = self.console_input.text()
         self.console_input.setText("")
-
-    @pyqtSlot()
-    def on_click(self):
-        print("\n")
+        if console_input.__eq__("print task"):
+            print_task(Window.task)
+            print(console_input)
+        if console_input.__eq__("console to task"):
+            config_to_task(config, task)
+            print(console_input)
 
 def ui_main():
   global app # make available elsewhere - only need to declare global if we assign
@@ -188,9 +215,4 @@ def ui_main():
 
 
 if __name__ == '__main__':
-
-    # ui_main()
-  app = QApplication(sys.argv)
-  ex = Window()
-  app.aboutToQuit.connect(app.deleteLater)
-  sys.exit(app.exec_())
+  ui_main()
