@@ -7,8 +7,12 @@ from pylibfreenect2 import createConsoleLogger, setGlobalLogger
 from pylibfreenect2 import LoggerLevel
 
 DEFAULT_RES = (240,135)
+WEBCAM_PORT = 0
+ADJUSTMENT_FRAMES = 2
 
-class Vision(object):
+
+#Class for connection to Kinect camera using pylibfreenect2
+class Kinect(object):
 	def __init__(self):
 		try:
 			from pylibfreenect2 import OpenCLPacketPipeline
@@ -20,26 +24,20 @@ class Vision(object):
 			except:
 				from pylibfreenect2 import CpuPacketPipeline
 				pipeline = CpuPacketPipeline()
-
 		print("Packet pipeline:", type(pipeline).__name__)
-
 		self.fn = Freenect2()
 		self.num_devices = self.fn.enumerateDevices()
 		if self.num_devices == 0:
 			print("No device connected!")
 			sys.exit(1)
-
 		self.serial = self.fn.getDeviceSerialNumber(0)
 		self.device = self.fn.openDevice(self.serial, pipeline=pipeline)
-
 		self.listener = SyncMultiFrameListener(FrameType.Color | FrameType.Ir | FrameType.Depth)
 		self.device.setColorFrameListener(self.listener)
 		self.device.setIrAndDepthFrameListener(self.listener)
 		self.device.start()
-
 		self.undistorted = Frame(512, 424, 4)
 		self.registered = Frame(512, 424, 4)
-
 
 	def get_frame(self):
 		return self.listener.waitForNewFrame()["color"]
@@ -50,6 +48,30 @@ class Vision(object):
 
 	def get_depth(self):
 		return self.listener.waitForNewFrame()["depth"]
+
+#Class for webcam connection
+class Webcam(object):
+	def __init__(self,camera_port = WEBCAM_PORT):
+		self.camera = cv2.VideoCapture(camera_port)
+	def get_frame(self):
+		for i in range(0,ADJUSTMENT_FRAMES):
+			self.camera.read()
+		retval, im = self.camera.read()
+		return im
+	def close(self):
+		del(self.camera)
+
+#Class for arbritrary camera connection
+#TODO
+class Camera(object):
+	def __init__(self):
+		pass
+	def get_frame(self):
+		pass
+	def get_depth(self):
+		pass
+	def close(self):
+		pass
 
 def adjust_resolution(image, new_res = DEFAULT_RES):
 	return cv2.resize(image, new_res)
@@ -64,12 +86,15 @@ def rotate_image(image, angle):
 	return new_image
 
 def remove_mean(image):
-
+	new_image = None
 	return new_image
 
 def detect_edge(image):
-
+	new_image = None
 	return new_image
 
+def overlay_image(image, objs):
+	overlayed_image = None
+	return overlayed_image
 
 

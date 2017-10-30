@@ -5,20 +5,29 @@ import numpy as np
 
 IM_NAME = 'test.png'
 
+
+new_webcam = vision.Webcam()
+
+img = new_webcam.get_frame()
+cv2.imshow("img",img)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+new_webcam.close()
+
 # new_connection = vision.Vision()
 # color = new_connection.get_depth()
 # img = color.asarray(np.float32)
 # cv2.imwrite(IM_NAME,img)
 # new_connection.close()
 
-img = cv2.imread(IM_NAME)
+#img = cv2.imread(IM_NAME)
 #gray_img = vision.convert_greyscale(img)
 #rotated_img = vision.rotate_image(img,90)
 #cv2.imshow("gray_img",gray_img)
 #cv2.imshow("rotated_img",rotated_img)
-cv2.imshow("img",img)
-cv2.waitKey(0)
-cv2.destoryAllWindows()
+# cv2.imshow("img",img)
+# cv2.waitKey(0)
+# cv2.destroyAllWindows()
 
 
 # plt.figure(1)
