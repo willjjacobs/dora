@@ -10,6 +10,7 @@ import sys
 
 import cv2
 import json
+from time import sleep
 from PyQt5.QtWidgets import (QMainWindow, QAction, QTabWidget,
                              QVBoxLayout, QHBoxLayout, QGroupBox, QGridLayout, QDialog, qApp, QApplication,
                              QWidget, QLineEdit, QPushButton, QMessageBox, QLabel, QFrame)
@@ -218,7 +219,7 @@ class Thread(QThread):
         QThread.__init__(self, parent=parent)
 
     def run(self):
-        cap = cv2.VideoCapture(0)
+        cap = cv2.VideoCapture('Demo1.mp4')
         while True:
             ret, frame = cap.read()
             rgbImage = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
@@ -226,6 +227,7 @@ class Thread(QThread):
             convertToQtFormat = QPixmap.fromImage(convertToQtFormat)
             p = convertToQtFormat.scaled(640, 480, Qt.KeepAspectRatio)
             self.changePixmap.emit(p)
+            sleep(.025)
             
 def ui_main():
   global app # make available elsewhere - only need to declare global if we assign
