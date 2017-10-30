@@ -35,7 +35,7 @@ def open_event(config):
 
     
 def close_event(config):
-    config.setValue('openValue', 21)
+    config.setValue('openValue', 22)
     open_value = config.value("openValue")
     print('open_value = ' + str(open_value))
     
