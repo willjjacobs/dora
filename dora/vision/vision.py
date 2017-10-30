@@ -9,6 +9,7 @@ from pylibfreenect2 import LoggerLevel
 DEFAULT_RES = (240,135)
 WEBCAM_PORT = 0
 ADJUSTMENT_FRAMES = 2
+DENOISING_PARAMS = [10,10,7,21]
 
 
 #Class for connection to Kinect camera using pylibfreenect2
@@ -85,19 +86,18 @@ def rotate_image(image, angle):
 	new_image = cv2.warpAffine(image,M,(cols,rows))
 	return new_image
 
-def remove_mean(image):
-	new_image = None
-	return new_image
+def denoise_color(image):
+	p = DENOISING_PARAMS 
+	return cv2.fastNlMeansDenoisingColored(image,None,p[0],p[1],p[2],p[3])
 
-#convert to grayscale
-#find mean pixel value of grayscale image
-#take low and high thresholds as standard deviation 
-#apply cv2.canny
+def denoise_grey(image):
+	p = DENOISING_PARAMS
+	return cv2.fastNlMeansDenoising(image,None,p[0],p[1],p[2],p[3])
+
 def detect_edge(image):
 	grey_image = convert_greyscale(image)
 	mean_val = np.mean(grey_image)
 	std = np.std(grey_image)
-	std = std/2
 	low_thresh = mean_val-std
 	high_thresh = mean_val+std
 	edges = cv2.Canny(grey_image,low_thresh,high_thresh)

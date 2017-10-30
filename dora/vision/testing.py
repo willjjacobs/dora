@@ -10,15 +10,14 @@ new_webcam = vision.Webcam()
 
 img = new_webcam.get_frame()
 new_webcam.close()
-edges = vision.detect_edge(img)
+denoise = vision.denoise_color(img)
+
+edges = vision.detect_edge(denoise)
 
 cv2.imshow("img",img)
 cv2.imshow("edges",edges)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
-
-cv2.imwrite("input.png",img)
-cv2.imwrite("edges.png",edges)
 
 # new_connection = vision.Vision()
 # color = new_connection.get_depth()
