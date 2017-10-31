@@ -13,7 +13,8 @@ import json
 from time import sleep
 from PyQt5.QtWidgets import (QMainWindow, QAction, QTabWidget,
                              QVBoxLayout, QHBoxLayout, QGroupBox, QGridLayout, QDialog, qApp, QApplication,
-                             QWidget, QLineEdit, QPushButton, QMessageBox, QLabel, QFrame)
+                             QWidget, QLineEdit, QPushButton, QMessageBox, QLabel, QFrame, 
+                             QTableWidget,QTableWidgetItem)
 from PyQt5.QtCore import QCoreApplication, pyqtSlot, QSettings, QThread, pyqtSignal, Qt
 from PyQt5.QtGui import QIcon, QImage, QPixmap, QFont
 
@@ -39,9 +40,9 @@ class Window(QMainWindow):
 
     def initUI(self):
         #Create Window Widgets
-        self.table_widget = tabWidget(self)
+        self.tab_widget = tabWidget(self)
         self.vid_widget_left = vidWidgetL(self)
-        self.setCentralWidget(self.table_widget)
+        self.table_widget = dataWidget(self)
         
         #Create top level frame
         self.main_frame = QFrame(self)
@@ -51,8 +52,9 @@ class Window(QMainWindow):
         mf_layout.setColumnStretch(0, 4)
         mf_layout.setColumnStretch(1, 4)
     
-        mf_layout.addWidget(self.table_widget,2,0,4,4)
-        mf_layout.addWidget(self.vid_widget_left,0,0,4,4)
+        mf_layout.addWidget(self.tab_widget,2,0,4,4)
+        mf_layout.addWidget(self.vid_widget_left,0,1,2,2)
+        mf_layout.addWidget(self.table_widget, 0,0,1,1)
         
         self.main_frame.setLayout(mf_layout)
         
@@ -200,12 +202,25 @@ class tabWidget(QWidget):
             #config_to_task(config, task)
             print(console_input)
             
+class dataWidget(QWidget):
+    
+    def __init__(self, Window):
+        super(QWidget, self).__init__(Window)
+        self.layout = QVBoxLayout()
+       
+        self.data = QTableWidget()
+        self.data.setRowCount(7)
+        self.data.setColumnCount(5)
+        
+        self.layout.addWidget(self.data)
+        self.setLayout(self.layout)
+            
 class vidWidgetL(QWidget):
     
     def __init__(self, Window):
         super(QWidget, self).__init__(Window)
         left_video = QLabel(self)
-        left_video.move(480, 20)
+        left_video.move(20, 20)
         left_video.resize(400, 300)
         th = Thread(self)
         th.changePixmap.connect(lambda p: left_video.setPixmap(p))
@@ -227,7 +242,7 @@ class Thread(QThread):
             convertToQtFormat = QPixmap.fromImage(convertToQtFormat)
             p = convertToQtFormat.scaled(640, 480, Qt.KeepAspectRatio)
             self.changePixmap.emit(p)
-            sleep(.025)
+            sleep(.030)
             
 def ui_main():
   global app # make available elsewhere - only need to declare global if we assign
