@@ -1,10 +1,8 @@
 import numpy as np
 import os
 import tensorflow as tf
-import NeuralNetDTO as NeuralNetDTO
 
-from utils import label_map_util
-from utils import visualization_utils as vis_util
+import core.neuralnet.NeuralNetDTO as DTO
 
 from core.neuralnet.utils import label_map_util
 
@@ -65,5 +63,5 @@ class NeuralNet:
         self.PATH_TO_LABELS = path_to_labels
         self.PATH_TO_CHECKPOINT = path_to_graph
         self.init_network()
-        
+
     #def train():
