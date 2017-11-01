@@ -1,10 +1,11 @@
 import numpy as np
 import os
 import tensorflow as tf
-import NeuralNetDTO as NeuralNetDTO
 
-from utils import label_map_util
-from utils import visualization_utils as vis_util
+import core.neuralnet.NeuralNetDTO as DTO
+
+from core.neuralnet.utils import label_map_util
+from core.neuralnet.utils import visualization_utils as vis_util
 
 class NeuralNet:
 
@@ -45,7 +46,7 @@ class NeuralNet:
         categories = label_map_util.convert_label_map_to_categories(label_map, max_num_classes=self.NUM_CLASSES, use_display_name=True)
         self.category_index = label_map_util.create_category_index(categories)
 
-    def run_inference(self, image_np, sess):                       
+    def run_inference(self, image_np, sess):
         # Expand dimensions since the model expects images to have shape: [1, None, None, 3]
         image_np_expanded = np.expand_dims(image_np, axis=0)
         # Actual detection.
@@ -69,5 +70,5 @@ class NeuralNet:
         self.PATH_TO_LABELS = path_to_labels
         self.PATH_TO_CHECKPOINT = path_to_graph
         self.init_network()
-        
+
     #def train():
