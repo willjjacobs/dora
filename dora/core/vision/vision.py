@@ -2,11 +2,11 @@ import numpy as np
 import cv2
 import sys
 import os
-from pylibfreenect2 import Freenect2, SyncMultiFrameListener
-from pylibfreenect2 import FrameType, Registration, Frame
-from pylibfreenect2 import createConsoleLogger, setGlobalLogger
-from pylibfreenect2 import LoggerLevel
-from utils import visualization_utils as vis_util
+# from pylibfreenect2 import Freenect2, SyncMultiFrameListener
+# from pylibfreenect2 import FrameType, Registration, Frame
+# from pylibfreenect2 import createConsoleLogger, setGlobalLogger
+# from pylibfreenect2 import LoggerLevel
+from core.neuralnet.utils import visualization_utils as vis_util
 
 DEFAULT_RES = (240,135)
 WEBCAM_PORT = 0
@@ -104,15 +104,15 @@ def rotate_image(image, angle):
 
 #Smooths color images
 def denoise_color(image):
-	p = DENOISING_PARAMS 
+	p = DENOISING_PARAMS
 	return cv2.fastNlMeansDenoisingColored(image,None,p[0],p[1],p[2],p[3])
 #Smooths greyscale images
 def denoise_grey(image):
 	p = DENOISING_PARAMS
 	return cv2.fastNlMeansDenoising(image,None,p[0],p[1],p[2],p[3])
 
-#uses uncanny edge detection 
-#thresholds calculated using mean pixel value and std deviation 
+#uses uncanny edge detection
+#thresholds calculated using mean pixel value and std deviation
 def detect_edge(image):
 	grey_image = convert_greyscale(image)
 	mean_val = np.mean(grey_image)
@@ -133,7 +133,7 @@ def overlay_image(image, dto, overlay_edges = True):
 	edges = convert_color(edges,[255,255,255],[0,0,255])
 	new_image = cv2.addWeighted(image,.5,edges,.5,0)
 
-	boxes = dto.boxes 
+	boxes = dto.boxes
 	category_index = dto.category_index
 	classes = dto.classes
 	scores = dto.scores
@@ -148,7 +148,7 @@ def overlay_image(image, dto, overlay_edges = True):
 
 	return new_image
 
-#TODO given boxes from dto, find distance at center of box 
+#TODO given boxes from dto, find distance at center of box
 def add_depth_information(depth,dto):
 	depths = None
 	return depths
