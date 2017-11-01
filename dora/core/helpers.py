@@ -20,7 +20,7 @@ class Dashboard:
 
     task ={}
 
-    task['multi'] = list((1, "TennisBall"),(2,"Rock"))
+    task['multi'] = [(1, "TennisBall"),(2,"Rock")]
     task['file'] =  "filename"
     task['stream'] = "STREAM"
     task['type'] = "check"

@@ -142,4 +142,7 @@ class Core:
       pass
 
 def main(args=None):
-  c = Core()
+  # c = Core()
+  # TODO: fix core
+  print("This is where we would create core. IF WE HAVE ONE!")
+  pass
