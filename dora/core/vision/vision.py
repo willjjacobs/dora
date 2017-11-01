@@ -132,8 +132,8 @@ def overlay_image(image, dto, overlay_edges = True):
 	edges = None
 	if overlay_edges:
 		edges = detect_edge(image)
-	edges = convert_color(edges,[255,255,255],[0,0,255])
-	new_image = cv2.addWeighted(image,.5,edges,.5,0)
+		edges = convert_color(edges,[255,255,255],[0,0,255])
+		new_image = cv2.addWeighted(image,.5,edges,.5,0)
 
 	boxes = dto.boxes
 	category_index = dto.category_index
