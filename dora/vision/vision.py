@@ -1,18 +1,21 @@
 import numpy as np
 import cv2
 import sys
+import os
+sys.path.append(os.path.abspath('../core/utils'))
 from pylibfreenect2 import Freenect2, SyncMultiFrameListener
 from pylibfreenect2 import FrameType, Registration, Frame
 from pylibfreenect2 import createConsoleLogger, setGlobalLogger
 from pylibfreenect2 import LoggerLevel
+import visualization_utils as vis_util
 
 DEFAULT_RES = (240,135)
 WEBCAM_PORT = 0
 ADJUSTMENT_FRAMES = 2
 DENOISING_PARAMS = [10,10,7,21]
 
-
 #Class for connection to Kinect camera using pylibfreenect2
+#Optionally supress output from pylibfreenect?
 class Kinect(object):
 	def __init__(self):
 		try:
@@ -74,11 +77,25 @@ class Camera(object):
 	def close(self):
 		pass
 
+class FileFeed(object):
+	def __init__(self,file):
+		self.feed = cv2.VideoCapture(file)
+	def get_frame(self):
+		retval, im = self.feed.read()
+		return im
+	def close(self):
+		del(self.feed)
+
 def adjust_resolution(image, new_res = DEFAULT_RES):
 	return cv2.resize(image, new_res)
 
 def convert_greyscale(image):
 	return cv2.cvtColor(image,cv2.COLOR_BGR2GRAY)
+
+def convert_color(image, init_pix, col_pix):
+	color_image = cv2.cvtColor(image,cv2.COLOR_GRAY2BGR)
+	#color_image[np.where((color_image == init_pix).all(axis=2))] = col_pix
+	return color_image
 
 def rotate_image(image, angle):
 	rows,cols,extra = image.shape
@@ -86,14 +103,17 @@ def rotate_image(image, angle):
 	new_image = cv2.warpAffine(image,M,(cols,rows))
 	return new_image
 
+#Smooths color images
 def denoise_color(image):
 	p = DENOISING_PARAMS 
 	return cv2.fastNlMeansDenoisingColored(image,None,p[0],p[1],p[2],p[3])
-
+#Smooths greyscale images
 def denoise_grey(image):
 	p = DENOISING_PARAMS
 	return cv2.fastNlMeansDenoising(image,None,p[0],p[1],p[2],p[3])
 
+#uses uncanny edge detection 
+#thresholds calculated using mean pixel value and std deviation 
 def detect_edge(image):
 	grey_image = convert_greyscale(image)
 	mean_val = np.mean(grey_image)
@@ -103,8 +123,35 @@ def detect_edge(image):
 	edges = cv2.Canny(grey_image,low_thresh,high_thresh)
 	return edges
 
-def overlay_image(image, objs):
-	overlayed_image = None
-	return overlayed_image
+#given an array of objects, overlay object onto original image
+#TODO get vis_util working for box overlay
+def overlay_image(image, dto, overlay_edges = True):
+
+	# overlay edge detection
+	edges = None
+	if overlay_edges:
+		edges = detect_edge(image)
+	edges = convert_color(edges,[255,255,255],[0,0,255])
+	new_image = cv2.addWeighted(image,.5,edges,.5,0)
+
+	boxes = dto.boxes 
+	category_index = dto.category_index
+	classes = dto.classes
+	scores = dto.scores
+	vis_util.visualize_boxes_and_labels_on_image_array(
+            new_image,
+            np.squeeze(boxes),
+            np.squeeze(classes).astype(np.int32),
+            np.squeeze(scores),
+            category_index,
+            use_normalized_coordinates=True,
+            line_thickness=4)
+
+	return new_image
+
+#TODO given boxes from dto, find distance at center of box 
+def add_depth_information(depth,dto):
+	depths = None
+	return depths
 
 
