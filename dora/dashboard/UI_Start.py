@@ -11,6 +11,7 @@ import sys
 import cv2
 import json
 from time import sleep
+import time
 from PyQt5.QtWidgets import (QMainWindow, QAction, QTabWidget,
                              QVBoxLayout, QHBoxLayout, QGroupBox, QGridLayout, QDialog, qApp, QApplication,
                              QWidget, QLineEdit, QPushButton, QMessageBox, QLabel, QFrame, 
@@ -18,10 +19,27 @@ from PyQt5.QtWidgets import (QMainWindow, QAction, QTabWidget,
 from PyQt5.QtCore import QCoreApplication, pyqtSlot, QSettings, QThread, pyqtSignal, Qt
 from PyQt5.QtGui import QIcon, QImage, QPixmap, QFont
 
-from util import *
+from dashboard.util import *
 
 
-            
+    def __init__(self, parent=None):
+        QThread.__init__(self, parent=parent)
+
+    def run(self):
+        cap = cv2.VideoCapture(0)
+        while True:
+            ret, frame = cap.read()
+            if (frame == None):
+              print("EMPTY FRAME COULD NOT OPEN WEBCAM")
+              time.sleep(5)   # delays for 5 seconds. You can Also Use Float Value.
+              continue
+            # if (frame.empty()):
+            rgbImage = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            convertToQtFormat = QImage(rgbImage.data, rgbImage.shape[1], rgbImage.shape[0], QImage.Format_RGB888)
+            convertToQtFormat = QPixmap.fromImage(convertToQtFormat)
+            p = convertToQtFormat.scaled(640, 480, Qt.KeepAspectRatio)
+            self.changePixmap.emit(p)
+
 class Window(QMainWindow):
 
     def __init__(self):
@@ -29,37 +47,40 @@ class Window(QMainWindow):
 
         self.settings = setup_config()
         open_event(self.settings)
+
+        #TESTING CODE
         self.task = create_task()
         self.initUI()
-        
+
     @pyqtSlot()
     def app_quit(self):
         print("Quitting")
         close_event(self.settings)
-        QCoreApplication.quit() 
+        QCoreApplication.quit()
 
     def initUI(self):
         #Create Window Widgets
         self.tab_widget = tabWidget(self)
         self.vid_widget_left = vidWidgetL(self)
-        self.table_widget = dataWidget(self)
-        
+        self.setCentralWidget(self.table_widget)
+
         #Create top level frame
         self.main_frame = QFrame(self)
         #self.main_frame.setStyleSheet('background-color: rgba(255, 255, 255, 1);')
-        
+
         mf_layout = QGridLayout()
         mf_layout.setColumnStretch(0, 4)
         mf_layout.setColumnStretch(1, 4)
-    
-        mf_layout.addWidget(self.tab_widget,2,0,4,4)
-        mf_layout.addWidget(self.vid_widget_left,0,1,2,2)
-        mf_layout.addWidget(self.table_widget, 0,0,1,1)
-        
+
+
+
+        mf_layout.addWidget(self.table_widget,2,0,4,4)
+        mf_layout.addWidget(self.vid_widget_left,0,0,4,4)
+
         self.main_frame.setLayout(mf_layout)
-        
+
         self.setCentralWidget(self.main_frame)
-        
+
 
         menubar = self.menuBar() #Create Menu Bar
         doraMenu = menubar.addMenu('&DORA') #Create DORA Menu
@@ -73,7 +94,7 @@ class Window(QMainWindow):
         creditsAct = QAction('&Credits', self) #Add Credits to DORA
         doraMenu.addAction(creditsAct)
 
-        fileMenu = menubar.addMenu('&File') 
+        fileMenu = menubar.addMenu('&File')
 
         loadHardwareProfileAct = QAction('&Load Hardware Profile', self)
         fileMenu.addAction(loadHardwareProfileAct)
@@ -98,9 +119,9 @@ class Window(QMainWindow):
         exitAct.setStatusTip('Exit application')
         exitAct.triggered.connect(self.app_quit)
         fileMenu.addAction(exitAct)
-        
+
         #Create Window Menu
-        windowMenu = menubar.addMenu('&Window') 
+        windowMenu = menubar.addMenu('&Window')
 
         RGB_visual_act = QAction('&RGB', self)
         windowMenu.addAction(RGB_visual_act)
@@ -113,9 +134,9 @@ class Window(QMainWindow):
 
         datatable_act = QAction('Data Table', self)
         windowMenu.addAction(datatable_act)
-        
+
         #Create Settings Menu
-        settingsMenu = menubar.addMenu('&Settings') 
+        settingsMenu = menubar.addMenu('&Settings')
 
 
         preferences_act = QAction('&Preferences', self)
@@ -126,9 +147,28 @@ class Window(QMainWindow):
 
         self.setGeometry(960,100,960,540)
         self.setWindowTitle('DORA')
-        
+
+        #Create Video Player
+#        left_video = QLabel(self)
+#        left_video.move(280, 120)
+#        left_video.resize(640, 100)
+#        th = Thread(self)
+#        th.changePixmap.connect(lambda p: left_video.setPixmap(p))
+#        th.start()
         self.show()
-        
+class vidWidgetL(QWidget):
+
+    def __init__(self, Window):
+        super(QWidget, self).__init__(Window)
+        left_video = QLabel(self)
+        left_video.move(30, 20)
+        left_video.resize(400, 300)
+        th = Thread(self)
+        th.changePixmap.connect(lambda p: left_video.setPixmap(p))
+        th.start()
+        pass
+
+
 class tabWidget(QWidget):
 
     def __init__(self, Window):
@@ -155,7 +195,7 @@ class tabWidget(QWidget):
         self.tab_tools.vlayout02.addStretch(1)
         self.tab_tools.hlayout = QHBoxLayout(self)
         self.tab_tools.hlayout.addStretch(0)
-        
+
         self.pushButton1 = QPushButton("Print Task")
         #self.pushButton1.clicked.connect(print_task(task))
         self.pushButton2 = QPushButton("DevTool 02")
@@ -249,7 +289,7 @@ def ui_main():
   app = QApplication(sys.argv)
   window = Window()
   app.aboutToQuit.connect(app.deleteLater)
-  sys.exit(app.exec_())     
+  sys.exit(app.exec_())
 
 
 if __name__ == '__main__':
