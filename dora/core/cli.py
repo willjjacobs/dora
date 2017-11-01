@@ -1,6 +1,8 @@
 import json
 from NeuralNet import NeuralNet
 import time
+import vision 
+
 """
 Module that contains the command line app.
 This is the primary entry point.
@@ -11,16 +13,6 @@ class Classification:
         self.box = box
         self.score = score
         self.distance = distance
-
-class Vision_input:
-    def __init__(self, camera):
-        pass
-
-    def get_frame(self):
-        pass
-
-    def get_depth(self):
-        pass
 
 
 
@@ -47,15 +39,25 @@ class Dashboard:
         return self.task
 
 '''
+
+
+
+#TODO
+#fix class structure
+#close camera at end of script  
 class Core:
     objects = ["Tennis Ball", "Rock", "Cliff"]
     visions = dict()
-    visions["webcam"] = Vision_input("webcam")
-    visions["kinect"] = Vision_input("kinect")
+    # visions["webcam"] = Vision_input("webcam")
+    # visions["kinect"] = Vision_input("kinect")
+
+    visions["webcam"] = vision.Webcam()
+
     neurals = dict()
     dashes = dict()
 
     def __init__(self):
+
         self.dashes["default"] = Dashboard(None)
         self.main()
 
@@ -82,12 +84,20 @@ class Core:
             task = dash.get_task()
             if task != None:
                 return task
-            frame = self.vision[parameters["stream"]].get_frame(parameters["resolution"])
-            depth_map = self.vision["kinect"].get_depth()
-            data = infer(frame)
-            overlay = self.overlay_image(data, frame)
-            self.process_data(data, parameters, depth_map)
-            dash.push(data, overlay, self.depth, frame)
+            frame = self.visions[parameters["stream"]].get_frame()
+            frame = vision.adjust_resolution(frame,parameters["resolution"])
+            #frame = self.vision[parameters["stream"]].get_frame(parameters["resolution"])
+            #depth_map = self.vision["kinect"].get_depth()
+            data = self.infer(frame, parameters["not_wildcard"])
+
+            #TODO
+            #flatten data to dto
+            overlay = vision.overlay_image(frame, data, True)
+            
+
+            self.process_data(data, parameters, None)
+            #self.process_data(data, parameters, depth_map)
+            dash.push(data, overlay, None, frame)
             time.sleep(timestep/1000)
 
     def set_networks(self,networks):
@@ -107,12 +117,20 @@ class Core:
     def single(self,parameters):
         dash = self.dashes["default"]
         self.set_networks(parameters["network"])
-        frame = self.vision[parameters["stream"]].get_frame(parameters["resolution"])
-        depth_map = self.vision["kinect"].get_depth()
-        data = infer(frame, self.task["not_wildcard"])
-        overlay = self.overlay_image(data, frame)
-        self.process_data(data, parameters, depth_map)
-        dash.push(data, overlay, self.depth, frame)
+        frame = self.visions[parameters["stream"]].get_frame()
+        frame = vision.adjust_resolution(frame,parameters["resolution"])
+        # frame = self.vision[parameters["stream"]].get_frame(parameters["resolution"])
+        # depth_map = self.vision["kinect"].get_depth()
+
+        data = infer(frame, parameters["not_wildcard"])
+
+        #TODO
+        #flatten data to dto
+        overlay = vision.overlay_image(frame, data, True)
+
+        self.process_data(data, parameters, None)
+        #self.process_data(data, parameters, depth_map)
+        dash.push(data, overlay, None, frame)
         with open(parameters["output"], "wb") as output:
             output.write(overlay)
         output.close()
@@ -180,3 +198,4 @@ class Core:
 """
 
 c = Core()
+c.visions["webcam"].close()
