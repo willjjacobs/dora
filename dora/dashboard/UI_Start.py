@@ -10,29 +10,17 @@ import sys
 
 import cv2
 import json
+from time import sleep
 from PyQt5.QtWidgets import (QMainWindow, QAction, QTabWidget,
                              QVBoxLayout, QHBoxLayout, QGroupBox, QGridLayout, QDialog, qApp, QApplication,
-                             QWidget, QLineEdit, QPushButton, QMessageBox, QLabel, QFrame)
+                             QWidget, QLineEdit, QPushButton, QMessageBox, QLabel, QFrame, 
+                             QTableWidget,QTableWidgetItem)
 from PyQt5.QtCore import QCoreApplication, pyqtSlot, QSettings, QThread, pyqtSignal, Qt
 from PyQt5.QtGui import QIcon, QImage, QPixmap, QFont
 
 from util import *
 
-class Thread(QThread):
-    changePixmap = pyqtSignal(QPixmap)
 
-    def __init__(self, parent=None):
-        QThread.__init__(self, parent=parent)
-
-    def run(self):
-        cap = cv2.VideoCapture(0)
-        while True:
-            ret, frame = cap.read()
-            rgbImage = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            convertToQtFormat = QImage(rgbImage.data, rgbImage.shape[1], rgbImage.shape[0], QImage.Format_RGB888)
-            convertToQtFormat = QPixmap.fromImage(convertToQtFormat)
-            p = convertToQtFormat.scaled(640, 480, Qt.KeepAspectRatio)
-            self.changePixmap.emit(p)
             
 class Window(QMainWindow):
 
@@ -41,8 +29,6 @@ class Window(QMainWindow):
 
         self.settings = setup_config()
         open_event(self.settings)
-        
-        #TESTING CODE
         self.task = create_task()
         self.initUI()
         
@@ -54,9 +40,9 @@ class Window(QMainWindow):
 
     def initUI(self):
         #Create Window Widgets
-        self.table_widget = tabWidget(self)
+        self.tab_widget = tabWidget(self)
         self.vid_widget_left = vidWidgetL(self)
-        self.setCentralWidget(self.table_widget)
+        self.table_widget = dataWidget(self)
         
         #Create top level frame
         self.main_frame = QFrame(self)
@@ -66,10 +52,9 @@ class Window(QMainWindow):
         mf_layout.setColumnStretch(0, 4)
         mf_layout.setColumnStretch(1, 4)
     
- 
- 
-        mf_layout.addWidget(self.table_widget,2,0,4,4)
-        mf_layout.addWidget(self.vid_widget_left,0,0,4,4)
+        mf_layout.addWidget(self.tab_widget,2,0,4,4)
+        mf_layout.addWidget(self.vid_widget_left,0,1,2,2)
+        mf_layout.addWidget(self.table_widget, 0,0,1,1)
         
         self.main_frame.setLayout(mf_layout)
         
@@ -142,26 +127,7 @@ class Window(QMainWindow):
         self.setGeometry(960,100,960,540)
         self.setWindowTitle('DORA')
         
-        #Create Video Player
-#        left_video = QLabel(self)
-#        left_video.move(280, 120)
-#        left_video.resize(640, 100)
-#        th = Thread(self)
-#        th.changePixmap.connect(lambda p: left_video.setPixmap(p))
-#        th.start()
         self.show()
-class vidWidgetL(QWidget):
-    
-    def __init__(self, Window):
-        super(QWidget, self).__init__(Window)
-        left_video = QLabel(self)
-        left_video.move(30, 20)
-        left_video.resize(400, 300)
-        th = Thread(self)
-        th.changePixmap.connect(lambda p: left_video.setPixmap(p))
-        th.start()
-        pass
-
         
 class tabWidget(QWidget):
 
@@ -230,12 +196,54 @@ class tabWidget(QWidget):
         console_input = self.console_input.text()
         self.console_input.setText("")
         if console_input.__eq__("print task"):
-            print_task(Window.task)
+            #print_task(Window.task)
             print(console_input)
         if console_input.__eq__("console to task"):
-            config_to_task(config, task)
+            #config_to_task(config, task)
             print(console_input)
+            
+class dataWidget(QWidget):
+    
+    def __init__(self, Window):
+        super(QWidget, self).__init__(Window)
+        self.layout = QVBoxLayout()
+       
+        self.data = QTableWidget()
+        self.data.setRowCount(7)
+        self.data.setColumnCount(5)
+        
+        self.layout.addWidget(self.data)
+        self.setLayout(self.layout)
+            
+class vidWidgetL(QWidget):
+    
+    def __init__(self, Window):
+        super(QWidget, self).__init__(Window)
+        left_video = QLabel(self)
+        left_video.move(20, 20)
+        left_video.resize(400, 300)
+        th = Thread(self)
+        th.changePixmap.connect(lambda p: left_video.setPixmap(p))
+        th.start()
+        
+class Thread(QThread):
+    changePixmap = pyqtSignal(QPixmap)
+    
 
+    def __init__(self, parent=None):
+        QThread.__init__(self, parent=parent)
+
+    def run(self):
+        cap = cv2.VideoCapture('Demo1.mp4')
+        while True:
+            ret, frame = cap.read()
+            rgbImage = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            convertToQtFormat = QImage(rgbImage.data, rgbImage.shape[1], rgbImage.shape[0], QImage.Format_RGB888)
+            convertToQtFormat = QPixmap.fromImage(convertToQtFormat)
+            p = convertToQtFormat.scaled(640, 480, Qt.KeepAspectRatio)
+            self.changePixmap.emit(p)
+            sleep(.030)
+            
 def ui_main():
   global app # make available elsewhere - only need to declare global if we assign
   app = QApplication(sys.argv)

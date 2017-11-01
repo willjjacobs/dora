@@ -1,7 +1,7 @@
 import numpy as np
 import os
 import tensorflow as tf
-import NeuralNetDTO as DTO
+import NeuralNetDTO as NeuralNetDTO
 
 from utils import label_map_util
 from utils import visualization_utils as vis_util
@@ -62,7 +62,7 @@ class NeuralNet:
             use_normalized_coordinates=True,
             line_thickness=8)
         '''
-        dto = DTO.DTO(boxes, self.category_index, classes, scores)
+        dto = NeuralNetDTO.NeuralNetDTO(boxes, self.category_index, classes, scores)
         return dto
 
     def set_network(self, path_to_graph, path_to_labels):
