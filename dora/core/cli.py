@@ -1,10 +1,21 @@
 import json
-from NeuralNet import NeuralNet
+from NeuralNet import NeuralNet as nn
 import time
+import tensorflow as tf
+from http.server import BaseHTTPRequestHandler, HTTPServer
+import requests
+import socket
+
+
+#dictionary which stores the tasks send by the dashboard class
+task ={}
+
 """
 Module that contains the command line app.
 This is the primary entry point.
 """
+
+
 
 class Classification:
     def __init__(self, box, score, distance):
@@ -24,29 +35,92 @@ class Vision_input:
 
 
 
-'''
+
+class testHTTPServer_RequestHandler(BaseHTTPRequestHandler):
+    """
+    def do_GET(self):
+        print("blaaa")
+        # Send response status code
+        self.send_response(200)
+        
+        # Send headers
+        self.send_header('Content-type', 'text/html')
+        self.end_headers()
+        
+        # Send message back to client
+        message = "Yazeed you suck!"
+        # Write content as utf-8 data
+        self.wfile.write(bytes(message, "utf8"))
+        return
+    """
+    def do_POST(self):
+        global task;
+        # Doesn't do anything with posted data
+        #self._set_headers('{statusCode: 200}')
+        cont_len = int(self.headers.get('content-length', 0))
+        print (self.rfile.read(cont_len))
+        
+        
+        
+        task['multi'] = list((1, "TennisBall"),(2,"Rock"))
+        task['file'] =  "filename"
+        task['stream'] = "STREAM"
+        task['type'] = "check"
+        task ['resolution'] = [300,320]
+        task['network'] = list(("filename", "rock"))
+        task['output'] = "filename/STREAM"
+        
+        #
+        #self.wfile.write(bytes("rtml><body><h1>POST!</h1></body></html>","utf8"))
+        #self.wfile.write(bytes("fuck", "utf8"))
+        #host = self.client_address.host + ":" + self.client_address.port
+        self.send_response(200, "pranav")
+        self.end_headers()
+
+
+
+
+
+
+
 class Dashboard:
 
-
     def __init__(self, ip_addr):
-        pass
+        self.start_server()
 
-    task ={}
 
-    task['multi'] = list((1, "TennisBall"),(2,"Rock"))
-    task['file'] =  "filename"
-    task['stream'] = "STREAM"
-    task['type'] = "check"
-    task ['resolution'] = [300,320]
-    task['network'] = list(("filename", "rock"))
-    task['output'] = "filename/STREAM"
 
+    def start_server():
+        print('starting server...')
+
+        # Server settings
+        # Choose port 8080, for port 80, which is normally used for a http server, you need root access
+        server_address = ('127.0.0.1', 8081)
+        httpd = HTTPServer(server_address, testHTTPServer_RequestHandler)
+        print('running server...')
+        httpd.serve_forever()
 
 
     def get_task(self):
-        return self.task
+        return task
 
-'''
+
+
+    def deref_task(self):
+        global task
+        task ={}
+
+
+    def do_push(self,data)
+    url = "http://localhost:8081"
+    #r = requests.post(url,data={'number': 12524, 'type': 'issue', 'action': 'show'})
+    r = requests.post(url,data)
+    print(r.status_code, r.reason)
+    print(r.text[:300] + '...')
+
+
+
+
 class Core:
     objects = ["Tennis Ball", "Rock", "Cliff"]
     visions = dict()
@@ -56,6 +130,9 @@ class Core:
     dashes = dict()
 
     def __init__(self):
+
+        with nn.detection_graph.as_default():
+            self.Session =  tf.Session(graph=nn.detection_graph)
         self.dashes["default"] = Dashboard(None)
         self.main()
 
@@ -84,7 +161,7 @@ class Core:
                 return task
             frame = self.vision[parameters["stream"]].get_frame(parameters["resolution"])
             depth_map = self.vision["kinect"].get_depth()
-            data = infer(frame)
+            data = self.infer(frame)
             overlay = self.overlay_image(data, frame)
             self.process_data(data, parameters, depth_map)
             dash.push(data, overlay, self.depth, frame)
@@ -97,7 +174,7 @@ class Core:
                 if self.neurals[o_type].PATH_TO_CHECKPOINT != nn_file:
                     #TODO: The below line will take time to execute. Consinder printing a message.
                     #TODO: Also be sure to call NeuralNet.set_network if NN is already instantiated.
-                    self.neurals[o_type] = NeuralNet.NeuralNet(nn_file)
+                    self.neurals[o_type] = nn.NeuralNet(nn_file)
 
     def get_dash(self,dash_ip):
         if ~ dash_ip in self.dashes:
@@ -180,3 +257,5 @@ class Core:
 """
 
 c = Core()
+
+
