@@ -6,12 +6,14 @@ import NeuralNetDTO as NeuralNetDTO
 from utils import label_map_util
 from utils import visualization_utils as vis_util
 
+from core.neuralnet.utils import label_map_util
+
 class NeuralNet:
 
     MODEL_NAME = 'ssd_mobilenet_v1_coco_11_06_2017'
     # Assumes working directory is root of git repo
-    PATH_TO_CHECKPOINT = os.path.join('core',MODEL_NAME, 'frozen_inference_graph.pb')
-    PATH_TO_LABELS = os.path.join('core','data', 'mscoco_label_map.pbtxt')
+    PATH_TO_CHECKPOINT = os.path.join('..','core',MODEL_NAME, 'frozen_inference_graph.pb')
+    PATH_TO_LABELS = os.path.join('..','core','data', 'mscoco_label_map.pbtxt')
     NUM_CLASSES = 90
 
     detection_graph = None
@@ -41,28 +43,22 @@ class NeuralNet:
             self.detection_scores = self.detection_graph.get_tensor_by_name('detection_scores:0')
             self.detection_classes = self.detection_graph.get_tensor_by_name('detection_classes:0')
             self.num_detections = self.detection_graph.get_tensor_by_name('num_detections:0')
+            self.sess = tf.Session(graph=self.detection_graph)
         label_map = label_map_util.load_labelmap(self.PATH_TO_LABELS)
         categories = label_map_util.convert_label_map_to_categories(label_map, max_num_classes=self.NUM_CLASSES, use_display_name=True)
         self.category_index = label_map_util.create_category_index(categories)
 
-    def run_inference(self, image_np, sess):                       
+    def run_inference(self, image_np):
         # Expand dimensions since the model expects images to have shape: [1, None, None, 3]
         image_np_expanded = np.expand_dims(image_np, axis=0)
         # Actual detection.
-        (boxes, scores, classes, num) = sess.run(
+        (boxes, scores, classes, num) = self.sess.run(
             [self.detection_boxes, self.detection_scores, self.detection_classes, self.num_detections],
             feed_dict={self.image_tensor: image_np_expanded})
         # Visualization of the results of a detection.
-        '''vis_util.visualize_boxes_and_labels_on_image_array(
-            image_np,
-            np.squeeze(boxes),
-            np.squeeze(classes).astype(np.int32),
-            np.squeeze(scores),
-            self.category_index,
-            use_normalized_coordinates=True,
-            line_thickness=8)
         '''
-        dto = NeuralNetDTO.NeuralNetDTO(boxes, self.category_index, classes, scores)
+        '''
+        dto = DTO.NeuralNetDTO(boxes, self.category_index, classes, scores)
         return dto
 
     def set_network(self, path_to_graph, path_to_labels):
