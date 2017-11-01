@@ -253,9 +253,9 @@ class Thread(QThread):
             # convertToQtFormat = QPixmap.fromImage(convertToQtFormat)
             # p = convertToQtFormat.scaled(640, 480, Qt.KeepAspectRatio)
 
-            denoise = vision.denoise_color(frame)
+            #denoise = vision.denoise_color(frame)
             dto = nn.run_inference(frame)
-            overlayed_image = vision.overlay_image(denoise,dto,True)
+            overlayed_image = vision.overlay_image(frame,dto,False)
             rgbImage = overlayed_image
             rgbImage = cv2.cvtColor(rgbImage, cv2.COLOR_BGR2RGB)
             convertToQtFormat = QImage(rgbImage.data, rgbImage.shape[1], rgbImage.shape[0], QImage.Format_RGB888)
