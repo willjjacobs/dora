@@ -6,7 +6,9 @@ import os
 # from pylibfreenect2 import FrameType, Registration, Frame
 # from pylibfreenect2 import createConsoleLogger, setGlobalLogger
 # from pylibfreenect2 import LoggerLevel
-from core.neuralnet.utils import visualization_utils as vis_util
+from core.NeuralNet.utils import visualization_utils as vis_util
+
+
 
 DEFAULT_RES = (240,135)
 WEBCAM_PORT = 0
@@ -150,6 +152,12 @@ def overlay_image(image, dto, overlay_edges = True):
 
 #TODO given boxes from dto, find distance at center of box
 def add_depth_information(depth,dto):
+	boxes = dto.boxes 
+
+	x = (boxes[0] + boxes[1])/2
+	y = (boxes[2] + boxes[3])/2
+
+
 	depths = None
 	return depths
 
