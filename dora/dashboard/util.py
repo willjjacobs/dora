@@ -7,6 +7,7 @@ Created on Fri Oct 27 10:59:47 2017
 from PyQt5 import QtCore
 from PyQt5.QtCore import QSettings
 from dashboard.jsonsocket import *
+#from jsonsocket import *
 
     #runs first time program is started, sets up config file
     #Currently set up to always treat as first time

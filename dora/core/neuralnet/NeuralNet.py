@@ -2,9 +2,9 @@ import numpy as np
 import os
 import tensorflow as tf
 
-import core.neuralnet.NeuralNetDTO as DTO
+import core.NeuralNet.NeuralNetDTO as DTO
 
-from core.neuralnet.utils import label_map_util
+from core.NeuralNet.utils import label_map_util
 
 class NeuralNet:
 

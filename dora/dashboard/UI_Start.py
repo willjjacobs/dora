@@ -18,6 +18,11 @@ from PyQt5.QtCore import QCoreApplication, pyqtSlot, QSettings, QThread, pyqtSig
 from PyQt5.QtGui import QIcon, QImage, QPixmap, QFont
 
 from dashboard.util import *
+#from util import *
+
+from core.vision import vision
+from core.NeuralNet import NeuralNet
+import tensorflow as tf 
 
 
 
@@ -232,14 +237,27 @@ class Thread(QThread):
         QThread.__init__(self, parent=parent)
 
     def run(self):
-        cap = cv2.VideoCapture('Demo1.mp4')
+        cap = vision.Webcam()
+        nn = NeuralNet.NeuralNet('core/NeuralNet/ssd_mobilenet_v1_coco_11_06_2017/frozen_inference_graph.pb', 'core/NeuralNet/data/mscoco_label_map.pbtxt')
         while True:
-            ret, frame = cap.read()
-            if (frame == None):
-              print("EMPTY FRAME COULD NOT OPEN WEBCAM")
-              sleep(5)   # delays for 5 seconds. You can Also Use Float Value.
-              continue
+            frame = cap.get_frame()
+            # ret, frame = cap.read()
+            # if (ret == False):
+            #   print("EMPTY FRAME COULD NOT OPEN WEBCAM")
+            #   sleep(5)   # delays for 5 seconds. You can Also Use Float Value.
+            #   continue
             rgbImage = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+
+
+            # convertToQtFormat = QImage(rgbImage.data, rgbImage.shape[1], rgbImage.shape[0], QImage.Format_RGB888)
+            # convertToQtFormat = QPixmap.fromImage(convertToQtFormat)
+            # p = convertToQtFormat.scaled(640, 480, Qt.KeepAspectRatio)
+
+            #denoise = vision.denoise_color(frame)
+            dto = nn.run_inference(frame)
+            overlayed_image = vision.overlay_image(frame,dto,False)
+            rgbImage = overlayed_image
+            rgbImage = cv2.cvtColor(rgbImage, cv2.COLOR_BGR2RGB)
             convertToQtFormat = QImage(rgbImage.data, rgbImage.shape[1], rgbImage.shape[0], QImage.Format_RGB888)
             convertToQtFormat = QPixmap.fromImage(convertToQtFormat)
             p = convertToQtFormat.scaled(640, 480, Qt.KeepAspectRatio)
