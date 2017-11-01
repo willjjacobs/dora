@@ -2,46 +2,64 @@
 # -*- coding: utf-8 -*-
 #Test
 """
-ZetCode PyQt5 tutorial
+DORA Dashboard main file
 
-In this example, we create a simple
-window in PyQt5.
-
-Author: Jan Bodnar
-Website: zetcode.com
-Last edited: August 2017
+Author: Wills
 """
-from .util import *
-import cv2
 import sys
+
+import cv2
+import json
+from time import sleep
 from PyQt5.QtWidgets import (QMainWindow, QAction, QTabWidget,
-                             QVBoxLayout, QHBoxLayout, qApp, QApplication,
-                             QWidget, QLineEdit, QPushButton, QMessageBox)
-from PyQt5.QtCore import QCoreApplication, pyqtSlot, QSettings
-from PyQt5.QtGui import QIcon, QImage
-from PyQt5.QtGui import QFont
+                             QVBoxLayout, QHBoxLayout, QGroupBox, QGridLayout, QDialog, qApp, QApplication,
+                             QWidget, QLineEdit, QPushButton, QMessageBox, QLabel, QFrame, 
+                             QTableWidget,QTableWidgetItem)
+from PyQt5.QtCore import QCoreApplication, pyqtSlot, QSettings, QThread, pyqtSignal, Qt
+from PyQt5.QtGui import QIcon, QImage, QPixmap, QFont
+
+from util import *
 
 
+            
 class Window(QMainWindow):
 
     def __init__(self):
         super().__init__()
-        self.settings = QSettings("CS-506", "DORA")
+
+        self.settings = setup_config()
         open_event(self.settings)
-
+        self.task = create_task()
         self.initUI()
-
+        
     @pyqtSlot()
     def app_quit(self):
         print("Quitting")
         close_event(self.settings)
-        QCoreApplication.quit()
-
+        QCoreApplication.quit() 
 
     def initUI(self):
-        #Create tabs
-        self.table_widget = tabWidget(self)
-        self.setCentralWidget(self.table_widget)
+        #Create Window Widgets
+        self.tab_widget = tabWidget(self)
+        self.vid_widget_left = vidWidgetL(self)
+        self.table_widget = dataWidget(self)
+        
+        #Create top level frame
+        self.main_frame = QFrame(self)
+        #self.main_frame.setStyleSheet('background-color: rgba(255, 255, 255, 1);')
+        
+        mf_layout = QGridLayout()
+        mf_layout.setColumnStretch(0, 4)
+        mf_layout.setColumnStretch(1, 4)
+    
+        mf_layout.addWidget(self.tab_widget,2,0,4,4)
+        mf_layout.addWidget(self.vid_widget_left,0,1,2,2)
+        mf_layout.addWidget(self.table_widget, 0,0,1,1)
+        
+        self.main_frame.setLayout(mf_layout)
+        
+        self.setCentralWidget(self.main_frame)
+        
 
         menubar = self.menuBar() #Create Menu Bar
         doraMenu = menubar.addMenu('&DORA') #Create DORA Menu
@@ -55,8 +73,7 @@ class Window(QMainWindow):
         creditsAct = QAction('&Credits', self) #Add Credits to DORA
         doraMenu.addAction(creditsAct)
 
-        #Create File Menu
-        fileMenu = menubar.addMenu('&File')
+        fileMenu = menubar.addMenu('&File') 
 
         loadHardwareProfileAct = QAction('&Load Hardware Profile', self)
         fileMenu.addAction(loadHardwareProfileAct)
@@ -65,6 +82,9 @@ class Window(QMainWindow):
         fileMenu.addAction(loadImageAct)
 
         load_video_stream_act = QAction('&Load Video Stream', self)
+        #load_video_stream_act.setShortcut('Ctrl+V')
+        #load_video_stream_act.setStatusTip('Connects to video stream for display')
+        #load_video_stream_act.triggered.connect(self.load_video_stream_wrapper)
         fileMenu.addAction(load_video_stream_act)
 
         load_neural_net_act = QAction('&Load Neural Net', self)
@@ -78,9 +98,9 @@ class Window(QMainWindow):
         exitAct.setStatusTip('Exit application')
         exitAct.triggered.connect(self.app_quit)
         fileMenu.addAction(exitAct)
-
+        
         #Create Window Menu
-        windowMenu = menubar.addMenu('&Window')
+        windowMenu = menubar.addMenu('&Window') 
 
         RGB_visual_act = QAction('&RGB', self)
         windowMenu.addAction(RGB_visual_act)
@@ -93,9 +113,10 @@ class Window(QMainWindow):
 
         datatable_act = QAction('Data Table', self)
         windowMenu.addAction(datatable_act)
-
+        
         #Create Settings Menu
-        settingsMenu = menubar.addMenu('&Settings')
+        settingsMenu = menubar.addMenu('&Settings') 
+
 
         preferences_act = QAction('&Preferences', self)
         settingsMenu.addAction(preferences_act)
@@ -104,15 +125,14 @@ class Window(QMainWindow):
         settingsMenu.addAction(preprocessing_act)
 
         self.setGeometry(960,100,960,540)
-        self.setWindowTitle('ICON')
-        #self.setWindowIcon(QIcon('web.png'))
-
+        self.setWindowTitle('DORA')
+        
         self.show()
-
+        
 class tabWidget(QWidget):
 
-    def __init__(self, parent):
-        super(QWidget, self).__init__(parent)
+    def __init__(self, Window):
+        super(QWidget, self).__init__(Window)
         self.layout = QVBoxLayout(self)
         self.layout.addStretch(1)
 
@@ -135,7 +155,9 @@ class tabWidget(QWidget):
         self.tab_tools.vlayout02.addStretch(1)
         self.tab_tools.hlayout = QHBoxLayout(self)
         self.tab_tools.hlayout.addStretch(0)
-        self.pushButton1 = QPushButton("DevTool 01")
+        
+        self.pushButton1 = QPushButton("Print Task")
+        #self.pushButton1.clicked.connect(print_task(task))
         self.pushButton2 = QPushButton("DevTool 02")
         self.pushButton3 = QPushButton("DevTool 03")
         self.pushButton4 = QPushButton("DevTool 04")
@@ -171,22 +193,64 @@ class tabWidget(QWidget):
 
     @pyqtSlot()
     def on_command(self):
-        print("\n")
-        print(self.console_input.text())
+        console_input = self.console_input.text()
         self.console_input.setText("")
+        if console_input.__eq__("print task"):
+            #print_task(Window.task)
+            print(console_input)
+        if console_input.__eq__("console to task"):
+            #config_to_task(config, task)
+            print(console_input)
+            
+class dataWidget(QWidget):
+    
+    def __init__(self, Window):
+        super(QWidget, self).__init__(Window)
+        self.layout = QVBoxLayout()
+       
+        self.data = QTableWidget()
+        self.data.setRowCount(7)
+        self.data.setColumnCount(5)
+        
+        self.layout.addWidget(self.data)
+        self.setLayout(self.layout)
+            
+class vidWidgetL(QWidget):
+    
+    def __init__(self, Window):
+        super(QWidget, self).__init__(Window)
+        left_video = QLabel(self)
+        left_video.move(20, 20)
+        left_video.resize(400, 300)
+        th = Thread(self)
+        th.changePixmap.connect(lambda p: left_video.setPixmap(p))
+        th.start()
+        
+class Thread(QThread):
+    changePixmap = pyqtSignal(QPixmap)
+    
 
-    @pyqtSlot()
-    def on_click(self):
-        print("\n")
+    def __init__(self, parent=None):
+        QThread.__init__(self, parent=parent)
 
+    def run(self):
+        cap = cv2.VideoCapture('Demo1.mp4')
+        while True:
+            ret, frame = cap.read()
+            rgbImage = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            convertToQtFormat = QImage(rgbImage.data, rgbImage.shape[1], rgbImage.shape[0], QImage.Format_RGB888)
+            convertToQtFormat = QPixmap.fromImage(convertToQtFormat)
+            p = convertToQtFormat.scaled(640, 480, Qt.KeepAspectRatio)
+            self.changePixmap.emit(p)
+            sleep(.030)
+            
 def ui_main():
   global app # make available elsewhere - only need to declare global if we assign
   app = QApplication(sys.argv)
   window = Window()
   app.aboutToQuit.connect(app.deleteLater)
-  sys.exit(app.exec_())
+  sys.exit(app.exec_())     
+
 
 if __name__ == '__main__':
-  app = QApplication(sys.argv)
-  window = Window()
-  app.aboutToQuit.connect(app.deleteLater)
+  ui_main()
