@@ -134,19 +134,18 @@ class Core:
     dashes = dict()
 
     def __init__(self):
-        cap = vision.Webcam()
+        self.cap = vision.Webcam()
         #from NeuralNet import NeuralNet
-        nn = NeuralNet.NeuralNet('dora/core/NeuralNet/ssd_mobilenet_v1_coco_11_06_2017/frozen_inference_graph.pb', 'dora/core/NeuralNet/data/mscoco_label_map.pbtxt')
+        self.nn = NeuralNet.NeuralNet('dora/core/NeuralNet/ssd_mobilenet_v1_coco_11_06_2017/frozen_inference_graph.pb', 'dora/core/NeuralNet/data/mscoco_label_map.pbtxt')
+        self.run()
+
+    def run(self):
         while True:
-            frame = cap.get_frame()
-            dto = nn.run_inference(frame)
+            frame = self.cap.get_frame()
+            dto = self.nn.run_inference(frame)
             overlayed_image = vision.overlay_image(frame,dto,False)
             #TODO: Replace below code to send to dashboard
             cv2.imshow('object detection', cv2.resize(overlayed_image, (800,600)))
             if cv2.waitKey(25) & 0xFF == ord('q'):
                 cv2.destroyAllWindows()
                 break
-
-    def main():
-        pass
-c = Core()
