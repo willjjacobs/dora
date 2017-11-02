@@ -1,6 +1,6 @@
 import json
-from NeuralNet import NeuralNet # as nn
-from vision import vision
+from core.NeuralNet import NeuralNet # as nn
+from core.vision import vision
 import time
 import tensorflow as tf
 from http.server import BaseHTTPRequestHandler, HTTPServer
@@ -138,13 +138,13 @@ class Core:
         host = "localhost"
         port = 8000
         cap = vision.Webcam()
-        from NeuralNet import NeuralNet
-        nn = NeuralNet.NeuralNet('core/NeuralNet/ssd_mobilenet_v1_coco_11_06_2017/frozen_inference_graph.pb', 'core/NeuralNet/data/mscoco_label_map.pbtxt')
+        #from NeuralNet import NeuralNet
+        nn = NeuralNet.NeuralNet('dora/core/NeuralNet/ssd_mobilenet_v1_coco_11_06_2017/frozen_inference_graph.pb', 'dora/core/NeuralNet/data/mscoco_label_map.pbtxt')
         while True:
             frame = cap.get_frame()
             dto = nn.run_inference(frame)
             overlayed_image = vision.overlay_image(frame,dto,False)
-            img_str = cv2.imencode('jpg', img)[1].toString()
+            img_str = cv2.imencode('jpg', overlayed_image)[1].toString()
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             s.connect((host, port))
             s.sendall(img_str)

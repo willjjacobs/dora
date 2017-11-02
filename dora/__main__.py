@@ -14,17 +14,8 @@ def main():
   """
   Start point for the entire top level dora application.
   """
-  if (len(sys.argv) > 1): #sys.argv[1] == "dashboard"):
-    ui_main()
-    # print("inside the top level if")
-    # try:
-    #   ui_main()
-    # except QXcbConnection:
-    #   print("Must have a graphical window available.")
-    #   sys.exit(1)
-  else:
-    core_main(sys.argv[1:]) # remove the first argument (dora)
-  print('Exiting the dora top level module')
+  # ui_main()
+  core_main(sys.argv[1:]) # remove the first argument (dora)
 
 if __name__ == '__main__':
   sys.exit(main())
