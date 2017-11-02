@@ -138,7 +138,7 @@ class Core:
     def __init__(self):
         self.cap = vision.Webcam()
         #from NeuralNet import NeuralNet
-        self.nn = NeuralNet.NeuralNet('dora/core/NeuralNet/ssd_mobilenet_v1_coco_11_06_2017/frozen_inference_graph.pb', 'dora/core/NeuralNet/data/mscoco_label_map.pbtxt')
+        self.nn = NeuralNet.NeuralNet('dora/core/neuralnet/ssd_mobilenet_v1_coco_11_06_2017/frozen_inference_graph.pb', 'dora/core/neuralnet/data/mscoco_label_map.pbtxt')
         #self.run()
 
     def get_frame(self):
