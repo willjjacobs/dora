@@ -81,6 +81,12 @@ class testHTTPServer_RequestHandler(BaseHTTPRequestHandler):
         self.send_response(200, "pranav")
         self.end_headers()
 
+
+
+
+
+
+
 class Dashboard:
 
     def __init__(self, ip_addr):
@@ -139,3 +145,7 @@ class Core:
             if cv2.waitKey(25) & 0xFF == ord('q'):
                 cv2.destroyAllWindows()
                 break
+
+    def main():
+        pass
+c = Core()
