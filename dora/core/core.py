@@ -132,20 +132,21 @@ class Core:
     visions["kinect"] = Vision_input("kinect")
     neurals = dict()
     dashes = dict()
+    new_frame = False
 
     def __init__(self):
         self.cap = vision.Webcam()
         #from NeuralNet import NeuralNet
         self.nn = NeuralNet.NeuralNet('dora/core/NeuralNet/ssd_mobilenet_v1_coco_11_06_2017/frozen_inference_graph.pb', 'dora/core/NeuralNet/data/mscoco_label_map.pbtxt')
-        self.run()
+        #self.run()
 
-    def run(self):
-        while True:
-            frame = self.cap.get_frame()
-            dto = self.nn.run_inference(frame)
-            overlayed_image = vision.overlay_image(frame,dto,False)
-            #TODO: Replace below code to send to dashboard
-            cv2.imshow('object detection', cv2.resize(overlayed_image, (800,600)))
-            if cv2.waitKey(25) & 0xFF == ord('q'):
-                cv2.destroyAllWindows()
-                break
+    def get_frame(self):
+        frame = self.cap.get_frame()
+        dto = self.nn.run_inference(frame)
+        return vision.overlay_image(frame,dto,False)
+            #cv2.imshow('object detection', cv2.resize(self.overlayed_image, (800,600)))
+            #if cv2.waitKey(25) & 0xFF == ord('q'):
+                #cv2.destroyAllWindows()
+                #break
+    
+

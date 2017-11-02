@@ -14,8 +14,8 @@ def main():
   """
   Start point for the entire top level dora application.
   """
-  # ui_main()
-  core.Core() # remove the first argument (dora)
+  ui_main(core.Core())
+  #  # remove the first argument (dora)
 
 if __name__ == '__main__':
   sys.exit(main())
