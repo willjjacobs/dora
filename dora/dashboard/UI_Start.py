@@ -6,7 +6,7 @@ DORA Dashboard main file
 Author: Wills
 """
 import sys
-
+import numpy as np
 import cv2
 import json
 from time import sleep
@@ -16,10 +16,10 @@ from PyQt5.QtWidgets import (QMainWindow, QAction, QTabWidget,
                              QTableWidget,QTableWidgetItem)
 from PyQt5.QtCore import QCoreApplication, pyqtSlot, QSettings, QThread, pyqtSignal, Qt
 from PyQt5.QtGui import QIcon, QImage, QPixmap, QFont
-
+#from PyQt5.QtCore.QString import QString
 from dashboard.util import *
 #from util import *
-
+import socket
 from core.vision import vision
 from core.NeuralNet import NeuralNet
 import tensorflow as tf 
@@ -237,16 +237,33 @@ class Thread(QThread):
         QThread.__init__(self, parent=parent)
 
     def run(self):
-        cap = vision.Webcam()
-        nn = NeuralNet.NeuralNet('core/NeuralNet/ssd_mobilenet_v1_coco_11_06_2017/frozen_inference_graph.pb', 'core/NeuralNet/data/mscoco_label_map.pbtxt')
+        host = 'localhost'
+        port = 8000
+        #cap = vision.Webcam()
+        #nn = NeuralNet.NeuralNet('core/NeuralNet/ssd_mobilenet_v1_coco_11_06_2017/frozen_inference_graph.pb', 'core/NeuralNet/data/mscoco_label_map.pbtxt')
         while True:
-            frame = cap.get_frame()
+
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            s.connect((host, port))
+            data = bytes('', encoding = "utf-32")
+            while True:
+                d = s.recv(225280)
+                if not d: break
+                else: data += d
+                #print (d)
+            #data = ''.join(msg)
+            
+            nparr = np.fromstring(data, dtype=np.uint8)
+            image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+            print(nparr.shape)
+            sys.stdout.flush()
+            #frame = cap.get_frame()
             # ret, frame = cap.read()
             # if (ret == False):
             #   print("EMPTY FRAME COULD NOT OPEN WEBCAM")
             #   sleep(5)   # delays for 5 seconds. You can Also Use Float Value.
             #   continue
-            rgbImage = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            #rgbImage = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
 
             # convertToQtFormat = QImage(rgbImage.data, rgbImage.shape[1], rgbImage.shape[0], QImage.Format_RGB888)
@@ -254,13 +271,14 @@ class Thread(QThread):
             # p = convertToQtFormat.scaled(640, 480, Qt.KeepAspectRatio)
 
             #denoise = vision.denoise_color(frame)
-            dto = nn.run_inference(frame)
-            overlayed_image = vision.overlay_image(frame,dto,False)
+            #dto = nn.run_inference(frame)
+            #overlayed_image = vision.overlay_image(frame,dto,False)
             
-            rgbImage = overlayed_image
-
-            rgbImage = cv2.cvtColor(rgbImage, cv2.COLOR_BGR2RGB)
-            convertToQtFormat = QImage(rgbImage.data, rgbImage.shape[1], rgbImage.shape[0], QImage.Format_RGB888)
+            #rgbImage = overlayed_image
+            #myPixmap = QPixmap(nparr)
+            #p = myPixmap.scaled(self.label.size(), Qt.KeepAspectRatio)
+            rgbImage = cv2.cvtColor(nparr, cv2.COLOR_BGR2RGB)
+            convertToQtFormat = QImage(nparr.data, nparr.shape[1], nparr.shape[0], QImage.Format_RGB888)
             convertToQtFormat = QPixmap.fromImage(convertToQtFormat)
             p = convertToQtFormat.scaled(640, 480, Qt.KeepAspectRatio)
             self.changePixmap.emit(p)
