@@ -141,6 +141,7 @@ class Core:
             frame = cap.get_frame()
             dto = nn.run_inference(frame)
             overlayed_image = vision.overlay_image(frame,dto,False)
+            #TODO: Replace below code to send to dashboard
             cv2.imshow('object detection', cv2.resize(overlayed_image, (800,600)))
             if cv2.waitKey(25) & 0xFF == ord('q'):
                 cv2.destroyAllWindows()
