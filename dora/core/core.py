@@ -81,12 +81,6 @@ class testHTTPServer_RequestHandler(BaseHTTPRequestHandler):
         self.send_response(200, "pranav")
         self.end_headers()
 
-
-
-
-
-
-
 class Dashboard:
 
     def __init__(self, ip_addr):
@@ -134,9 +128,6 @@ class Core:
     dashes = dict()
 
     def __init__(self):
-        print("here")
-        host = "localhost"
-        port = 8000
         cap = vision.Webcam()
         #from NeuralNet import NeuralNet
         nn = NeuralNet.NeuralNet('dora/core/NeuralNet/ssd_mobilenet_v1_coco_11_06_2017/frozen_inference_graph.pb', 'dora/core/NeuralNet/data/mscoco_label_map.pbtxt')
@@ -144,142 +135,7 @@ class Core:
             frame = cap.get_frame()
             dto = nn.run_inference(frame)
             overlayed_image = vision.overlay_image(frame,dto,False)
-            img_str = cv2.imencode('jpg', overlayed_image)[1].toString()
-            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            s.connect((host, port))
-            s.sendall(img_str)
-            s.close()
-            time.sleep(0.5)
-        # #print('here')
-        # with nn.detection_graph.as_default():
-        #     self.Session =  tf.Session(graph=nn.detection_graph)
-        # self.dashes["default"] = Dashboard(None)
-        # self.main()
-
-    """handles tasks, which then return to this function when they are over"""
-    def main(self):
-        while True:
-            task = self.dashes["default"].get_task()
-            while task != None:
-                """parse command line arguments into parameters"""
-                """if task is a single input command """
-                if task["type"] in {"check", "distance", "number", "pixel"}:
-                    self.single(task)
-                    self.task = None
-                else:
-                    task = self.log(task)
-
-    """ provides stream of images and data to UI"""
-    def log(self,timestep, functions, parameters):
-        if timestep == 0:
-            return None
-        self.set_networks(parameters["network"])
-        dash = self.get_dash(parameters["output"])
-        while True:
-            task = dash.get_task()
-            if task != None:
-                return task
-            frame = self.vision[parameters["stream"]].get_frame(parameters["resolution"])
-            depth_map = self.vision["kinect"].get_depth()
-            data = self.infer(frame)
-            overlay = self.overlay_image(data, frame)
-            self.process_data(data, parameters, depth_map)
-            dash.push(data, overlay, self.depth, frame)
-            time.sleep(timestep/1000)
-
-    def set_networks(self,networks):
-        """networks is dict from file names to lists of object types"""
-        for nn_file in networks:
-            for o_type in networks[nn_file]:
-                if self.neurals[o_type].PATH_TO_CHECKPOINT != nn_file:
-                    #TODO: The below line will take time to execute. Consinder printing a message.
-                    #TODO: Also be sure to call NeuralNet.set_network if NN is already instantiated.
-                    self.neurals[o_type] = nn.NeuralNet(nn_file)
-
-    def get_dash(self,dash_ip):
-        if ~ dash_ip in self.dashes:
-            self.dashes[dash_ip] = Dashboard(dash_ip)
-        return self.dashes[dash_ip]
-
-    def single(self,parameters):
-        dash = self.dashes["default"]
-        self.set_networks(parameters["network"])
-        frame = self.vision[parameters["stream"]].get_frame(parameters["resolution"])
-        depth_map = self.vision["kinect"].get_depth()
-        data = infer(frame, self.task["not_wildcard"])
-        overlay = self.overlay_image(data, frame)
-        self.process_data(data, parameters, depth_map)
-        dash.push(data, overlay, self.depth, frame)
-        with open(parameters["output"], "wb") as output:
-            output.write(overlay)
-        output.close()
-
-    """uses iterator design pattern"""
-    def infer(self,frame,not_wildcard):
-        """dict of NN_objects"""
-        data_dict = dict()
-        """inefficient"""
-        for obj in not_wildcard:
-            object_inference = self.neurals[obj].run_inference(frame)
-            for i in object_inference:
-                if i.prediction == obj:
-                    data_dict[obj] = i
-        wildcard_inference = self.neurals["*"].run_inference(frame)
-        for i in wildcard_inference:
-            if ~ i.prediction in not_wildcard:
-                data_dict[obj] = i
-        return data_dict
-
-
-
-#adjusts data based on user specifications
-    def process_data(data, parameters, depth_map):
-#holds classifications
-        datas = {}
-#object to be sent
-        payload = {}
-        for o in data:
-            datas[o] = []
-            for i in range(len(data[o])):
-                if data[o].classes[i] == o:
-                    datas[o].append(Classification(data[o].boxes[i], data[o].scores[i], data[o].distance[i]))
-#remove all except for MULTI best objects
-            datas[o].sort(key = lambda c: c.score)
-            n = parameters["multi"][o]
-            datas[o] = datas[o][:n]
-            if parameters["check"]:
-                if len(datas[o]) > 0:
-                    payload[o]["check"] = True
-            if parameters["number"]:
-                payload[o]["number"] = len(datas[o])
-            datas[o]["list"] = []
-            for c in datas[o]:
-                c_dict = {}
-                if parameters["pixel"]:
-                    #c_dict["pixel"] = (c.box.upper_left + c.box.lower_right)/2
-                    c_dict["pixel"] = 0
-                if parameters["distance"]:
-                #TODO: use get_distance(pixel_coords, depth_map) to add distance for each pixel coordinate to payload
-                    c_dict["distance"] = 0
-                datas[o]["list"].append(c_dict)
-        return json.dumps(payload)
-
-
-    def add_depth(data, depth_map):
-      """
-        uses iterator design pattern
-            adds depth value of center pixel (found by averaging top left and bottom right pixel) to each element of each object list in data
-      """
-      pass
-
-    def overlay_image(data, frame, parameters):
-      """uses iterator design pattern
-            if parameters[pixel]:
-                calls OpenCV to draw rectangles over image based on coordinates in data
-                if parameters[distance]:
-                    calls OpenCV to draw distances on top of rectangles
-            returns edited frame
-            """
-
-c = Core()
-
+            cv2.imshow('object detection', cv2.resize(overlayed_image, (800,600)))
+            if cv2.waitKey(25) & 0xFF == ord('q'):
+                cv2.destroyAllWindows()
+                break
