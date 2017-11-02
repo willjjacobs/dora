@@ -1,3 +1,6 @@
 opencv-python
-PyQt5
+pyqt5
 tensorflow
+pytest
+pillow
+requests
