@@ -1,12 +1,15 @@
 import json
-from NeuralNet import NeuralNet as nn
+from NeuralNet import NeuralNet # as nn
+from vision import vision
 import time
 import tensorflow as tf
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import requests
 import socket
-from core.neuralnet import NeuralNet
-from core.helpers import *
+import cv2
+import socket
+#from core.NeuralNet import NeuralNet
+#from core.helpers import *
 
 #dictionary which stores the tasks send by the dashboard class
 task ={}
@@ -112,12 +115,12 @@ class Dashboard:
         task ={}
 
 
-    def do_push(self,data)
-    url = "http://localhost:8081"
-    #r = requests.post(url,data={'number': 12524, 'type': 'issue', 'action': 'show'})
-    r = requests.post(url,data)
-    print(r.status_code, r.reason)
-    print(r.text[:300] + '...')
+    def do_push(self,data):
+        url = "http://localhost:8081"
+        #r = requests.post(url,data={'number': 12524, 'type': 'issue', 'action': 'show'})
+        r = requests.post(url,data)
+        print(r.status_code, r.reason)
+        print(r.text[:300] + '...')
 
 
 
@@ -131,11 +134,27 @@ class Core:
     dashes = dict()
 
     def __init__(self):
-
-        with nn.detection_graph.as_default():
-            self.Session =  tf.Session(graph=nn.detection_graph)
-        self.dashes["default"] = Dashboard(None)
-        self.main()
+        print("here")
+        host = "localhost"
+        port = 8000
+        cap = vision.Webcam()
+        from NeuralNet import NeuralNet
+        nn = NeuralNet.NeuralNet('core/NeuralNet/ssd_mobilenet_v1_coco_11_06_2017/frozen_inference_graph.pb', 'core/NeuralNet/data/mscoco_label_map.pbtxt')
+        while True:
+            frame = cap.get_frame()
+            dto = nn.run_inference(frame)
+            overlayed_image = vision.overlay_image(frame,dto,False)
+            img_str = cv2.imencode('jpg', img)[1].toString()
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            s.connect((host, port))
+            s.sendall(img_str)
+            s.close()
+            time.sleep(0.5)
+        # #print('here')
+        # with nn.detection_graph.as_default():
+        #     self.Session =  tf.Session(graph=nn.detection_graph)
+        # self.dashes["default"] = Dashboard(None)
+        # self.main()
 
     """handles tasks, which then return to this function when they are over"""
     def main(self):

@@ -2,7 +2,7 @@ import numpy as np
 import os
 import tensorflow as tf
 
-import core.NeuralNet.NeuralNetDTO as DTO
+import core.NeuralNet.NeuralNetDTO as DTO #core.NeuralNet.
 
 from core.NeuralNet.utils import label_map_util
 

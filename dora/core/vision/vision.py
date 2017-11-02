@@ -6,7 +6,7 @@ import os
 # from pylibfreenect2 import FrameType, Registration, Frame
 # from pylibfreenect2 import createConsoleLogger, setGlobalLogger
 # from pylibfreenect2 import LoggerLevel
-from core.NeuralNet.utils import visualization_utils as vis_util
+from NeuralNet.utils import visualization_utils as vis_util
 
 
 
