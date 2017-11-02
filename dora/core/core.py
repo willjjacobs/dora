@@ -125,6 +125,7 @@ class Dashboard:
 
 
 
+#temporary core class
 class Core:
     objects = ["Tennis Ball", "Rock", "Cliff"]
     visions = dict()
@@ -149,6 +150,7 @@ class Core:
                 #cv2.destroyAllWindows()
                 #break
     
+#unitegrated, full core class
 '''
 """handles tasks, which then return to this function when they are over"""
     def main(self):
