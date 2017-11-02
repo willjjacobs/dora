@@ -34,7 +34,7 @@ Alternatively, a requirements.txt file is included and the requirements can be i
 $ pip3 -r requirements.txt
 ```
 
-To run Dora When at the top level directory:
+To run Dora when at the top level directory:
 ```bash
 [~/Projects/dora] $ ls
 dora  Pipfile  README.md  requirements.txt  setup.py
