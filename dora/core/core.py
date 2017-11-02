@@ -1,5 +1,5 @@
 import json
-from core.NeuralNet import NeuralNet # as nn
+from core.neuralnet import NeuralNet # as nn
 from core.vision import vision
 import time
 import tensorflow as tf
