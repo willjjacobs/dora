@@ -8,8 +8,6 @@ import os
 # from pylibfreenect2 import LoggerLevel
 from core.neuralnet.utils import visualization_utils as vis_util
 
-
-
 DEFAULT_RES = (240,135)
 WEBCAM_PORT = 0
 ADJUSTMENT_FRAMES = 2
@@ -88,12 +86,13 @@ class FileFeed(object):
 		del(self.feed)
 
 def adjust_resolution(image, new_res = DEFAULT_RES):
-	return cv2.resize(image, new_res)
+	new_image = image.copy()
+	return cv2.resize(new_image, new_res)
 
 def convert_greyscale(image):
 	return cv2.cvtColor(image,cv2.COLOR_BGR2GRAY)
 
-def convert_color(image, init_pix, col_pix):
+def convert_color(image, init_pix = None, col_pix = None):
 	color_image = cv2.cvtColor(image,cv2.COLOR_GRAY2BGR)
 	#color_image[np.where((color_image == init_pix).all(axis=2))] = col_pix
 	return color_image
@@ -124,16 +123,69 @@ def detect_edge(image):
 	edges = cv2.Canny(grey_image,low_thresh,high_thresh)
 	return edges
 
+#fills from bottom up
+def fill_edges(edges):
+	dims = edges.shape
+	filled = edges.copy()
+	pix = 255
+	for x in range(dims[1]-1,-1,-1):
+		for y in range(dims[0]-1,-1,-1):
+			if filled[y][x] == 255 and pix == 255:
+				pix = 0
+			else:
+				filled[y][x] = pix
+		pix = 255
+	return filled
+
+#horizontal erosion
+def erode_filled(filled):
+	dims = filled.shape
+	eroded = filled.copy()
+	width = 20
+	for y in range(dims[0]-1,-1,-1):
+		count = 0
+		for x in range(dims[1]-1,-1,-1):
+			if x < width or x > dims[1] - width:
+				eroded[y][x] = 0
+			elif eroded[y][x] == 255:
+				count+=1
+			else:
+				if count < width and count > 0:
+					for i in range(0,count+1):
+						eroded[y][x+i] = 0
+				count = 0  
+	return eroded
+
+#finds highest point on the drivable surface
+def highest_point(eroded):
+	R = 5
+	largest = np.unravel_index(eroded.argmax(), eroded.shape)
+	eroded = convert_color(eroded)
+	for y in range(largest[0]-R,largest[0]+R):
+		for x in range(largest[1]-R,largest[1]+R):
+			eroded[y][x] = [0,0,255]
+	return largest, eroded
+
+
+def overlay_drivable_surface(highest_point,image):
+	return cv2.addWeighted(highest_point,.5,image,.5,0)
+
+
+#TODO
+def detect_drivable_surfaces(image):
+	return
+
 #given an array of objects, overlay object onto original image
 #TODO get vis_util working for box overlay
 def overlay_image(image, dto, overlay_edges = True):
 
 	# overlay edge detection
+	new_image = image.copy()
 	edges = None
 	if overlay_edges:
 		edges = detect_edge(image)
 		edges = convert_color(edges,[255,255,255],[0,0,255])
-		image = cv2.addWeighted(image,.5,edges,.5,0)
+		new_image = cv2.addWeighted(new_image,.5,edges,.5,0)
 		
 
 	boxes = dto.boxes
@@ -141,7 +193,7 @@ def overlay_image(image, dto, overlay_edges = True):
 	classes = dto.classes
 	scores = dto.scores
 	vis_util.visualize_boxes_and_labels_on_image_array(
-            image,
+            new_image,
             np.squeeze(boxes),
             np.squeeze(classes).astype(np.int32),
             np.squeeze(scores),
@@ -149,7 +201,7 @@ def overlay_image(image, dto, overlay_edges = True):
             use_normalized_coordinates=True,
             line_thickness=4)
 
-	return image
+	return new_image
 
 #TODO given boxes from dto, find distance at center of box
 def add_depth_information(depth,dto):
