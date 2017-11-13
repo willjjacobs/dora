@@ -236,25 +236,65 @@ class Thread(QThread):
     def __init__(self, parent=None):
         QThread.__init__(self, parent=parent)
 
+    def rev(sock, count):
+        buf = b'';
+        while count:
+            temp = sock.recv(count);
+            if not temp: return None;
+            buf += temp;
+            count -= len(temp);
+        return buf;
     def run(self):
         host = 'localhost'
         port = 8000
         #cap = vision.Webcam()
         #nn = NeuralNet.NeuralNet('core/NeuralNet/ssd_mobilenet_v1_coco_11_06_2017/frozen_inference_graph.pb', 'core/NeuralNet/data/mscoco_label_map.pbtxt')
+        conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        conn.connect((host, port));
         while True:
+            print("recieving");
+            sys.stdout.flush();
+            buf = b'';
+            count = 16;
+            while count:
+                temp = conn.recv(count);
+                if not temp: 
+                    break;
+                buf += temp;
+                count -= len(temp);
+            #lenn = b'';
 
-            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            s.connect((host, port))
-            data = bytes('', encoding = "utf-32")
-            while True:
-                d = s.recv(225280)
-                if not d: break
-                else: data += d
-                #print (d)
+            lenn = int(buf);
+            print('got len ' + str(lenn));
+            sys.stdout.flush();
+            buf = b'';
+            count = lenn;
+            while count:
+                temp = conn.recv(count);
+                if not temp: break;
+                buf += temp;
+                count -= len(temp);
+            print(lenn);
+            sys.stdout.flush();
+            #data = bytes('', encoding = "utf-32")
+            #data = b'';
+            # while leng:
+            #     d = s.recv(leng);
+            #     if not d: break
+            #     else: data += d
+            #     leng -= len(d);
+            #     #print (d)
             #data = ''.join(msg)
             
-            nparr = np.fromstring(data, dtype=np.uint8)
+            nparr = np.fromstring(buf, dtype=np.uint8)
             image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+###### after here image is done, I could not figure out how to view in pyQt            
+            cv2.imshow('Dashboard', image);
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                break
+
+            # cv2.waitKey(5);
+            # cv2.destroyAllWindows();
             print(nparr.shape)
             sys.stdout.flush()
             #frame = cap.get_frame()
@@ -277,12 +317,14 @@ class Thread(QThread):
             #rgbImage = overlayed_image
             #myPixmap = QPixmap(nparr)
             #p = myPixmap.scaled(self.label.size(), Qt.KeepAspectRatio)
-            rgbImage = cv2.cvtColor(nparr, cv2.COLOR_BGR2RGB)
-            convertToQtFormat = QImage(nparr.data, nparr.shape[1], nparr.shape[0], QImage.Format_RGB888)
-            convertToQtFormat = QPixmap.fromImage(convertToQtFormat)
-            p = convertToQtFormat.scaled(640, 480, Qt.KeepAspectRatio)
-            self.changePixmap.emit(p)
-            sleep(.030)
+            ##rgbImage = cv2.cvtColor(nparr, cv2.COLOR_BGR2RGB)
+            ##convertToQtFormat = QImage(nparr.data, nparr.shape[1], nparr.shape[0], QImage.Format_RGB888)
+
+
+            # convertToQtFormat = QPixmap(image);
+            # p = convertToQtFormat.scaled(640, 480, Qt.KeepAspectRatio)
+            # self.changePixmap.emit(p)
+            # sleep(6);
 
 def ui_main():
   global app # make available elsewhere - only need to declare global if we assign

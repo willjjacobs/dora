@@ -7,7 +7,8 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 import requests
 import socket
 import cv2
-import socket
+import numpy as np
+import sys
 #from core.NeuralNet import NeuralNet
 #from core.helpers import *
 
@@ -140,22 +141,40 @@ class Core:
         cap = vision.Webcam()
         #from NeuralNet import NeuralNet
         nn = NeuralNet.NeuralNet('dora/core/NeuralNet/ssd_mobilenet_v1_coco_11_06_2017/frozen_inference_graph.pb', 'dora/core/NeuralNet/data/mscoco_label_map.pbtxt')
+        print("finished init nn");
+        sys.stdout.flush();
         while True:
-            frame = cap.get_frame()
-            dto = nn.run_inference(frame)
-            overlayed_image = vision.overlay_image(frame,dto,False)
-            #print(overlayed_image.shape)
-            #sys.stdout.flush()
-            img_str = cv2.imencode('.jpg', overlayed_image)
-            print(img_str.size)
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             s.bind((host, port))
             s.listen(1)
             conn,addr =s.accept()
+            while True:
+                frame = cap.get_frame()
+                dto = nn.run_inference(frame)
+                overlayed_image = vision.overlay_image(frame,dto,False)
+                #print(overlayed_image.shape)
+                #sys.stdout.flush()
+                res, img_str = cv2.imencode('.jpg', overlayed_image)
+                #print(img_str.size)
+                data = np.array(img_str);
+                final_str = data.tostring();
+                # s = socket.socket();
+                # s.connect((host, port));
 
-            conn.sendall(overlayed_image)
-            conn.close()
-            time.sleep(0.5)
+
+
+                print("about to start sending");
+                sen_len = str(len(final_str)).ljust(16);
+                print(len(final_str));
+                #print(final_str)
+                sys.stdout.flush();
+                try:
+                    conn.send(sen_len.encode('utf-8'));
+                    conn.send(final_str);
+                except ConnectionResetError:
+                    break;
+                # conn.close()
+                time.sleep(0.5)
         # #print('here')
         # with nn.detection_graph.as_default():
         #     self.Session =  tf.Session(graph=nn.detection_graph)
