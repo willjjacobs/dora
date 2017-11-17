@@ -21,7 +21,7 @@ from dashboard.util import *
 #from util import *
 import socket
 from core.vision import vision
-from core.NeuralNet import NeuralNet
+from core.neuralnet import NeuralNet
 import tensorflow as tf 
 
 
