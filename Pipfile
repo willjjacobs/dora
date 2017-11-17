@@ -9,9 +9,9 @@ name = "pypi"
 
 
 
-[requires]
+#[requires]
 
-python_version = "3.5"
+#python_version = "3.5"
 
 
 [packages]
@@ -21,4 +21,4 @@ pyqt5 = "*"
 tensorflow = "*"
 pytest = "*"
 pillow = "*"
-pylibfreenect2 = "*"
+#pylibfreenect2 = "*"

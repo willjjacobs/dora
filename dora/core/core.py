@@ -9,7 +9,7 @@ import socket
 import cv2
 import numpy as np
 import sys
-#from core.NeuralNet import NeuralNet
+#from core.neuralNet import neuralNet
 #from core.helpers import *
 
 #dictionary which stores the tasks send by the dashboard class

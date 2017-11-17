@@ -288,7 +288,19 @@ class Thread(QThread):
             
             nparr = np.fromstring(buf, dtype=np.uint8)
             image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-###### after here image is done, I could not figure out how to view in pyQt            
+###### after here image is done, I could not figure out how to view in pyQt 
+            
+            #PyQT TEST CODE WILL L
+            height, width, channel = image.shape
+            bytesPerLine = 3 * width
+            rgbImage = QImage(image.data, width, height, bytesPerLine, QImage.Format_RGB888)
+
+            #convertToQtFormat = QImage(rgbImage.data, rgbImage.shape[1], rgbImage.shape[0], QImage.Format_RGB888)
+            convertToQtFormat = QPixmap.fromImage(rgbImage)
+            p = convertToQtFormat.scaled(400, 300, Qt.KeepAspectRatio)
+            self.changePixmap.emit(p)
+            sleep(.030)
+            
             cv2.imshow('Dashboard', image);
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
