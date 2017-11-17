@@ -22,7 +22,7 @@ from dashboard.util import *
 import socket
 from core.vision import vision
 from core.neuralnet import NeuralNet
-import tensorflow as tf 
+import tensorflow as tf
 
 
 
@@ -258,7 +258,7 @@ class Thread(QThread):
             count = 16;
             while count:
                 temp = conn.recv(count);
-                if not temp: 
+                if not temp:
                     break;
                 buf += temp;
                 count -= len(temp);
@@ -285,11 +285,11 @@ class Thread(QThread):
             #     leng -= len(d);
             #     #print (d)
             #data = ''.join(msg)
-            
+
             nparr = np.fromstring(buf, dtype=np.uint8)
             image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-###### after here image is done, I could not figure out how to view in pyQt 
-            
+###### after here image is done, I could not figure out how to view in pyQt
+
             #PyQT TEST CODE WILL L
             height, width, channel = image.shape
             bytesPerLine = 3 * width
@@ -300,7 +300,7 @@ class Thread(QThread):
             p = convertToQtFormat.scaled(400, 300, Qt.KeepAspectRatio)
             self.changePixmap.emit(p)
             sleep(.030)
-            
+
             cv2.imshow('Dashboard', image);
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
@@ -325,7 +325,7 @@ class Thread(QThread):
             #denoise = vision.denoise_color(frame)
             #dto = nn.run_inference(frame)
             #overlayed_image = vision.overlay_image(frame,dto,False)
-            
+
             #rgbImage = overlayed_image
             #myPixmap = QPixmap(nparr)
             #p = myPixmap.scaled(self.label.size(), Qt.KeepAspectRatio)
