@@ -9,17 +9,15 @@ name = "pypi"
 
 
 
-[requires]
-
+#[requires]
 #python_version = "3.5"
 
 
 [packages]
 
-opencv-python = "*"
-pyqt5 = "*"
 tensorflow = "*"
+opencv-python = "*"
+"PyQt5" = "*"
 pytest = "*"
-pillow = "*"
-#pylibfreenect2 = "*"
+Pillow = "*"
 requests = "*"
