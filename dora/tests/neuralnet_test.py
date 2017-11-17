@@ -1,3 +1,5 @@
+import pytest
+
 import cv2
 import tensorflow as tf
 import sys
@@ -6,9 +8,8 @@ import numpy as np
 import dora.core.neuralnet.NeuralNet as NeuralNet
 from dora.core.neuralnet.utils import visualization_utils as vis_util
 
-
+@pytest.mark.xfail(reason = "NeuralNet instantiation")
 def test_nn():
-  return
   cap = cv2.VideoCapture(0)
   nn = NeuralNet.NeuralNet()
 

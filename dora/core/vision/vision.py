@@ -6,7 +6,7 @@ import os
 # from pylibfreenect2 import FrameType, Registration, Frame
 # from pylibfreenect2 import createConsoleLogger, setGlobalLogger
 # from pylibfreenect2 import LoggerLevel
-from core.neuralnet.utils import visualization_utils as vis_util
+from dora.core.neuralnet.utils import visualization_utils as vis_util
 
 
 
@@ -134,7 +134,7 @@ def overlay_image(image, dto, overlay_edges = True):
 		edges = detect_edge(image)
 		edges = convert_color(edges,[255,255,255],[0,0,255])
 		image = cv2.addWeighted(image,.5,edges,.5,0)
-		
+
 
 	boxes = dto.boxes
 	category_index = dto.category_index
@@ -153,7 +153,7 @@ def overlay_image(image, dto, overlay_edges = True):
 
 #TODO given boxes from dto, find distance at center of box
 def add_depth_information(depth,dto):
-	boxes = dto.boxes 
+	boxes = dto.boxes
 
 	x = (boxes[0] + boxes[1])/2
 	y = (boxes[2] + boxes[3])/2
