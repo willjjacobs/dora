@@ -292,8 +292,9 @@ class Thread(QThread):
             
             #PyQT TEST CODE WILL L
             height, width, channel = image.shape
-            bytesPerLine = 3 * width
-            rgbImage = QImage(image.data, width, height, bytesPerLine, QImage.Format_RGB888)
+            bytesPerLine = channel * width
+            cv2.cvtColor(image, cv2.COLOR_BGR2RGB, image)
+            rgbImage = QImage(image, width, height, bytesPerLine, QImage.Format_RGB888)
 
             #convertToQtFormat = QImage(rgbImage.data, rgbImage.shape[1], rgbImage.shape[0], QImage.Format_RGB888)
             convertToQtFormat = QPixmap.fromImage(rgbImage)
