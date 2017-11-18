@@ -245,99 +245,70 @@ class Thread(QThread):
             count -= len(temp);
         return buf;
     def run(self):
+        #adder and port of server
         host = 'localhost'
         port = 8000
-        #cap = vision.Webcam()
-        #nn = NeuralNet.NeuralNet('core/NeuralNet/ssd_mobilenet_v1_coco_11_06_2017/frozen_inference_graph.pb', 'core/NeuralNet/data/mscoco_label_map.pbtxt')
-        conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        conn.connect((host, port));
+
         while True:
-            print("recieving");
-            sys.stdout.flush();
-            buf = b'';
-            count = 16;
-            while count:
-                temp = conn.recv(count);
-                if not temp: 
-                    break;
-                buf += temp;
-                count -= len(temp);
-            #lenn = b'';
+            #try to connect, if not found continue to try again
+            try:
+                conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                conn.connect((host, port));
+            except ConnectionRefusedError:
+                continue
+            #start revieving
+            while True:
+                print("recieving");
+                sys.stdout.flush();
+                #recieve the length
+                buf = b'';
+                count = 16;
+                while count:
+                    temp = conn.recv(count);
+                    if not temp: 
+                        break;
+                    buf += temp;
+                    count -= len(temp);
+                # convert len to int
+                lenn = int(buf);
+                print('got len ' + str(lenn));
+                sys.stdout.flush();
 
-            lenn = int(buf);
-            print('got len ' + str(lenn));
-            sys.stdout.flush();
-            buf = b'';
-            count = lenn;
-            while count:
-                temp = conn.recv(count);
-                if not temp: break;
-                buf += temp;
-                count -= len(temp);
-            print(lenn);
-            sys.stdout.flush();
-            #data = bytes('', encoding = "utf-32")
-            #data = b'';
-            # while leng:
-            #     d = s.recv(leng);
-            #     if not d: break
-            #     else: data += d
-            #     leng -= len(d);
-            #     #print (d)
-            #data = ''.join(msg)
-            
-            nparr = np.fromstring(buf, dtype=np.uint8)
-            image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-###### after here image is done, I could not figure out how to view in pyQt 
-            
-            #PyQT TEST CODE WILL L
-            height, width, channel = image.shape
-            bytesPerLine = channel * width
-            cv2.cvtColor(image, cv2.COLOR_BGR2RGB, image)
-            rgbImage = QImage(image, width, height, bytesPerLine, QImage.Format_RGB888)
+                #recieve the image string
+                buf = b'';
+                count = lenn;
+                while count:
+                    temp = conn.recv(count);
+                    if not temp: break;
+                    buf += temp;
+                    count -= len(temp);
+                print(lenn);
+                sys.stdout.flush();
 
-            #convertToQtFormat = QImage(rgbImage.data, rgbImage.shape[1], rgbImage.shape[0], QImage.Format_RGB888)
-            convertToQtFormat = QPixmap.fromImage(rgbImage)
-            p = convertToQtFormat.scaled(400, 300, Qt.KeepAspectRatio)
-            self.changePixmap.emit(p)
-            sleep(.030)
-            
-            cv2.imshow('Dashboard', image);
-            if cv2.waitKey(1) & 0xFF == ord('q'):
-                break
+                #Convert from string back to image
+                nparr = np.fromstring(buf, dtype=np.uint8)
+                image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+                #find params and correct color channels
+                height, width, channel = image.shape
+                bytesPerLine = channel * width
+                cv2.cvtColor(image, cv2.COLOR_BGR2RGB, image)
 
-            # cv2.waitKey(5);
-            # cv2.destroyAllWindows();
-            print(nparr.shape)
-            sys.stdout.flush()
-            #frame = cap.get_frame()
-            # ret, frame = cap.read()
-            # if (ret == False):
-            #   print("EMPTY FRAME COULD NOT OPEN WEBCAM")
-            #   sleep(5)   # delays for 5 seconds. You can Also Use Float Value.
-            #   continue
-            #rgbImage = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                #convert to pyQt image
+                rgbImage = QImage(image, width, height, bytesPerLine, QImage.Format_RGB888)
+                convertToQtFormat = QPixmap.fromImage(rgbImage)
+                p = convertToQtFormat.scaled(400, 300, Qt.KeepAspectRatio)
+                self.changePixmap.emit(p)
+                sleep(.030)
 
-
-            # convertToQtFormat = QImage(rgbImage.data, rgbImage.shape[1], rgbImage.shape[0], QImage.Format_RGB888)
-            # convertToQtFormat = QPixmap.fromImage(convertToQtFormat)
-            # p = convertToQtFormat.scaled(640, 480, Qt.KeepAspectRatio)
-
-            #denoise = vision.denoise_color(frame)
-            #dto = nn.run_inference(frame)
-            #overlayed_image = vision.overlay_image(frame,dto,False)
-            
-            #rgbImage = overlayed_image
-            #myPixmap = QPixmap(nparr)
-            #p = myPixmap.scaled(self.label.size(), Qt.KeepAspectRatio)
-            ##rgbImage = cv2.cvtColor(nparr, cv2.COLOR_BGR2RGB)
-            ##convertToQtFormat = QImage(nparr.data, nparr.shape[1], nparr.shape[0], QImage.Format_RGB888)
-
-
-            # convertToQtFormat = QPixmap(image);
-            # p = convertToQtFormat.scaled(640, 480, Qt.KeepAspectRatio)
-            # self.changePixmap.emit(p)
-            # sleep(6);
+                #keep this just in case for testing
+                """
+                    cv2.imshow('Dashboard', image);
+                    if cv2.waitKey(1) & 0xFF == ord('q'):
+                    break
+                print(nparr.shape)
+                sys.stdout.flush()
+                """
+                
 
 def ui_main():
   global app # make available elsewhere - only need to declare global if we assign

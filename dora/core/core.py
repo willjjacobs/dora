@@ -135,39 +135,49 @@ class Core:
     dashes = dict()
 
     def __init__(self):
+
         print("here")
+        #address and port
         host = "localhost"
         port = 8000
+
+        #start webcam
         cap = vision.Webcam()
+
         #from NeuralNet import NeuralNet
         nn = NeuralNet.NeuralNet('dora/core/NeuralNet/ssd_mobilenet_v1_coco_11_06_2017/frozen_inference_graph.pb', 'dora/core/NeuralNet/data/mscoco_label_map.pbtxt')
+
         print("finished init nn");
         sys.stdout.flush();
+
         while True:
+            #Setup socket and wait for connection
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             s.bind((host, port))
             s.listen(1)
             conn,addr =s.accept()
+            #sending loop
             while True:
+
+                #get frame and overlay
                 frame = cap.get_frame()
                 dto = nn.run_inference(frame)
                 overlayed_image = vision.overlay_image(frame,dto,False)
-                #print(overlayed_image.shape)
-                #sys.stdout.flush()
+
+                #Conver image to string of uint8
                 res, img_str = cv2.imencode('.jpg', overlayed_image)
-                #print(img_str.size)
                 data = np.array(img_str);
                 final_str = data.tostring();
-                # s = socket.socket();
-                # s.connect((host, port));
 
 
+                #get len of image string
+                sen_len = str(len(final_str)).ljust(16);
 
                 print("about to start sending");
-                sen_len = str(len(final_str)).ljust(16);
                 print(len(final_str));
-                #print(final_str)
                 sys.stdout.flush();
+                #finally send it
+                #try and except block is for when connection cuts
                 try:
                     conn.send(sen_len.encode('utf-8'));
                     conn.send(final_str);
@@ -175,11 +185,6 @@ class Core:
                     break;
                 # conn.close()
                 time.sleep(0.5)
-        # #print('here')
-        # with nn.detection_graph.as_default():
-        #     self.Session =  tf.Session(graph=nn.detection_graph)
-        # self.dashes["default"] = Dashboard(None)
-        # self.main()
 
     """handles tasks, which then return to this function when they are over"""
     def main(self):
