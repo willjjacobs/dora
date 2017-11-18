@@ -1,5 +1,5 @@
 import json
-from core.neuralnet import NeuralNet # as nn
+from core.neuralnet import NeuralNet  # as nn
 from core.vision import vision
 import time
 import tensorflow as tf
@@ -13,13 +13,11 @@ import sys
 #from core.helpers import *
 
 #dictionary which stores the tasks send by the dashboard class
-task ={}
-
+task = {}
 """
 Module that contains the command line app.
 This is the primary entry point.
 """
-
 
 
 class Classification:
@@ -27,6 +25,7 @@ class Classification:
         self.box = box
         self.score = score
         self.distance = distance
+
 
 class Vision_input:
     def __init__(self, camera):
@@ -37,8 +36,6 @@ class Vision_input:
 
     def get_depth(self):
         pass
-
-
 
 
 class testHTTPServer_RequestHandler(BaseHTTPRequestHandler):
@@ -58,20 +55,19 @@ class testHTTPServer_RequestHandler(BaseHTTPRequestHandler):
         self.wfile.write(bytes(message, "utf8"))
         return
     """
+
     def do_POST(self):
-        global task;
+        global task
         # Doesn't do anything with posted data
         #self._set_headers('{statusCode: 200}')
         cont_len = int(self.headers.get('content-length', 0))
-        print (self.rfile.read(cont_len))
+        print(self.rfile.read(cont_len))
 
-
-
-        task['multi'] = list((1, "TennisBall"),(2,"Rock"))
-        task['file'] =  "filename"
+        task['multi'] = list((1, "TennisBall"), (2, "Rock"))
+        task['file'] = "filename"
         task['stream'] = "STREAM"
         task['type'] = "check"
-        task ['resolution'] = [300,320]
+        task['resolution'] = [300, 320]
         task['network'] = list(("filename", "rock"))
         task['output'] = "filename/STREAM"
 
@@ -83,17 +79,9 @@ class testHTTPServer_RequestHandler(BaseHTTPRequestHandler):
         self.end_headers()
 
 
-
-
-
-
-
 class Dashboard:
-
     def __init__(self, ip_addr):
         self.start_server()
-
-
 
     def start_server():
         print('starting server...')
@@ -105,28 +93,21 @@ class Dashboard:
         print('running server...')
         httpd.serve_forever()
 
-
     def get_task(self):
         return task
 
-
-
     def deref_task(self):
         global task
-        task ={}
+        task = {}
 
-
-    def do_push(self,data):
+    def do_push(self, data):
         url = "http://localhost:8081"
         #r = requests.post(url,data={'number': 12524, 'type': 'issue', 'action': 'show'})
-        r = requests.post(url,data)
+        r = requests.post(url, data)
         print(r.status_code, r.reason)
         print(r.text[:300] + '...')
 
 
-
-
-#temporary core class
 class Core:
     objects = ["Tennis Ball", "Rock", "Cliff"]
     visions = dict()
@@ -180,10 +161,10 @@ class Core:
                 #finally send it
                 #try and except block is for when connection cuts
                 try:
-                    conn.send(sen_len.encode('utf-8'));
-                    conn.send(final_str);
+                    conn.send(sen_len.encode('utf-8'))
+                    conn.send(final_str)
                 except ConnectionResetError:
-                    break;
+                    break
                 # conn.close()
                 time.sleep(0.5)
 
@@ -202,7 +183,8 @@ class Core:
                     task = self.log(task)
 
     """ provides stream of images and data to UI"""
-    def log(self,timestep, functions, parameters):
+
+    def log(self, timestep, functions, parameters):
         if timestep == 0:
             return None
         self.set_networks(parameters["network"])
@@ -211,15 +193,16 @@ class Core:
             task = dash.get_task()
             if task != None:
                 return task
-            frame = self.vision[parameters["stream"]].get_frame(parameters["resolution"])
+            frame = self.vision[parameters["stream"]].get_frame(
+                parameters["resolution"])
             depth_map = self.vision["kinect"].get_depth()
             data = self.infer(frame)
             overlay = self.overlay_image(data, frame)
             self.process_data(data, parameters, depth_map)
             dash.push(data, overlay, self.depth, frame)
-            time.sleep(timestep/1000)
+            time.sleep(timestep / 1000)
 
-    def set_networks(self,networks):
+    def set_networks(self, networks):
         """networks is dict from file names to lists of object types"""
         for nn_file in networks:
             for o_type in networks[nn_file]:
@@ -228,15 +211,16 @@ class Core:
                     #TODO: Also be sure to call NeuralNet.set_network if NN is already instantiated.
                     self.neurals[o_type] = nn.NeuralNet(nn_file)
 
-    def get_dash(self,dash_ip):
-        if ~ dash_ip in self.dashes:
+    def get_dash(self, dash_ip):
+        if ~dash_ip in self.dashes:
             self.dashes[dash_ip] = Dashboard(dash_ip)
         return self.dashes[dash_ip]
 
-    def single(self,parameters):
+    def single(self, parameters):
         dash = self.dashes["default"]
         self.set_networks(parameters["network"])
-        frame = self.vision[parameters["stream"]].get_frame(parameters["resolution"])
+        frame = self.vision[parameters["stream"]].get_frame(
+            parameters["resolution"])
         depth_map = self.vision["kinect"].get_depth()
         data = infer(frame, self.task["not_wildcard"])
         overlay = self.overlay_image(data, frame)
@@ -247,7 +231,8 @@ class Core:
         output.close()
 
     """uses iterator design pattern"""
-    def infer(self,frame,not_wildcard):
+
+    def infer(self, frame, not_wildcard):
         """dict of NN_objects"""
         data_dict = dict()
         """inefficient"""
@@ -258,25 +243,27 @@ class Core:
                     data_dict[obj] = i
         wildcard_inference = self.neurals["*"].run_inference(frame)
         for i in wildcard_inference:
-            if ~ i.prediction in not_wildcard:
+            if ~i.prediction in not_wildcard:
                 data_dict[obj] = i
         return data_dict
 
-
-
 #adjusts data based on user specifications
+
     def process_data(data, parameters, depth_map):
-#holds classifications
+        #holds classifications
         datas = {}
-#object to be sent
+        #object to be sent
         payload = {}
         for o in data:
             datas[o] = []
             for i in range(len(data[o])):
                 if data[o].classes[i] == o:
-                    datas[o].append(Classification(data[o].boxes[i], data[o].scores[i], data[o].distance[i]))
+                    datas[o].append(
+                        Classification(data[o].boxes[i], data[o].scores[i],
+                                       data[o].distance[i]))
+
 #remove all except for MULTI best objects
-            datas[o].sort(key = lambda c: c.score)
+            datas[o].sort(key=lambda c: c.score)
             n = parameters["multi"][o]
             datas[o] = datas[o][:n]
             if parameters["check"]:
@@ -291,27 +278,24 @@ class Core:
                     #c_dict["pixel"] = (c.box.upper_left + c.box.lower_right)/2
                     c_dict["pixel"] = 0
                 if parameters["distance"]:
-                #TODO: use get_distance(pixel_coords, depth_map) to add distance for each pixel coordinate to payload
+                    #TODO: use get_distance(pixel_coords, depth_map) to add distance for each pixel coordinate to payload
                     c_dict["distance"] = 0
                 datas[o]["list"].append(c_dict)
         return json.dumps(payload)
 
-
     def add_depth(data, depth_map):
-      """
+        """
         uses iterator design pattern
             adds depth value of center pixel (found by averaging top left and bottom right pixel) to each element of each object list in data
       """
-      pass
+        pass
 
     def overlay_image(data, frame, parameters):
-      """uses iterator design pattern
+        """uses iterator design pattern
             if parameters[pixel]:
                 calls OpenCV to draw rectangles over image based on coordinates in data
                 if parameters[distance]:
                     calls OpenCV to draw distances on top of rectangles
             returns edited frame
             """
-
 c = Core()
-'''

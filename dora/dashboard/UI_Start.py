@@ -18,17 +18,10 @@ from PyQt5.QtCore import QCoreApplication, pyqtSlot, QSettings, QThread, pyqtSig
 from PyQt5.QtGui import QIcon, QImage, QPixmap, QFont
 #from PyQt5.QtCore.QString import QString
 from dashboard.util import *
-<<<<<<< HEAD
-
-from core import core
-=======
-#from util import *
 import socket
 from core.vision import vision
 from core.neuralnet import NeuralNet
->>>>>>> network
-import tensorflow as tf 
-
+import tensorflow as tf
 
 
 class Window(QMainWindow):

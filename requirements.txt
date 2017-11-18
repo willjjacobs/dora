@@ -2,5 +2,8 @@ opencv-python
 pyqt5
 tensorflow
 pytest
+pytest-cov
+pytest-pythonpath
 pillow
 requests
+matplotlib
