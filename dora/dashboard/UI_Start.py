@@ -18,12 +18,10 @@ from PyQt5.QtCore import QCoreApplication, pyqtSlot, QSettings, QThread, pyqtSig
 from PyQt5.QtGui import QIcon, QImage, QPixmap, QFont
 #from PyQt5.QtCore.QString import QString
 from dashboard.util import *
-#from util import *
 import socket
 from core.vision import vision
 from core.neuralnet import NeuralNet
 import tensorflow as tf
-
 
 
 class Window(QMainWindow):
@@ -310,7 +308,9 @@ class Thread(QThread):
                 """
                 
 
-def ui_main():
+def ui_main(c):
+  global core
+  core = c
   global app # make available elsewhere - only need to declare global if we assign
   app = QApplication(sys.argv)
   window = Window()

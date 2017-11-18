@@ -7,7 +7,6 @@ if sys.version_info < (3, 5):
     print("You must use Python 3.5 or greater.")
     sys.exit(1)
 
-
 def main():
     """
     Start point for the entire top level dora application.
@@ -28,9 +27,9 @@ def main():
             return 1
     else:
         print("You must utilize two separate terminals")
+        return 1
 
     return 0
-
 
 if __name__ == '__main__':
     sys.exit(main())

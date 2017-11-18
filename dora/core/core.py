@@ -115,9 +115,9 @@ class Core:
     visions["kinect"] = Vision_input("kinect")
     neurals = dict()
     dashes = dict()
+    new_frame = False
 
     def __init__(self):
-
         print("here")
         #address and port
         host = "localhost"
