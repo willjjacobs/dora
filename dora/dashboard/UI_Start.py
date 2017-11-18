@@ -6,7 +6,7 @@ DORA Dashboard main file
 Author: Wills
 """
 import sys
-
+import numpy as np
 import cv2
 import json
 from time import sleep
@@ -16,11 +16,13 @@ from PyQt5.QtWidgets import (QMainWindow, QAction, QTabWidget,
                              QTableWidget,QTableWidgetItem)
 from PyQt5.QtCore import QCoreApplication, pyqtSlot, QSettings, QThread, pyqtSignal, Qt
 from PyQt5.QtGui import QIcon, QImage, QPixmap, QFont
-
+#from PyQt5.QtCore.QString import QString
 from dashboard.util import *
-
-from core import core
-import tensorflow as tf 
+#from util import *
+import socket
+from core.vision import vision
+from core.neuralnet import NeuralNet
+import tensorflow as tf
 
 
 
@@ -234,20 +236,81 @@ class Thread(QThread):
     def __init__(self, parent=None):
         QThread.__init__(self, parent=parent)
 
+    def rev(sock, count):
+        buf = b'';
+        while count:
+            temp = sock.recv(count);
+            if not temp: return None;
+            buf += temp;
+            count -= len(temp);
+        return buf;
     def run(self):
+        #adder and port of server
+        host = 'localhost'
+        port = 8000
+
         while True:
-            rgbImage = core.get_frame()
+            #try to connect, if not found continue to try again
+            try:
+                conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                conn.connect((host, port));
+            except ConnectionRefusedError:
+                continue
+            #start revieving
+            while True:
+                print("recieving");
+                sys.stdout.flush();
+                #recieve the length
+                buf = b'';
+                count = 16;
+                while count:
+                    temp = conn.recv(count);
+                    if not temp: 
+                        break;
+                    buf += temp;
+                    count -= len(temp);
+                # convert len to int
+                lenn = int(buf);
+                print('got len ' + str(lenn));
+                sys.stdout.flush();
 
-            rgbImage = cv2.cvtColor(rgbImage, cv2.COLOR_BGR2RGB)
-            convertToQtFormat = QImage(rgbImage.data, rgbImage.shape[1], rgbImage.shape[0], QImage.Format_RGB888)
-            convertToQtFormat = QPixmap.fromImage(convertToQtFormat)
-            p = convertToQtFormat.scaled(640, 480, Qt.KeepAspectRatio)
-            self.changePixmap.emit(p)
-            sleep(.030)
+                #recieve the image string
+                buf = b'';
+                count = lenn;
+                while count:
+                    temp = conn.recv(count);
+                    if not temp: break;
+                    buf += temp;
+                    count -= len(temp);
+                print(lenn);
+                sys.stdout.flush();
 
-def ui_main(c):
-  global core
-  core = c
+                #Convert from string back to image
+                nparr = np.fromstring(buf, dtype=np.uint8)
+                image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+                #find params and correct color channels
+                height, width, channel = image.shape
+                bytesPerLine = channel * width
+                cv2.cvtColor(image, cv2.COLOR_BGR2RGB, image)
+
+                #convert to pyQt image
+                rgbImage = QImage(image, width, height, bytesPerLine, QImage.Format_RGB888)
+                convertToQtFormat = QPixmap.fromImage(rgbImage)
+                p = convertToQtFormat.scaled(400, 300, Qt.KeepAspectRatio)
+                self.changePixmap.emit(p)
+                sleep(.030)
+
+                #keep this just in case for testing
+                """
+                    cv2.imshow('Dashboard', image);
+                    if cv2.waitKey(1) & 0xFF == ord('q'):
+                    break
+                print(nparr.shape)
+                sys.stdout.flush()
+                """
+                
+
+def ui_main():
   global app # make available elsewhere - only need to declare global if we assign
   app = QApplication(sys.argv)
   window = Window()

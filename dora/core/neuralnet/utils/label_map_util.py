@@ -19,6 +19,7 @@ import logging
 
 import tensorflow as tf
 from google.protobuf import text_format
+
 from core.neuralnet.object_detection.protos import string_int_label_map_pb2
 
 
