@@ -7,15 +7,30 @@ if sys.version_info < (3, 5):
     print("You must use Python 3.5 or greater.")
     sys.exit(1)
 
-from core import core
-from dashboard.UI_Start import ui_main
 
 def main():
-  """
-  Start point for the entire top level dora application.
-  """
-  ui_main(core.Core())
-  #  # remove the first argument (dora)
+    """
+    Start point for the entire top level dora application.
+    """
+
+    if (len(sys.argv) >= 2):
+        if (sys.argv[1] == 'server'):
+            from core.core import main as core_main
+            core_main()
+        if (sys.argv[1] == 'client'):
+            from dashboard.UI_Start import ui_main
+            ui_main()
+        else:  # (len(sys.argv) > 2):
+            print("Sample usage: \n"
+                  "To launch the dashboard: python dora client\n"
+                  "To launch the server: python dora server\n"
+                  "To launch both on localhost: python dora\n")
+            return 1
+    else:
+        print("launching dora on localhost")
+
+    return 0
+
 
 if __name__ == '__main__':
-  sys.exit(main())
+    sys.exit(main())

@@ -1,5 +1,10 @@
 This is the repository for the DORA project. Very much a work in progress at this point.
 
+python dora server
+(wait neural net to initialize)
+python dora client
+(opens in a new window, it will take a while for the image to appear)
+
 In order to utilize this code:
 
 Our project is designed to utilize Python version 3.5 or greater. A number of dependencies are specified and will be installed with a Pipfile or can be installed manually by referencing requirements.txt. Additionally, a webcam is required.
@@ -54,6 +59,11 @@ dora  Pipfile  README.md  requirements.txt  setup.py
 
 At this point, our dashboard will open. Some debugging will be output to the console. After the dashboard window opens, it may take some time for the video feed to appear on the right hand side as the neural net initializes and then begins to interpret frames.
 
+'''
+pip3 install pipenv
+pipenv --three
+pipenv install [--dev]
+'''
 
 In order to run tests and coverage reports, use this command:
 ```bash

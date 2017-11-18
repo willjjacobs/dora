@@ -1,25 +1,17 @@
 [[source]]
-
 url = "https://pypi.python.org/simple"
 verify_ssl = true
 name = "pypi"
 
-
 [dev-packages]
-
-
-
-#[requires]
-#python_version = "3.5"
-
+pytest-cov = "*"
+pytest-pythonpath = "*"
+matplotlib = "*"
 
 [packages]
-
 tensorflow = "*"
 opencv-python = "*"
-PyQt5 = "*"
-pytest = "*"
-pillow = "*"
-#pylibfreenect2 = "*"
+#PyQt5 = "*"
 Pillow = "*"
 requests = "*"
+#SIP = "*"
