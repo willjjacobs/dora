@@ -7,8 +7,9 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 import requests
 import socket
 import cv2
-import socket
-#from core.NeuralNet import NeuralNet
+import numpy as np
+import sys
+#from core.neuralNet import neuralNet
 #from core.helpers import *
 
 #dictionary which stores the tasks send by the dashboard class
@@ -136,23 +137,58 @@ class Core:
     new_frame = False
 
     def __init__(self):
-        self.cap = vision.Webcam()
-        #from NeuralNet import NeuralNet
-        self.nn = NeuralNet.NeuralNet('dora/core/neuralnet/ssd_mobilenet_v1_coco_11_06_2017/frozen_inference_graph.pb', 'dora/core/neuralnet/data/mscoco_label_map.pbtxt')
-        #self.run()
+        print("here")
+        #address and port
+        host = "localhost"
+        port = 8000
 
-    def get_frame(self):
-        frame = self.cap.get_frame()
-        dto = self.nn.run_inference(frame)
-        return vision.overlay_image(frame,dto,False)
-            #cv2.imshow('object detection', cv2.resize(self.overlayed_image, (800,600)))
-            #if cv2.waitKey(25) & 0xFF == ord('q'):
-                #cv2.destroyAllWindows()
-                #break
-    
-#unitegrated, full core class
-'''
-"""handles tasks, which then return to this function when they are over"""
+        #start webcam
+        cap = vision.Webcam()
+
+        #from NeuralNet import NeuralNet
+        nn = NeuralNet.NeuralNet('dora/core/NeuralNet/ssd_mobilenet_v1_coco_11_06_2017/frozen_inference_graph.pb', 'dora/core/NeuralNet/data/mscoco_label_map.pbtxt')
+
+        print("finished init nn");
+        sys.stdout.flush();
+
+        while True:
+            #Setup socket and wait for connection
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            s.bind((host, port))
+            s.listen(1)
+            conn,addr =s.accept()
+            #sending loop
+            while True:
+
+                #get frame and overlay
+                frame = cap.get_frame()
+                dto = nn.run_inference(frame)
+                overlayed_image = vision.overlay_image(frame,dto,False)
+
+                #Conver image to string of uint8
+                res, img_str = cv2.imencode('.jpg', overlayed_image)
+                data = np.array(img_str);
+                final_str = data.tostring();
+
+
+                #get len of image string
+                sen_len = str(len(final_str)).ljust(16);
+
+                print("about to start sending");
+                print(len(final_str));
+                sys.stdout.flush();
+                #finally send it
+                #try and except block is for when connection cuts
+                try:
+                    conn.send(sen_len.encode('utf-8'));
+                    conn.send(final_str);
+                except ConnectionResetError:
+                    break;
+                # conn.close()
+                time.sleep(0.5)
+
+    """handles tasks, which then return to this function when they are over"""
+
     def main(self):
         while True:
             task = self.dashes["default"].get_task()

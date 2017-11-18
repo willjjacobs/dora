@@ -9,9 +9,9 @@ name = "pypi"
 
 
 
-[requires]
+#[requires]
 
-python_version = "3.5"
+#python_version = "3.5"
 
 
 [packages]
@@ -20,5 +20,10 @@ tensorflow = "*"
 opencv-python = "*"
 "PyQt5" = "*"
 pytest = "*"
+<<<<<<< HEAD
 Pillow = "*"
 requests = "*"
+=======
+pillow = "*"
+#pylibfreenect2 = "*"
+>>>>>>> network
