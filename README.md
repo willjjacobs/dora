@@ -5,6 +5,8 @@ python dora server
 python dora client
 (opens in a new window, it will take a while for the image to appear)
 
+To run the tests, `pytest`. To run the rests and code coverage, `pytest --cov`. Both from root directory.
+
 In order to utilize this code:
 
 Our project is designed to utilize Python version 3.5 or greater. A number of dependencies are specified and will be installed with a Pipfile or can be installed manually by referencing requirements.txt. Additionally, a webcam is required.

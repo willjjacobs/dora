@@ -27,7 +27,7 @@ def main():
                   "To launch both on localhost: python dora\n")
             return 1
     else:
-        print("launching dora on localhost")
+        print("You must utilize two separate terminals")
 
     return 0
 
