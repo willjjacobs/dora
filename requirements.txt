@@ -1,3 +1,9 @@
 opencv-python
-PyQt5
+pyqt5
 tensorflow
+pytest
+pytest-cov
+pytest-pythonpath
+pillow
+requests
+matplotlib

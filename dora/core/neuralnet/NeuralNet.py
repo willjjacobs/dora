@@ -2,16 +2,14 @@ import numpy as np
 import os
 import tensorflow as tf
 
-import core.neuralnet.NeuralNetDTO as DTO #core.NeuralNet.
-
+import core.neuralnet.NeuralNetDTO as DTO
 from core.neuralnet.utils import label_map_util
 
 class NeuralNet:
 
     MODEL_NAME = 'ssd_mobilenet_v1_coco_11_06_2017'
-    # Assumes working directory is root of git repo
-    PATH_TO_CHECKPOINT = os.path.join('..','core',MODEL_NAME, 'frozen_inference_graph.pb')
-    PATH_TO_LABELS = os.path.join('..','core','data', 'mscoco_label_map.pbtxt')
+    PATH_TO_CHECKPOINT = os.path.join(os.path.dirname(os.path.abspath(__file__)), MODEL_NAME, 'frozen_inference_graph.pb')
+    PATH_TO_LABELS = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data', 'mscoco_label_map.pbtxt')
     NUM_CLASSES = 90
 
     detection_graph = None
