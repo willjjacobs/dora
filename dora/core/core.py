@@ -1,6 +1,4 @@
 import json
-from core.neuralnet import NeuralNet  # as nn
-from core.vision import vision
 import time
 import tensorflow as tf
 from http.server import BaseHTTPRequestHandler, HTTPServer
@@ -9,8 +7,10 @@ import socket
 import cv2
 import numpy as np
 import sys
-#from core.neuralNet import neuralNet
-#from core.helpers import *
+
+from core.neuralnet import NeuralNet  # as nn
+from core.vision import vision
+from core.helpers import *
 
 #dictionary which stores the tasks send by the dashboard class
 task = {}
@@ -18,24 +18,6 @@ task = {}
 Module that contains the command line app.
 This is the primary entry point.
 """
-
-
-class Classification:
-    def __init__(self, box, score, distance):
-        self.box = box
-        self.score = score
-        self.distance = distance
-
-
-class Vision_input:
-    def __init__(self, camera):
-        pass
-
-    def get_frame(self):
-        pass
-
-    def get_depth(self):
-        pass
 
 
 class testHTTPServer_RequestHandler(BaseHTTPRequestHandler):
@@ -127,37 +109,38 @@ class Core:
         cap = vision.Webcam()
 
         #from NeuralNet import NeuralNet
-        nn = NeuralNet.NeuralNet('dora/core/NeuralNet/ssd_mobilenet_v1_coco_11_06_2017/frozen_inference_graph.pb', 'dora/core/NeuralNet/data/mscoco_label_map.pbtxt')
+        nn = NeuralNet.NeuralNet(
+            'dora/core/NeuralNet/ssd_mobilenet_v1_coco_11_06_2017/frozen_inference_graph.pb',
+            'dora/core/NeuralNet/data/mscoco_label_map.pbtxt')
 
-        print("finished init nn");
-        sys.stdout.flush();
+        print("finished init nn")
+        sys.stdout.flush()
 
         while True:
             #Setup socket and wait for connection
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             s.bind((host, port))
             s.listen(1)
-            conn,addr =s.accept()
+            conn, addr = s.accept()
             #sending loop
             while True:
 
                 #get frame and overlay
                 frame = cap.get_frame()
                 dto = nn.run_inference(frame)
-                overlayed_image = vision.overlay_image(frame,dto,False)
+                overlayed_image = vision.overlay_image(frame, dto, False)
 
                 #Conver image to string of uint8
                 res, img_str = cv2.imencode('.jpg', overlayed_image)
-                data = np.array(img_str);
-                final_str = data.tostring();
-
+                data = np.array(img_str)
+                final_str = data.tostring()
 
                 #get len of image string
-                sen_len = str(len(final_str)).ljust(16);
+                sen_len = str(len(final_str)).ljust(16)
 
-                print("about to start sending");
-                print(len(final_str));
-                sys.stdout.flush();
+                print("about to start sending")
+                print(len(final_str))
+                sys.stdout.flush()
                 #finally send it
                 #try and except block is for when connection cuts
                 try:

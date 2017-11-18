@@ -4,6 +4,7 @@ class Classification:
         self.score = score
         self.distance = distance
 
+
 class Vision_input:
     def __init__(self, camera):
         pass
@@ -14,21 +15,20 @@ class Vision_input:
     def get_depth(self):
         pass
 
-class Dashboard:
-    def __init__(self, ip_addr):
-        pass
 
-    task ={}
+# class Dashboard:
+#     def __init__(self, ip_addr):
+#         pass
 
-    task['multi'] = [(1, "TennisBall"),(2,"Rock")]
-    task['file'] =  "filename"
-    task['stream'] = "STREAM"
-    task['type'] = "check"
-    task ['resolution'] = [300,320]
-    task['network'] = list(("filename", "rock"))
-    task['output'] = "filename/STREAM"
+#     task = {}
 
+#     task['multi'] = [(1, "TennisBall"), (2, "Rock")]
+#     task['file'] = "filename"
+#     task['stream'] = "STREAM"
+#     task['type'] = "check"
+#     task['resolution'] = [300, 320]
+#     task['network'] = list(("filename", "rock"))
+#     task['output'] = "filename/STREAM"
 
-
-    def get_task(self):
-        return self.task
+#     def get_task(self):
+#         return self.task
