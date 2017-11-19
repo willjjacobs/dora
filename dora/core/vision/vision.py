@@ -276,11 +276,19 @@ def overlay_image(image, dto, overlay_edges=True):
     category_index = dto.category_index
     classes = dto.classes
     s = dto.scores
+    # Get indices and display *ONLY* sports balls
+    # Index derived from mscoco_label_map.pbtext
+    sports_ball_index = 37
+    i = np.where(classes == sports_ball_index)
+    i = i[1].tolist()
+    boxes = np.squeeze(boxes)[i]
+    s = np.squeeze(s)[i]
+
     vis_util.visualize_boxes_and_labels_on_image_array(
         new_image,
-        np.squeeze(boxes),
+        boxes,
         np.squeeze(classes).astype(np.int32),
-        np.squeeze(scores),
+        s,
         category_index,
         use_normalized_coordinates=True,
         line_thickness=4)
@@ -308,11 +316,29 @@ def overlay_image(image, dto, overlay_edges=True):
     category_index = dto.category_index
     classes = dto.classes
     scores = dto.scores
+
+    # Get indices and display *ONLY* sports balls
+    # Index derived from mscoco_label_map.pbtext
+    # Change the below flag to false if you want to view all detected items and not just tennis
+    # balls.
+    isolate_sports_ball = True
+    if isolate_sports_ball:
+        sports_ball_index = 37
+        i = np.where(classes == sports_ball_index)
+        i = i[1].tolist()
+        boxes = np.squeeze(boxes)[i]
+        scores = np.squeeze(scores)[i]
+        classes = np.squeeze(classes)[i]
+    else:
+        boxes = np.squeeze(boxes)
+        scores = np.squeeze(scores)
+        classes = np.squeeze(classes)
+
     vis_util.visualize_boxes_and_labels_on_image_array(
         new_image,
-        np.squeeze(boxes),
-        np.squeeze(classes).astype(np.int32),
-        np.squeeze(scores),
+        boxes,
+        classes.astype(np.int32),
+        scores,
         category_index,
         use_normalized_coordinates=True,
         line_thickness=4)
