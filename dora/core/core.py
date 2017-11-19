@@ -109,10 +109,10 @@ class Core:
         cap = vision.Webcam()
 
         #from NeuralNet import NeuralNet
-        nn = NeuralNet.NeuralNet(
-            'dora/core/NeuralNet/ssd_mobilenet_v1_coco_11_06_2017/frozen_inference_graph.pb',
-            'dora/core/NeuralNet/data/mscoco_label_map.pbtxt')
-
+        # nn = NeuralNet.NeuralNet(
+        #     'dora/core/NeuralNet/ssd_mobilenet_v1_coco_11_06_2017/frozen_inference_graph.pb',
+        #     'dora/core/NeuralNet/data/mscoco_label_map.pbtxt')
+        nn = NeuralNet.NeuralNet()
         print("finished init nn")
         sys.stdout.flush()
 
@@ -281,4 +281,3 @@ class Core:
                     calls OpenCV to draw distances on top of rectangles
             returns edited frame
             """
-c = Core()
