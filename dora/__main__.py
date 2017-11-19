@@ -14,8 +14,8 @@ def main(args = sys.argv):
 
     if (len(args) >= 2):
         if (args[1] == 'server'):
-            from core.core import main as core_main
-            core_main()
+            import core.core
+            c = Core()
         if (args[1] == 'client'):
             from dashboard.UI_Start import ui_main
             ui_main()
