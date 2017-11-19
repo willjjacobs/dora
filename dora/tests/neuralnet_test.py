@@ -32,7 +32,7 @@ def test_nn_inference(neural_net):
     test_image = cv2.imread(img_path)
     dto = neural_net.run_inference(test_image)
     assert dto.boxes.size != 0
-    assert dto.category_index.size != 0
+    assert dto.category_index != None
     assert dto.classes.size != 0
     assert dto.scores.size != 0
     assert dto.depths == None
