@@ -7,16 +7,16 @@ if sys.version_info < (3, 5):
     print("You must use Python 3.5 or greater.")
     sys.exit(1)
 
-def main():
+def main(args = sys.argv):
     """
     Start point for the entire top level dora application.
     """
 
-    if (len(sys.argv) >= 2):
-        if (sys.argv[1] == 'server'):
+    if (len(args) >= 2):
+        if (args[1] == 'server'):
             from core.core import main as core_main
             core_main()
-        if (sys.argv[1] == 'client'):
+        if (args[1] == 'client'):
             from dashboard.UI_Start import ui_main
             ui_main()
         else:  # (len(sys.argv) > 2):
