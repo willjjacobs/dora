@@ -19,7 +19,7 @@ class Core:
     def __init__(self, host='localhost', port=8080, dashboard_url='localhost'):
         # start webcam and neural net
         self.cap = vision.Webcam()
-        # self.nn = NeuralNet.NeuralNet()
+        self.nn = NeuralNet.NeuralNet()
         self.server = Server(ip_addr=host, port=port)
         self.server.setName('DORA HTTP Server')
         self.server.start()  # starts server thread
@@ -27,11 +27,11 @@ class Core:
     def get_latest_image(self):
         #get frame and overlay
         frame = self.cap.get_frame()
-        # dto = self.nn.run_inference(frame)
-        # overlayed_image = vision.overlay_image(frame, dto, False)
+        dto = self.nn.run_inference(frame)
+        overlayed_image = vision.overlay_image(frame, dto, False)
         #Convert image to jpg
         retval, img_encoded = cv2.imencode('.jpg', frame)
-        # TODO check retval
+        # TODO: check retval
         return img_encoded
 
     def close(self):
