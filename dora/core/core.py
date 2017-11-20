@@ -8,7 +8,7 @@ import cv2
 import numpy as np
 import sys
 
-from core.neuralnet import NeuralNet  # as nn
+from core.neuralnet import NeuralNet
 from core.vision import vision
 from core.helpers import *
 
@@ -107,11 +107,6 @@ class Core:
 
         #start webcam
         cap = vision.Webcam()
-
-        #from NeuralNet import NeuralNet
-        # nn = NeuralNet.NeuralNet(
-        #     'dora/core/NeuralNet/ssd_mobilenet_v1_coco_11_06_2017/frozen_inference_graph.pb',
-        #     'dora/core/NeuralNet/data/mscoco_label_map.pbtxt')
         nn = NeuralNet.NeuralNet()
         print("finished init nn")
         sys.stdout.flush()
