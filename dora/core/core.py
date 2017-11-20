@@ -12,6 +12,8 @@ from core.neuralnet import NeuralNet
 import core.vision as vision
 from core.networking import *
 
+global core_instance
+
 
 class Core:
     def __init__(self, host='localhost', port=8080, dashboard_url='localhost'):
@@ -19,8 +21,10 @@ class Core:
         self.cap = vision.Webcam()
         # self.nn = NeuralNet.NeuralNet()
         self.server = Server(ip_addr=host, port=port)
+        self.server.setName('DORA HTTP Server')
+        self.server.start()  # starts server thread
 
-    def get_latest_image():
+    def get_latest_image(self):
         #get frame and overlay
         frame = self.cap.get_frame()
         # dto = self.nn.run_inference(frame)
@@ -28,8 +32,10 @@ class Core:
         #Convert image to jpg
         retval, img_encoded = cv2.imencode('.jpg', frame)
         # TODO check retval
-        # img_encoded.tostring() ??
         return img_encoded
+
+    def close(self):
+        self.server.terminate()
 
     def main(self):
         print("in main")
@@ -45,10 +51,11 @@ class Core:
 
 
 def start_core():
-    global c
-    c = Core()
+    global core_instance
+    core_instance = Core()
     return 0
 
 
 def get_core_instance():
-    return c
+    global core_instance
+    return core_instance
