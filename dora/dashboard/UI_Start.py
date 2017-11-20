@@ -263,7 +263,12 @@ class Thread(QThread):
                     buf += temp
                     count -= len(temp)
                 # convert len to int
-                lenn = int(buf)
+                try:
+                    lenn = int(buf)
+                except ValueError:
+                    print('Invalid literal, trying again')
+                    sleep(.030)
+                    continue
                 print('got len ' + str(lenn))
                 sys.stdout.flush()
 
@@ -309,7 +314,7 @@ def ui_main():
     app = QApplication(sys.argv)
     window = Window()
     app.aboutToQuit.connect(app.deleteLater)
-    sys.exit(app.exec_())
+    return app.exec_()
 
 
 if __name__ == '__main__':
