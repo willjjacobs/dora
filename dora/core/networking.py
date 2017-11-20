@@ -1,8 +1,7 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from requests import Request, Session
-# import urlparse
-
-from core.core import get_core_instance
+from threading import Thread
+from core.core import *
 
 
 class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
@@ -21,7 +20,8 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
         self.end_headers()
 
         # Write content as utf-8 data
-        self.wfile.write(bytes(c.get_latest_image().tostring(), "utf8"))
+        # self.wfile.write(bytes(c.get_latest_image().tostring(), "utf8"))
+        self.wfile.write(c.get_latest_image().tostring())
         return
 
     def do_POST(self):
@@ -47,10 +47,13 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
         self.end_headers()
 
 
-class Server():
+class Server(Thread):
     def __init__(self, ip_addr='localhost', port=8080):
+        Thread.__init__(self)
         self.ip_addr = ip_addr
         self.port = port
+
+    def run(self):
         self.start_server()
 
     def start_server(self):
@@ -59,10 +62,10 @@ class Server():
         server_address = (self.ip_addr, self.port)
         httpd = HTTPServer(server_address, HTTPServer_RequestHandler)
         print('running server... use <Ctrl-C> to stop')
-        try:
-            httpd.serve_forever()
-        except KeyboardInterrupt:
-            pass
+        # try:
+        httpd.serve_forever()
+        # except KeyboardInterrupt:
+        #     pass
 
     def do_push(self, data):
         url = "http://localhost:8081"
