@@ -303,7 +303,7 @@ def detect_drivable_surfaces(image):
 
 #given an array of objects, overlay object onto original image
 #TODO get vis_util working for box overlay
-def overlay_image(image, dto, overlay_edges=True):
+def overlay_image(image, dto, overlay_edges=True, isolate_sports_ball=True):
     # overlay edge detection
     new_image = image.copy()
     edges = None
@@ -321,7 +321,6 @@ def overlay_image(image, dto, overlay_edges=True):
     # Index derived from mscoco_label_map.pbtext
     # Change the below flag to false if you want to view all detected items and not just tennis
     # balls.
-    isolate_sports_ball = True
     if isolate_sports_ball:
         sports_ball_index = 37
         i = np.where(classes == sports_ball_index)
