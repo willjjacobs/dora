@@ -15,7 +15,7 @@ We utilize PyTest as it allows for automatically collecting test files in our pr
 
 Further plugins we may use would be linting plugins such as flake8, pyflakes, yapf, etc. which could be used to enforce code style as well as help police for unused imports and functions ensuring overall higher code quality. Another plugin we have been experimenting with is `pytest-pyqt`, which will allow for unit testing of the UI code. At current, we do not feel as though the unit tests we have written for our UI perform any useful function than running the actual application.
 
-Plugins also exist to facilitate regression testing, data generation, race conditions
+Plugins also exist to facilitate regression testing, data generation, race conditions and a multitude of other functions.
 
 In order to utilize this code:
 
