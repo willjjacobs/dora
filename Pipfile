@@ -7,7 +7,7 @@ name = "pypi"
 pytest = "*"
 pytest-cov = "*"
 pytest-pythonpath = "*"
-matplotlib = "*"
+pytest-qt = "*"
 
 [packages]
 tensorflow = "*"

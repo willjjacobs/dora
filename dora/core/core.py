@@ -10,52 +10,34 @@ import sys
 
 from core.neuralnet import NeuralNet
 import core.vision as vision
-from core.networking import *
-
-global core_instance
-
+from core.networking import HTTPServer_RequestHandler, dora_httpd_server
 
 class Core:
-    def __init__(self, host='localhost', port=8080, dashboard_url='localhost'):
+    def __init__(self, server_address='localhost', port=8080, dashboard_url='localhost'):
         # start webcam and neural net
         self.cap = vision.Webcam()
         self.nn = NeuralNet.NeuralNet()
-        self.server = Server(ip_addr=host, port=port)
-        self.server.setName('DORA HTTP Server')
-        self.server.start()  # starts server thread
+        self.server = dora_httpd_server(server_address, port, self)
+        self.server.up()
 
     def get_latest_image(self):
         #get frame and overlay
         frame = self.cap.get_frame()
-        dto = self.nn.run_inference(frame)
+        self.dto = self.nn.run_inference(frame)
         overlayed_image = vision.overlay_image(frame, dto, False)
         #Convert image to jpg
         retval, img_encoded = cv2.imencode('.jpg', frame)
         # TODO: check retval
         return img_encoded
 
-    def close(self):
-        self.server.terminate()
+    def exit_gracefully(self):
+        self.server.down()
 
-    def main(self):
-        print("in main")
-
-        # while True:
-
-        #     response = requests.post(
-        #         self.host_url, headers=headers, data=img_encoded.tostring())
-        #     time.sleep(0.5)
-
-        # print("After requests loop")
-        # break
-
+    def get_latest_dto(self):
+        return self.dto.as_dict()
 
 def start_core():
-    global core_instance
     core_instance = Core()
+    core_instance
     return 0
 
-
-def get_core_instance():
-    global core_instance
-    return core_instance
