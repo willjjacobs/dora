@@ -1,6 +1,6 @@
 import pytest
 
-from dora.core.vision import vision
+from dora.core import vision
 import cv2
 import matplotlib.pyplot as plt
 import numpy as np

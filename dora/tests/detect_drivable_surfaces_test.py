@@ -1,4 +1,4 @@
-from dora.core.vision import vision
+from dora.core import vision
 import cv2
 import pytest
 
