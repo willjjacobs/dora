@@ -7,11 +7,15 @@ python dora client
 
 Testing:
 
-Before testing, be sure issue the command `pip install pytest` and `pip install pytest-cov` to install the PyTest module.
+Before testing, be sure issue the command `pip install pytest pytest-cov pytest-pythonpath` to install the PyTest module and necessary plugins.
 
-To run the tests, issue the command `pytest`. To run the rests and output code coverage statistics, `pytest --cov`. Be sure to run both from the project's root directory.
+To run the tests, issue the command `pytest` from the project root directory. To run the tests and output code coverage statistics, `pytest --cov`.
 
+We utilize PyTest as it allows for automatically collecting test files in our project and executing them. Configuration for running the tests as well as coverage reports is customized in setup.cfg. PyTest offers decorators to mark whether we expect a test to pass or fail and behave appropriately. Additionally, unit test functions can be parameterized if we know how we expect them to behave. Timeouts are useful due to the infinite networking aspect of our code.
 
+Further plugins we may use would be linting plugins such as flake8, pyflakes, yapf, etc. which could be used to enforce code style as well as help police for unused imports and functions ensuring overall higher code quality. Another plugin we have been experimenting with is `pytest-pyqt`, which will allow for unit testing of the UI code. At current, we do not feel as though the unit tests we have written for our UI perform any useful function than running the actual application.
+
+Plugins also exist to facilitate regression testing, data generation, race conditions
 
 In order to utilize this code:
 
