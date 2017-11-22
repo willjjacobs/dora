@@ -1,11 +1,15 @@
 This is the repository for the DORA project. Very much a work in progress at this point.
 
 python dora server
-(wait neural net to initialize)
+(wait for neural net to initialize)
 python dora client
 (opens in a new window, it will take a while for the image to appear)
 
-To run the tests, `pytest`. To run the rests and code coverage, `pytest --cov`. Both from root directory.
+Testing:
+
+Before testing, be sure issue the command `pip install pytest` and `pip install pytest-cov` to install the PyTest module.
+
+To run the tests, issue the command `pytest`. To run the rests and output code coverage statistics, `pytest --cov`. Be sure to run both from the project's root directory.
 
 
 
