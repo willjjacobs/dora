@@ -28,7 +28,7 @@ class Core:
         #get frame and overlay
         frame = self.cap.get_frame()
         dto = self.nn.run_inference(frame)
-        overlayed_image = vision.overlay_image(frame, dto, True)
+        overlayed_image = vision.overlay_image(frame, dto, False)
         #Convert image to jpg
         retval, img_encoded = cv2.imencode('.jpg', overlayed_image)
         # TODO: check retval

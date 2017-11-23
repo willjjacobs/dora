@@ -23,7 +23,7 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
         # self.wfile.write(bytes(c.get_latest_image().tostring(), "utf8"))
         self.wfile.write(c.get_latest_image().tostring())
         return
-
+"""
     def do_POST(self):
         global task
         # Doesn't do anything with posted data
@@ -45,7 +45,7 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
         #host = self.client_address.host + ":" + self.client_address.port
         self.send_response(200, "pranav")
         self.end_headers()
-
+"""
 
 class Server(Thread):
     def __init__(self, ip_addr='localhost', port=8080):
@@ -66,10 +66,11 @@ class Server(Thread):
         httpd.serve_forever()
         # except KeyboardInterrupt:
         #     pass
-
+"""
     def do_push(self, data):
         url = "http://localhost:8081"
         #r = requests.post(url,data={'number': 12524, 'type': 'issue', 'action': 'show'})
         r = requests.post(url, data)
         print(r.status_code, r.reason)
         print(r.text[:300] + '...')
+"""
