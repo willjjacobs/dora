@@ -10,6 +10,8 @@ When `running server...` is displayed you may enter the next command:
 
 (opens in a new window, it will take a while for the image to appear)
 
+Unfortunately, there is a bug in Dora Server where the HTTP server is running in its own thread it is not responsive to CTRL-C. Therefore, the user will have to kill the python processes using the terminal command `pkill` in Linux and MacOS. Windows users can just close the terminal windows. This will be fixed in later iterations.
+
 Testing:
 
 Before testing, be sure issue the command `pip install pytest pytest-cov pytest-pythonpath` to install the PyTest module and necessary plugins.
