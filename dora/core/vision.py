@@ -15,7 +15,6 @@ DENOISING_PARAMS = [10, 10, 7, 21]
 
 
 #ADD SELECTOR 
-
 #Class for connection to Kinect camera using pylibfreenect2
 #Optionally supress output from pylibfreenect?
 class Kinect(object):
@@ -48,60 +47,47 @@ class Kinect(object):
 
     def get_frame(self):
         return self.listener.waitForNewFrame()["color"]
-
     def close(self):
         self.device.stop()
         self.device.close()
         return 0
-
     def get_depth(self):
         return self.listener.waitForNewFrame()["depth"]
-
 
 #Class for webcam connection
 class Webcam(object):
     def __init__(self, camera_port=WEBCAM_PORT):
         self.camera = cv2.VideoCapture(camera_port)
-
     def get_frame(self):
         for i in range(0, ADJUSTMENT_FRAMES):
             self.camera.read()
         retval, im = self.camera.read()
         return im
-
     def close(self):
         del (self.camera)
         return 0
-
 
 #Class for arbritrary camera connection
 #TODO
 class Camera(object):
     def __init__(self):
         pass
-
     def get_frame(self):
         pass
-
     def get_depth(self):
         pass
-
     def close(self):
         pass
-
 
 class FileFeed(object):
     def __init__(self, file):
         self.feed = cv2.VideoCapture(file)
-
     def get_frame(self):
         retval, im = self.feed.read()
         return im
-
     def close(self):
         del (self.feed)
         return 0
-
 
 def adjust_resolution(image, new_res=DEFAULT_RES):
     new_image = image.copy()
@@ -136,7 +122,6 @@ def detect_edge(image):
     edges = cv2.Canny(grey_image, low_thresh, high_thresh)
     return edges
 
-
 #fills from bottom up
 def fill_edges(edges):
     dims = edges.shape
@@ -150,7 +135,6 @@ def fill_edges(edges):
                 filled[y][x] = pix
         pix = 255
     return filled
-
 
 #horizontal erosion
 def erode_filled(filled):
@@ -181,60 +165,8 @@ def highest_point(eroded):
             eroded[y][x] = [0, 0, 255]
     return largest, eroded
 
-
 def overlay_drivable_surface(highest_point, image):
     return cv2.addWeighted(highest_point, .5, image, .5, 0)
-
-
-#fills from bottom up
-def fill_edges(edges):
-    dims = edges.shape
-    filled = edges.copy()
-    pix = 255
-    for x in range(dims[1] - 1, -1, -1):
-        for y in range(dims[0] - 1, -1, -1):
-            if filled[y][x] == 255 and pix == 255:
-                pix = 0
-            else:
-                filled[y][x] = pix
-        pix = 255
-    return filled
-
-
-#horizontal erosion
-def erode_filled(filled):
-    dims = filled.shape
-    eroded = filled.copy()
-    width = 20
-    for y in range(dims[0] - 1, -1, -1):
-        count = 0
-        for x in range(dims[1] - 1, -1, -1):
-            if x < width or x > dims[1] - width:
-                eroded[y][x] = 0
-            elif eroded[y][x] == 255:
-                count += 1
-            else:
-                if count < width and count > 0:
-                    for i in range(0, count + 1):
-                        eroded[y][x + i] = 0
-                count = 0
-    return eroded
-
-
-#finds highest point on the drivable surface
-def highest_point(eroded):
-    R = 5
-    largest = np.unravel_index(eroded.argmax(), eroded.shape)
-    eroded = convert_color(eroded)
-    for y in range(largest[0] - R, largest[0] + R):
-        for x in range(largest[1] - R, largest[1] + R):
-            eroded[y][x] = [0, 0, 255]
-    return largest, eroded
-
-
-def overlay_drivable_surface(highest_point, image):
-    return cv2.addWeighted(highest_point, .5, image, .5, 0)
-
 
 #TODO
 def detect_drivable_surfaces(image):
@@ -324,16 +256,12 @@ def overlay_image(image, dto, overlay_edges=True, isolate_sports_ball=False):
         category_index,
         use_normalized_coordinates=True,
         line_thickness=4)
-
     return new_image
-
 
 #TODO given boxes from dto, find distance at center of box
 def add_depth_information(depth, dto):
     boxes = dto.boxes
-
     x = (boxes[0] + boxes[1]) / 2
     y = (boxes[2] + boxes[3]) / 2
-
     depths = None
     return depths

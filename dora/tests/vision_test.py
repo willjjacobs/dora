@@ -59,8 +59,15 @@ def test_denoise_color():
 def test_detect_drivable_surfaces():
   assert vision.detect_drivable_surfaces(test_color_image) is not None 
 
-def test_overlay_image():
+@pytest.mark.xfail(reason = "No depth map")
+def test_add_depth_information():
+  path_to_graph = os.path.join('dora','core','neuralnet','ssd_mobilenet_v1_coco_11_06_2017','frozen_inference_graph.pb')
+  path_to_labels = os.path.join('dora','core','neuralnet', 'data', 'mscoco_label_map.pbtxt')
+  neural_net = NeuralNet.NeuralNet(path_to_graph, path_to_labels)
+  dto = neural_net.run_inference(test_color_image)
+  assert vision.add_depth_information(None,dto) is not None
 
+def test_overlay_image():
   path_to_graph = os.path.join('dora','core','neuralnet','ssd_mobilenet_v1_coco_11_06_2017','frozen_inference_graph.pb')
   path_to_labels = os.path.join('dora','core','neuralnet', 'data', 'mscoco_label_map.pbtxt')
   neural_net = NeuralNet.NeuralNet(path_to_graph, path_to_labels)
