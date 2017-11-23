@@ -2,10 +2,10 @@ import numpy as np
 import cv2
 import sys
 import os
-# from pylibfreenect2 import Freenect2, SyncMultiFrameListener
-# from pylibfreenect2 import FrameType, Registration, Frame
-# from pylibfreenect2 import createConsoleLogger, setGlobalLogger
-# from pylibfreenect2 import LoggerLevel
+from pylibfreenect2 import Freenect2, SyncMultiFrameListener
+from pylibfreenect2 import FrameType, Registration, Frame
+from pylibfreenect2 import createConsoleLogger, setGlobalLogger
+from pylibfreenect2 import LoggerLevel
 from core.neuralnet.utils import visualization_utils as vis_util
 
 DEFAULT_RES = (240, 135)
@@ -13,6 +13,8 @@ WEBCAM_PORT = 0
 ADJUSTMENT_FRAMES = 2
 DENOISING_PARAMS = [10, 10, 7, 21]
 
+
+#ADD SELECTOR 
 
 #Class for connection to Kinect camera using pylibfreenect2
 #Optionally supress output from pylibfreenect?
@@ -50,6 +52,7 @@ class Kinect(object):
     def close(self):
         self.device.stop()
         self.device.close()
+        return 0
 
     def get_depth(self):
         return self.listener.waitForNewFrame()["depth"]
@@ -68,6 +71,7 @@ class Webcam(object):
 
     def close(self):
         del (self.camera)
+        return 0
 
 
 #Class for arbritrary camera connection
@@ -96,33 +100,19 @@ class FileFeed(object):
 
     def close(self):
         del (self.feed)
+        return 0
 
 
 def adjust_resolution(image, new_res=DEFAULT_RES):
     new_image = image.copy()
     return cv2.resize(new_image, new_res)
-
-
-def adjust_resolution(image, new_res=DEFAULT_RES):
-    new_image = image.copy()
-    return cv2.resize(new_image, new_res)
-
 
 def convert_greyscale(image):
     return cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
-
-def convert_color(image, init_pix=None, col_pix=None):
+def convert_color(image):
     color_image = cv2.cvtColor(image, cv2.COLOR_GRAY2BGR)
-    #color_image[np.where((color_image == init_pix).all(axis=2))] = col_pix
     return color_image
-
-
-def convert_color(image, init_pix=None, col_pix=None):
-    color_image = cv2.cvtColor(image, cv2.COLOR_GRAY2BGR)
-    #color_image[np.where((color_image == init_pix).all(axis=2))] = col_pix
-    return color_image
-
 
 def rotate_image(image, angle):
     rows, cols, extra = image.shape
@@ -130,18 +120,10 @@ def rotate_image(image, angle):
     new_image = cv2.warpAffine(image, M, (cols, rows))
     return new_image
 
-
 #Smooths color images
 def denoise_color(image):
     p = DENOISING_PARAMS
     return cv2.fastNlMeansDenoisingColored(image, None, p[0], p[1], p[2], p[3])
-
-
-#Smooths greyscale images
-def denoise_grey(image):
-    p = DENOISING_PARAMS
-    return cv2.fastNlMeansDenoising(image, None, p[0], p[1], p[2], p[3])
-
 
 #uses uncanny edge detection
 #thresholds calculated using mean pixel value and std deviation
@@ -189,7 +171,6 @@ def erode_filled(filled):
                 count = 0
     return eroded
 
-
 #finds highest point on the drivable surface
 def highest_point(eroded):
     R = 5
@@ -257,49 +238,51 @@ def overlay_drivable_surface(highest_point, image):
 
 #TODO
 def detect_drivable_surfaces(image):
-    return
-
-
-#given an array of objects, overlay object onto original image
-#TODO get vis_util working for box overlay
-def overlay_image(image, dto, overlay_edges=True):
-
-    # overlay edge detection
     new_image = image.copy()
-    edges = None
-    if overlay_edges:
-        edges = detect_edge(image)
-        edges = convert_color(edges, [255, 255, 255], [0, 0, 255])
-        new_image = cv2.addWeighted(new_image, .5, edges, .5, 0)
-
-    boxes = dto.boxes
-    category_index = dto.category_index
-    classes = dto.classes
-    s = dto.scores
-    # Get indices and display *ONLY* sports balls
-    # Index derived from mscoco_label_map.pbtext
-    sports_ball_index = 37
-    i = np.where(classes == sports_ball_index)
-    i = i[1].tolist()
-    boxes = np.squeeze(boxes)[i]
-    s = np.squeeze(s)[i]
-
-    vis_util.visualize_boxes_and_labels_on_image_array(
-        new_image,
-        boxes,
-        np.squeeze(classes).astype(np.int32),
-        s,
-        category_index,
-        use_normalized_coordinates=True,
-        line_thickness=4)
-
-    return new_image
+    denoise = denoise_color(new_image)
+    edges = detect_edge(denoise)
+    filled = fill_edges(edges)
+    eroded = erode_filled(filled)
+    smoothed_eroded = cv2.GaussianBlur(eroded, (15, 15), 0)
+    point, new_eroded = highest_point(smoothed_eroded)
+    overlayed = overlay_drivable_surface(new_eroded, new_image)
+    return overlayed
 
 
-#TODO
-def detect_drivable_surfaces(image):
-    return
+# #given an array of objects, overlay object onto original image
+# #TODO get vis_util working for box overlay
+# def overlay_image(image, dto, overlay_edges=True):
 
+#     # overlay edge detection
+#     new_image = image.copy()
+#     edges = None
+#     if overlay_edges:
+#         edges = detect_edge(image)
+#         edges = convert_color(edges, [255, 255, 255], [0, 0, 255])
+#         new_image = cv2.addWeighted(new_image, .5, edges, .5, 0)
+
+#     boxes = dto.boxes
+#     category_index = dto.category_index
+#     classes = dto.classes
+#     s = dto.scores
+#     # Get indices and display *ONLY* sports balls
+#     # Index derived from mscoco_label_map.pbtext
+#     sports_ball_index = 37
+#     i = np.where(classes == sports_ball_index)
+#     i = i[1].tolist()
+#     boxes = np.squeeze(boxes)[i]
+#     s = np.squeeze(s)[i]
+
+#     vis_util.visualize_boxes_and_labels_on_image_array(
+#         new_image,
+#         boxes,
+#         np.squeeze(classes).astype(np.int32),
+#         s,
+#         category_index,
+#         use_normalized_coordinates=True,
+#         line_thickness=4)
+
+#     return new_image
 
 #given an array of objects, overlay object onto original image
 #TODO get vis_util working for box overlay
@@ -309,7 +292,7 @@ def overlay_image(image, dto, overlay_edges=True, isolate_sports_ball=True):
     edges = None
     if overlay_edges:
         edges = detect_edge(image)
-        edges = convert_color(edges, [255, 255, 255], [0, 0, 255])
+        edges = convert_color(edges)
         new_image = cv2.addWeighted(new_image, .5, edges, .5, 0)
 
     boxes = dto.boxes
