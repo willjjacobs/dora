@@ -58,6 +58,7 @@ class NeuralNet:
         return dto
 
     def set_network(self, path_to_graph, path_to_labels):
+        self.sess.close()
         self.PATH_TO_LABELS = path_to_labels
         self.PATH_TO_CHECKPOINT = path_to_graph
         self.init_network()
