@@ -2,10 +2,10 @@ import numpy as np
 import cv2
 import sys
 import os
-from pylibfreenect2 import Freenect2, SyncMultiFrameListener
-from pylibfreenect2 import FrameType, Registration, Frame
-from pylibfreenect2 import createConsoleLogger, setGlobalLogger
-from pylibfreenect2 import LoggerLevel
+#from pylibfreenect2 import Freenect2, SyncMultiFrameListener
+#from pylibfreenect2 import FrameType, Registration, Frame
+#from pylibfreenect2 import createConsoleLogger, setGlobalLogger
+#from pylibfreenect2 import LoggerLevel
 from core.neuralnet.utils import visualization_utils as vis_util
 
 DEFAULT_RES = (240, 135)
@@ -286,7 +286,7 @@ def detect_drivable_surfaces(image):
 
 #given an array of objects, overlay object onto original image
 #TODO get vis_util working for box overlay
-def overlay_image(image, dto, overlay_edges=True, isolate_sports_ball=True):
+def overlay_image(image, dto, overlay_edges=True, isolate_sports_ball=False):
     # overlay edge detection
     new_image = image.copy()
     edges = None
