@@ -84,6 +84,9 @@ pipenv install [--dev]
 '''
 
 In order to run tests and coverage reports, use this command:
+`pytest --cov=dora`
+
+The following results will be displayed:
 ```bash
 (dora-TLaQji9E) will@will-Falco:[~/Projects/dora] $ pytest --cov=dora
 ============================= test session starts =============================
