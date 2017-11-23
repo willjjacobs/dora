@@ -2,11 +2,11 @@ This is the repository for the DORA project. Very much a work in progress at thi
 
 To start Dora server and client, issue the following commands from Dora's root directory:
 
-python dora server
+`python dora server`
 
 When `running server...` is displayed you may enter the next command:
 
-python dora client
+`python dora client`
 
 (opens in a new window, it will take a while for the image to appear)
 
