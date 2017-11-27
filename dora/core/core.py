@@ -26,7 +26,7 @@ class Core:
         self.dto = self.nn.run_inference(frame)
         overlayed_image = vision.overlay_image(frame, dto, False)
         #Convert image to jpg
-        retval, img_encoded = cv2.imencode('.jpg', frame)
+        retval, img_encoded = cv2.imencode('.jpg', overlayed_image)
         # TODO: check retval
         return img_encoded
 

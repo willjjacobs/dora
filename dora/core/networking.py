@@ -33,15 +33,11 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
           self.send_response(400)
 
     def do_POST(self):
-        self.send_response(200)
-        self.send_header("Content-type", "application/json")
-        self.end_headers()
         global task
         # Doesn't do anything with posted data
         #self._set_headers('{statusCode: 200}')
         cont_len = int(self.headers.get('content-length', 0))
         print(self.rfile.read(cont_len))
-
         task['multi'] = list((1, "TennisBall"), (2, "Rock"))
         task['file'] = "filename"
         task['stream'] = "STREAM"
@@ -49,14 +45,12 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
         task['resolution'] = [300, 320]
         task['network'] = list(("filename", "rock"))
         task['output'] = "filename/STREAM"
-
         #
         #self.wfile.write(bytes("rtml><body><h1>POST!</h1></body></html>","utf8"))
         #self.wfile.write(bytes("fuck", "utf8"))
         #host = self.client_address.host + ":" + self.client_address.port
         self.send_response(200, "pranav")
         self.end_headers()
-
 
 class dora_httpd_server(object):
     def __init__(self, server_address, port, core_instance):

@@ -20,7 +20,7 @@ import requests
 from core import vision
 from core.neuralnet import NeuralNet
 import tensorflow as tf
-
+import time
 
 class Window(QMainWindow):
     def __init__(self):
@@ -231,9 +231,16 @@ class Thread(QThread):
 
     def run(self):
         while True:
-            r = requests.get('http://localhost:8080')
+            try:
+                r = requests.get('http://localhost:8080')
+            except:
+                time.sleep(5)
+                continue
             nparr = np.fromstring(r.content, dtype=np.uint8)
-            image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+            try:
+                image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+            except:
+                continue
             #find params and correct color channels
             height, width, channel = image.shape
             bytesPerLine = channel * width
