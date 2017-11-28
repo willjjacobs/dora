@@ -7,6 +7,8 @@ python dora client
 
 To run the tests, `pytest`. To run the rests and code coverage, `pytest --cov`. Both from root directory.
 
+
+
 In order to utilize this code:
 
 Our project is designed to utilize Python version 3.5 or greater. A number of dependencies are specified and will be installed with a Pipfile or can be installed manually by referencing requirements.txt. Additionally, a webcam is required.
@@ -45,6 +47,7 @@ System Level Setup:
 Alternatively, a requirements.txt file is included and the requirements can be installed via the command below:
 ```bash
 $ pip3 -r requirements.txt
+```
 ```
 If you do not have system admin privileges pip can use the `--user` flag to install to the user's directory:
 ```bash
@@ -106,4 +109,6 @@ TOTAL                                   593    500     44      0    15%
 
 
 =============== 1 passed, 1 skipped, 2 xfailed in 3.25 seconds ================
-=======
+
+At this point, our dashboard will open. Some debugging will be output to the console. After the dashboard window opens, it may take some time for the video feed to appear on the right hand side as the neural net initializes and then begins to interpret frames.
+

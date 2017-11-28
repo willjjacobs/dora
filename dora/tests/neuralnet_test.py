@@ -16,25 +16,31 @@ def neural_net():
 
 def test_neural_net_instantiate_successful(neural_net):
     assert neural_net != None
+    assert neural_net.detection_graph != None
+    assert neural_net.sess != None
+    path_to_graph = os.path.join('dora','core','neuralnet','ssd_mobilenet_v1_coco_11_06_2017','frozen_inference_graph.pb')
+    path_to_labels = os.path.join('dora','core','neuralnet', 'data', 'mscoco_label_map.pbtxt')
+    neural_net = NeuralNet.NeuralNet(path_to_graph, path_to_labels)
+    assert neural_net != None
+    assert neural_net.detection_graph != None
+    assert neural_net.sess != None
 
 
 # @pytest.mark.skipif(True, reason="Method is too slow")
-@pytest.mark.xfail(reason="you know why")
-def test_nn(neural_net):
-    cap = cv2.VideoCapture(0)
+def test_nn_inference(neural_net):
+    img_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),'test_image.jpg')
+    test_image = cv2.imread(img_path)
+    dto = neural_net.run_inference(test_image)
+    assert dto.boxes.size != 0
+    assert dto.category_index != None
+    assert dto.classes.size != 0
+    assert dto.scores.size != 0
+    assert dto.depths == None
 
-    while (True):
-        ret, image = cap.read()
-        dto = nn.run_inference(image)
-        vis_util.visualize_boxes_and_labels_on_image_array(
-            image,
-            np.squeeze(dto.boxes),
-            np.squeeze(dto.classes).astype(np.int32),
-            np.squeeze(dto.scores),
-            dto.category_index,
-            use_normalized_coordinates=True,
-            line_thickness=8)
-        cv2.imshow('object detection', cv2.resize(image, (800, 600)))
-        if cv2.waitKey(25) & 0xFF == ord('q'):
-            cv2.destroyAllWindows()
-            break
+def test_set_network(neural_net):
+    path_to_graph = os.path.join('dora','core','neuralnet','ssd_mobilenet_v1_coco_11_06_2017','frozen_inference_graph.pb')
+    path_to_labels = os.path.join('dora','core','neuralnet', 'data', 'mscoco_label_map.pbtxt')
+    neural_net.set_network(path_to_graph, path_to_labels)
+    assert neural_net != None
+    assert neural_net.detection_graph != None
+    assert neural_net.sess != None

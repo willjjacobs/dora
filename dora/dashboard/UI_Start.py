@@ -1,6 +1,3 @@
-#!/usr/bin/python3
-# -*- coding: utf-8 -*-
-#Test
 """
 DORA Dashboard main file
 Author: Wills
@@ -10,24 +7,22 @@ import numpy as np
 import cv2
 import json
 from time import sleep
-from PyQt5.QtWidgets import (QMainWindow, QAction, QTabWidget,
-                             QVBoxLayout, QHBoxLayout, QGroupBox, QGridLayout, QDialog, qApp, QApplication,
-                             QWidget, QLineEdit, QPushButton, QMessageBox, QLabel, QFrame,
-                             QTableWidget,QTableWidgetItem)
+from PyQt5.QtWidgets import (
+    QMainWindow, QAction, QTabWidget, QVBoxLayout, QHBoxLayout, QGroupBox,
+    QGridLayout, QDialog, qApp, QApplication, QWidget, QLineEdit, QPushButton,
+    QMessageBox, QLabel, QFrame, QTableWidget, QTableWidgetItem)
 from PyQt5.QtCore import QCoreApplication, pyqtSlot, QSettings, QThread, pyqtSignal, Qt
 from PyQt5.QtGui import QIcon, QImage, QPixmap, QFont
 #from PyQt5.QtCore.QString import QString
 from dashboard.util import *
-#from util import *
 import socket
-from core.vision import vision
+import requests
+from core import vision
 from core.neuralnet import NeuralNet
 import tensorflow as tf
-
-
+import time
 
 class Window(QMainWindow):
-
     def __init__(self):
         super().__init__()
 
@@ -56,25 +51,24 @@ class Window(QMainWindow):
         mf_layout.setColumnStretch(0, 4)
         mf_layout.setColumnStretch(1, 4)
 
-        mf_layout.addWidget(self.tab_widget,2,0,4,4)
-        mf_layout.addWidget(self.vid_widget_left,0,1,2,2)
-        mf_layout.addWidget(self.table_widget, 0,0,1,1)
+        mf_layout.addWidget(self.tab_widget, 2, 0, 4, 4)
+        mf_layout.addWidget(self.vid_widget_left, 0, 1, 2, 2)
+        mf_layout.addWidget(self.table_widget, 0, 0, 1, 1)
 
         self.main_frame.setLayout(mf_layout)
 
         self.setCentralWidget(self.main_frame)
 
+        menubar = self.menuBar()  #Create Menu Bar
+        doraMenu = menubar.addMenu('&DORA')  #Create DORA Menu
 
-        menubar = self.menuBar() #Create Menu Bar
-        doraMenu = menubar.addMenu('&DORA') #Create DORA Menu
-
-        hardwareAct = QAction('&Hardware', self) #Add Hardware to DORA
+        hardwareAct = QAction('&Hardware', self)  #Add Hardware to DORA
         doraMenu.addAction(hardwareAct)
 
-        aboutAct = QAction('&About', self) #Add About to DORA
+        aboutAct = QAction('&About', self)  #Add About to DORA
         doraMenu.addAction(aboutAct)
 
-        creditsAct = QAction('&Credits', self) #Add Credits to DORA
+        creditsAct = QAction('&Credits', self)  #Add Credits to DORA
         doraMenu.addAction(creditsAct)
 
         fileMenu = menubar.addMenu('&File')
@@ -121,36 +115,35 @@ class Window(QMainWindow):
         #Create Settings Menu
         settingsMenu = menubar.addMenu('&Settings')
 
-
         preferences_act = QAction('&Preferences', self)
         settingsMenu.addAction(preferences_act)
 
         preprocessing_act = QAction('&Pre=Processing', self)
         settingsMenu.addAction(preprocessing_act)
 
-        self.setGeometry(960,100,960,540)
+        self.setGeometry(960, 100, 960, 540)
         self.setWindowTitle('DORA')
 
         self.show()
 
-class tabWidget(QWidget):
 
+class tabWidget(QWidget):
     def __init__(self, Window):
         super(QWidget, self).__init__(Window)
         self.layout = QVBoxLayout(self)
         self.layout.addStretch(1)
 
-          # Initialize tab screen
+        # Initialize tab screen
         self.tabs = QTabWidget()
         self.tab_tools = QWidget()
         self.tab_console = QWidget()
         self.tab_log = QWidget()
-        self.tabs.resize(300,200)
+        self.tabs.resize(300, 200)
 
         # Add tabs
-        self.tabs.addTab(self.tab_tools,"Tools")
-        self.tabs.addTab(self.tab_console,"Console")
-        self.tabs.addTab(self.tab_log,"Log")
+        self.tabs.addTab(self.tab_tools, "Tools")
+        self.tabs.addTab(self.tab_console, "Console")
+        self.tabs.addTab(self.tab_log, "Log")
 
         # Create Tools tab
         self.tab_tools.vlayout01 = QVBoxLayout(self)
@@ -184,7 +177,6 @@ class tabWidget(QWidget):
         self.console_input = QLineEdit(self)
         self.console_input.returnPressed.connect(self.on_command)
 
-
         #Add widgets to tab
         self.tab_console.layout.addWidget(self.console_input)
 
@@ -206,8 +198,8 @@ class tabWidget(QWidget):
             #config_to_task(config, task)
             print(console_input)
 
-class dataWidget(QWidget):
 
+class dataWidget(QWidget):
     def __init__(self, Window):
         super(QWidget, self).__init__(Window)
         self.layout = QVBoxLayout()
@@ -219,8 +211,8 @@ class dataWidget(QWidget):
         self.layout.addWidget(self.data)
         self.setLayout(self.layout)
 
-class vidWidgetL(QWidget):
 
+class vidWidgetL(QWidget):
     def __init__(self, Window):
         super(QWidget, self).__init__(Window)
         left_video = QLabel(self)
@@ -230,93 +222,45 @@ class vidWidgetL(QWidget):
         th.changePixmap.connect(lambda p: left_video.setPixmap(p))
         th.start()
 
+
 class Thread(QThread):
     changePixmap = pyqtSignal(QPixmap)
 
     def __init__(self, parent=None):
         QThread.__init__(self, parent=parent)
 
-    def rev(sock, count):
-        buf = b'';
-        while count:
-            temp = sock.recv(count);
-            if not temp: return None;
-            buf += temp;
-            count -= len(temp);
-        return buf;
     def run(self):
-        #adder and port of server
-        host = 'localhost'
-        port = 8000
-
         while True:
-            #try to connect, if not found continue to try again
             try:
-                conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                conn.connect((host, port));
-            except ConnectionRefusedError:
+                r = requests.get('http://localhost:8080')
+            except:
+                time.sleep(5)
                 continue
-            #start revieving
-            while True:
-                print("recieving");
-                sys.stdout.flush();
-                #recieve the length
-                buf = b'';
-                count = 16;
-                while count:
-                    temp = conn.recv(count);
-                    if not temp: 
-                        break;
-                    buf += temp;
-                    count -= len(temp);
-                # convert len to int
-                lenn = int(buf);
-                print('got len ' + str(lenn));
-                sys.stdout.flush();
-
-                #recieve the image string
-                buf = b'';
-                count = lenn;
-                while count:
-                    temp = conn.recv(count);
-                    if not temp: break;
-                    buf += temp;
-                    count -= len(temp);
-                print(lenn);
-                sys.stdout.flush();
-
-                #Convert from string back to image
-                nparr = np.fromstring(buf, dtype=np.uint8)
+            nparr = np.fromstring(r.content, dtype=np.uint8)
+            try:
                 image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-                #find params and correct color channels
-                height, width, channel = image.shape
-                bytesPerLine = channel * width
-                cv2.cvtColor(image, cv2.COLOR_BGR2RGB, image)
+            except:
+                continue
+            #find params and correct color channels
+            height, width, channel = image.shape
+            bytesPerLine = channel * width
+            cv2.cvtColor(image, cv2.COLOR_BGR2RGB, image)
 
-                #convert to pyQt image
-                rgbImage = QImage(image, width, height, bytesPerLine, QImage.Format_RGB888)
-                convertToQtFormat = QPixmap.fromImage(rgbImage)
-                p = convertToQtFormat.scaled(400, 300, Qt.KeepAspectRatio)
-                self.changePixmap.emit(p)
-                sleep(.030)
+            #convert to pyQt image
+            rgbImage = QImage(image, width, height, bytesPerLine,
+                              QImage.Format_RGB888)
+            convertToQtFormat = QPixmap.fromImage(rgbImage)
+            p = convertToQtFormat.scaled(400, 300, Qt.KeepAspectRatio)
+            self.changePixmap.emit(p)
 
-                #keep this just in case for testing
-                """
-                    cv2.imshow('Dashboard', image);
-                    if cv2.waitKey(1) & 0xFF == ord('q'):
-                    break
-                print(nparr.shape)
-                sys.stdout.flush()
-                """
-                
 
 def ui_main():
-  global app # make available elsewhere - only need to declare global if we assign
-  app = QApplication(sys.argv)
-  window = Window()
-  app.aboutToQuit.connect(app.deleteLater)
-  sys.exit(app.exec_())
+    global app  # make available elsewhere - only need to declare global if we assign
+    app = QApplication(sys.argv)
+    window = Window()
+    app.aboutToQuit.connect(app.deleteLater)
+    return app.exec_()
 
 
 if __name__ == '__main__':
-  ui_main()
+    ui_main()
