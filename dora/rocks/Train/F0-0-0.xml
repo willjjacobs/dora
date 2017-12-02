@@ -1,0 +1,26 @@
+<annotation>
+	<folder>Forest-0</folder>
+	<filename>0-0.jpg</filename>
+	<path>/media/ysabri/A02843E92843BCD2/Users/hacoo/Desktop/CS506/dora/dora/rocks/Forest-0/0-0.jpg</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>1550</width>
+		<height>804</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>Rocks</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>191</xmin>
+			<ymin>489</ymin>
+			<xmax>550</xmax>
+			<ymax>770</ymax>
+		</bndbox>
+	</object>
+</annotation>

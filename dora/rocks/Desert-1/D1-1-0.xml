@@ -1,0 +1,26 @@
+<annotation>
+	<folder>Desert-1</folder>
+	<filename>1-0.jpg</filename>
+	<path>/media/ysabri/A02843E92843BCD2/Users/hacoo/Desktop/CS506/dora/dora/rocks/Desert-1/1-0.jpg</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>3872</width>
+		<height>2592</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>Rocks</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>1842</xmin>
+			<ymin>1779</ymin>
+			<xmax>2489</xmax>
+			<ymax>2252</ymax>
+		</bndbox>
+	</object>
+</annotation>

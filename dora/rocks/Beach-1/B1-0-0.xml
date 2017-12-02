@@ -1,0 +1,26 @@
+<annotation>
+	<folder>Beach-1</folder>
+	<filename>0-0.jpg</filename>
+	<path>/media/ysabri/A02843E92843BCD2/Users/hacoo/Desktop/CS506/dora/dora/rocks/Beach-1/0-0.jpg</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>780</width>
+		<height>800</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>Rocks</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>392</xmin>
+			<ymin>531</ymin>
+			<xmax>699</xmax>
+			<ymax>792</ymax>
+		</bndbox>
+	</object>
+</annotation>
