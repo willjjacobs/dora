@@ -15,6 +15,8 @@ def main(args=sys.argv):
 
     if (len(args) >= 2):
         if (args[1] == 'server'):
+            '''from core.neuralnet.NeuralNet import NeuralNet
+            n = NeuralNet()'''
             from core.core import start_core
             return start_core()
         if (args[1] == 'client'):
