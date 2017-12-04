@@ -1,8 +1,8 @@
 from PyQt5 import QtCore
 from PyQt5.QtCore import QSettings
-#from dashboard.jsonsocket import *
+from dashboard.jsonsocket import *
 import requests
-from jsonsocket import *
+#from jsonsocket import *
 
 
 #runs first time program is started, sets up config file
