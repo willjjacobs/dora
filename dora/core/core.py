@@ -11,7 +11,7 @@ import sys
 
 from core.neuralnet import NeuralNet
 import core.vision as vision
-from core.networking import *
+from core.networking import dora_httpd_server
 
 global core_instance
 
@@ -19,18 +19,18 @@ global core_instance
 
 class Core:
     settingObj = {}
-    def __init__(self, host='localhost', port=8080, dashboard_url='localhost'):
-        #initializer function for the camera , window and more
+
+    def __init__(self, server_address='localhost', port=8080, dashboard_url='localhost'):
         self.settingInit()
         # start webcam and neural net
         self.cap = vision.Webcam()
         self.nn = NeuralNet.NeuralNet()
-        self.server = Server(ip_addr=host, port=port)
-        self.server.setName('DORA HTTP Server')
-        self.server.start()  # starts server thread
+        self.server = dora_httpd_server(server_address, port)
+        self.server.up()
 
     def get_latest_image(self):
         #get frame and overlay
+
         if(self.settingObj['Window'] =='RGB'):
             print("window RGB")
             frame = self.cap.get_frame()
@@ -39,22 +39,25 @@ class Core:
                 print("window Depth Map")
                 frame = self.cap.get_frame()
             else:
-                print("grey ")
-                print("settingObj['Window'] =" + self.settingObj['Window'])
-                print("grey scaleeeeeeeeeeee")
+                print("grey scale")
                 frame = self.cap.get_frame()
 
 
-        dto = self.nn.run_inference(frame)
-        overlayed_image = vision.overlay_image(frame, dto, False)
+
+        self.dto = self.nn.run_inference(frame)
+        overlayed_image = vision.overlay_image(frame, self.dto, 
+                                               overlay_edges=True, 
+                                               isolate_sports_ball=self.settingObj['isolate_sports_ball'])
+
         #Convert image to jpg
         retval, img_encoded = cv2.imencode('.jpg', overlayed_image)
         # TODO: check retval
         return img_encoded
 
     def settingInit(self):
+        self.settingObj['Camera'] = 'Webcam'
         self.settingObj['Window'] = 'RGB'
-        self.settingObj['onlyTennisBallAppear'] = 'True'
+        self.settingObj['isolate_sports_ball'] = False
 
     def settingChanger(self,stg):
         self.settingObj = stg
@@ -70,24 +73,29 @@ class Core:
 
 
     def close(self):
-        self.server.terminate()
+        self.server.down()
+
+    """
+    def perform_action(self, json_data):
+        print('inside perform_action' + str(json_data))
+        if json_data['isolate_sports_ball'] is not None:
+            if json_data['isolate_sports_ball'] == 'True':
+                self.isolate_sports_ball = True
+            elif json_data['isolate_sports_ball'] == 'False':
+                self.isolate_sports_ball = False
+    """
+
+    def get_latest_dto(self):
+        if not hasattr(self, 'dto'):
+            return None
+        return self.dto.as_dict()
 
     def main(self):
         print("in main")
 
-        # while True:
-
-        #     response = requests.post(
-        #         self.host_url, headers=headers, data=img_encoded.tostring())
-        #     time.sleep(0.5)
-
-        # print("After requests loop")
-        # break
-
-
 def start_core():
     global core_instance
-    core_instance = Core()
+    core_instance = Core(server_address='localhost', port=8080, dashboard_url='localhost')
     return 0
 
 
