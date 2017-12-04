@@ -245,8 +245,7 @@ class Thread(QThread):
         QThread.__init__(self, parent=parent)
 
     def run(self):
-        x = 0
-        while x < 5:
+        while True:
             r = requests.get('http://localhost:8080')
             nparr = np.fromstring(r.content, dtype=np.uint8)
             image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
@@ -261,7 +260,6 @@ class Thread(QThread):
             convertToQtFormat = QPixmap.fromImage(rgbImage)
             p = convertToQtFormat.scaled(400, 300, Qt.KeepAspectRatio)
             self.changePixmap.emit(p)
-            x = x + 1
 
 
 def ui_main():
