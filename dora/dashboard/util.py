@@ -47,7 +47,9 @@ def config_to_task(config, task):
     task["isolate_toggle"] = config.value("isolate_toggle")
     task["core_ip"] = config.value("core_ip")
     
-    requests.post('http://localhost:8080', data={ 'isolate_sports_ball' : task['isolate_toggle']})
+    data_to_send = { 'isolate_sports_ball' : task['isolate_toggle']}
+    
+    requests.post('http://localhost:8080', json=data_to_send))
 
 
     #Runs on program open

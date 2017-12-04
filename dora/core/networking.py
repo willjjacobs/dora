@@ -1,6 +1,7 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from requests import Request, Session
 import threading
+import json
 from core.core import *
 # import core.core
 # from core.core import get_core_instance
@@ -41,6 +42,8 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
         content_len = int(self.headers.get('content-length', 0))
         post_body = self.rfile.read(content_len)
         json_data = json.loads(post_body)
+        print(json_data)
+        from core.core import get_core_instance
         c = get_core_instance()
 
         c.perform_action(json_data)

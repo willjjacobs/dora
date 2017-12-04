@@ -28,7 +28,9 @@ class Core:
         #get frame and overlay
         frame = self.cap.get_frame()
         self.dto = self.nn.run_inference(frame)
-        overlayed_image = vision.overlay_image(frame, self.dto, self.isolate_sports_ball)
+        overlayed_image = vision.overlay_image(frame, self.dto, 
+                                               overlay_edges=True, 
+                                               isolate_sports_ball=self.isolate_sports_ball)
         #Convert image to jpg
         retval, img_encoded = cv2.imencode('.jpg', overlayed_image)
         # TODO: check retval
@@ -37,8 +39,8 @@ class Core:
     def close(self):
         self.server.down()
 
-    def perform_action(json_data):
-        print('inside perform_action' + json_data)
+    def perform_action(self, json_data):
+        print('inside perform_action' + str(json_data))
         if json_data['isolate_sports_ball'] is not None:
             if json_data['isolate_sports_ball'] == 'True':
                 self.isolate_sports_ball = True
