@@ -1,8 +1,7 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
-from requests import Request, Session
 from threading import Thread
 from core.core import *
-
+import json
 
 class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
     def do_GET(self):
@@ -11,7 +10,6 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
         print(self.path)
 
         c = get_core_instance()
-        headers = {'Content-Type': 'image/jpeg'}
         # Send response status code
         self.send_response(200)
 
@@ -23,29 +21,29 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
         # self.wfile.write(bytes(c.get_latest_image().tostring(), "utf8"))
         self.wfile.write(c.get_latest_image().tostring())
         return
-"""
+
     def do_POST(self):
-        global task
+        from core.core import get_core_instance
         # Doesn't do anything with posted data
-        #self._set_headers('{statusCode: 200}')
+
         cont_len = int(self.headers.get('content-length', 0))
-        print(self.rfile.read(cont_len))
 
-        task['multi'] = list((1, "TennisBall"), (2, "Rock"))
-        task['file'] = "filename"
-        task['stream'] = "STREAM"
-        task['type'] = "check"
-        task['resolution'] = [300, 320]
-        task['network'] = list(("filename", "rock"))
-        task['output'] = "filename/STREAM"
+        data = self.rfile.read(cont_len)
 
-        #
-        #self.wfile.write(bytes("rtml><body><h1>POST!</h1></body></html>","utf8"))
-        #self.wfile.write(bytes("fuck", "utf8"))
-        #host = self.client_address.host + ":" + self.client_address.port
-        self.send_response(200, "pranav")
+        data = data.decode("utf-8")
+        data = json.loads(data)
+
+        self.send_response(200, "setting changed")
+        self.send_header('Content-type', 'application/json')
         self.end_headers()
-"""
+        c = get_core_instance()
+        c.settingChanger(data)
+        c.settingPrinter()
+
+        c = get_core_instance()
+        c.settingChanger(data)
+        c.settingPrinter()
+
 
 class Server(Thread):
     def __init__(self, ip_addr='localhost', port=8080):

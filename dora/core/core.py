@@ -1,3 +1,4 @@
+import yaml
 import json
 import time
 import tensorflow as tf
@@ -15,8 +16,12 @@ from core.networking import *
 global core_instance
 
 
+
 class Core:
+    settingObj = {}
     def __init__(self, host='localhost', port=8080, dashboard_url='localhost'):
+        #initializer function for the camera , window and more
+        self.settingInit()
         # start webcam and neural net
         self.cap = vision.Webcam()
         self.nn = NeuralNet.NeuralNet()
@@ -26,13 +31,43 @@ class Core:
 
     def get_latest_image(self):
         #get frame and overlay
-        frame = self.cap.get_frame()
+        if(self.settingObj['Window'] =='RGB'):
+            print("window RGB")
+            frame = self.cap.get_frame()
+        else:
+            if(self.settingObj['Window'] == 'Depth Map'):
+                print("window Depth Map")
+                frame = self.cap.get_frame()
+            else:
+                print("grey ")
+                print("settingObj['Window'] =" + self.settingObj['Window'])
+                print("grey scaleeeeeeeeeeee")
+                frame = self.cap.get_frame()
+
+
         dto = self.nn.run_inference(frame)
         overlayed_image = vision.overlay_image(frame, dto, False)
         #Convert image to jpg
         retval, img_encoded = cv2.imencode('.jpg', overlayed_image)
         # TODO: check retval
         return img_encoded
+
+    def settingInit(self):
+        self.settingObj['Window'] = 'RGB'
+        self.settingObj['onlyTennisBallAppear'] = 'True'
+
+    def settingChanger(self,stg):
+        self.settingObj = stg
+
+
+    def settingPrinter(self):
+        for k, v in self.settingObj.items():
+            print(k, v)
+
+
+
+
+
 
     def close(self):
         self.server.terminate()
