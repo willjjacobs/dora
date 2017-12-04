@@ -36,3 +36,6 @@ def test_close_event(): #Legacy method
 def test_send_task(): #Legacy method
     assert True
     
+def test_dash():
+    assert window is not None
+    

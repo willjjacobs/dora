@@ -15,26 +15,28 @@ from PyQt5.QtCore import QCoreApplication, pyqtSlot, QSettings, QThread, pyqtSig
 from PyQt5.QtGui import QIcon, QImage, QPixmap, QFont
 #from PyQt5.QtCore.QString import QString
 from dashboard.util import *
+#from util import *
 import socket
 import requests
 from core import vision
 from core.neuralnet import NeuralNet
 import tensorflow as tf
 
-
+settings = setup_config()
+task = create_task()
 class Window(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        self.settings = setup_config()
-        open_event(self.settings)
-        self.task = create_task()
+        #settings = setup_config()
+        open_event(settings)
+        #task = create_task()
         self.initUI()
 
     @pyqtSlot()
     def app_quit(self):
         print("Quitting")
-        close_event(self.settings)
+        close_event(settings)
         QCoreApplication.quit()
 
     def initUI(self):
@@ -153,8 +155,8 @@ class tabWidget(QWidget):
         self.tab_tools.hlayout = QHBoxLayout(self)
         self.tab_tools.hlayout.addStretch(0)
 
-        self.pushButton1 = QPushButton("Print Task")
-        #self.pushButton1.clicked.connect(print_task(task))
+        self.pushButton1 = QPushButton("Toggle Isolate Sports Ball")
+        self.pushButton1.clicked.connect(self.isolate_toggle_act)
         self.pushButton2 = QPushButton("DevTool 02")
         self.pushButton3 = QPushButton("DevTool 03")
         self.pushButton4 = QPushButton("DevTool 04")
@@ -186,7 +188,20 @@ class tabWidget(QWidget):
         # Add tabs to widget
         self.layout.addWidget(self.tabs)
         self.setLayout(self.layout)
-
+        
+    @pyqtSlot()
+    def isolate_toggle_act(self):
+        if settings.value("isolate_toggle") == "True":
+            settings.setValue("isolate_toggle", "False")
+        else:
+            settings.setValue("isolate_toggle", "True")
+            
+        print(settings.value("isolate_toggle"))
+        print (task["isolate_toggle"])
+        config_to_task(settings, task)
+        print (task["isolate_toggle"])
+        
+        
     @pyqtSlot()
     def on_command(self):
         console_input = self.console_input.text()
@@ -230,7 +245,8 @@ class Thread(QThread):
         QThread.__init__(self, parent=parent)
 
     def run(self):
-        while True:
+        x = 0
+        while x < 5:
             r = requests.get('http://localhost:8080')
             nparr = np.fromstring(r.content, dtype=np.uint8)
             image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
@@ -245,6 +261,7 @@ class Thread(QThread):
             convertToQtFormat = QPixmap.fromImage(rgbImage)
             p = convertToQtFormat.scaled(400, 300, Qt.KeepAspectRatio)
             self.changePixmap.emit(p)
+            x = x + 1
 
 
 def ui_main():
