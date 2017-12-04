@@ -10,17 +10,17 @@ from time import sleep
 from PyQt5.QtWidgets import (
     QMainWindow, QAction, QTabWidget, QVBoxLayout, QHBoxLayout, QGroupBox,
     QGridLayout, QDialog, qApp, QApplication, QWidget, QLineEdit, QPushButton,
-    QMessageBox, QLabel, QFrame, QTableWidget, QTableWidgetItem)
+    QMessageBox, QLabel, QFrame, QTableWidget, QTableWidgetItem, QCheckBox)
 from PyQt5.QtCore import QCoreApplication, pyqtSlot, QSettings, QThread, pyqtSignal, Qt
 from PyQt5.QtGui import QIcon, QImage, QPixmap, QFont
 #from PyQt5.QtCore.QString import QString
-from dashboard.util import *
-#from util import *
+#from dashboard.util import *
+from util import *
 import socket
 import requests
-from core import vision
-from core.neuralnet import NeuralNet
-import tensorflow as tf
+#from core import vision
+#from core.neuralnet import NeuralNet
+#import tensorflow as tf
 
 settings = setup_config()
 task = create_task()
@@ -38,6 +38,28 @@ class Window(QMainWindow):
         print("Quitting")
         close_event(settings)
         QCoreApplication.quit()
+        
+    @pyqtSlot()
+    def todo(self):
+        print("ToDo")
+        
+    @pyqtSlot()
+    def set_RGB(self):
+        settings.setValue("Window", "RGB")
+        config_to_task(settings, task)
+        print("Setting Display to " + task["Window"])
+        
+    @pyqtSlot()
+    def set_Greyscale(self):
+        settings.setValue("Window", "Greyscale")
+        config_to_task(settings, task)
+        print("Setting Display to " + task["Window"])
+        
+    @pyqtSlot()
+    def set_Depthmap(self):
+        settings.setValue("Window", "Depthmap")
+        config_to_task(settings, task)
+        print("Setting Display to " + task["Window"])
 
     def initUI(self):
         #Create Window Widgets
@@ -103,24 +125,33 @@ class Window(QMainWindow):
         windowMenu = menubar.addMenu('&Window')
 
         RGB_visual_act = QAction('&RGB', self)
+        RGB_visual_act.setStatusTip('Set Display Window to RGB')
+        RGB_visual_act.triggered.connect(self.set_RGB)
         windowMenu.addAction(RGB_visual_act)
 
         greyscale_visual_act = QAction('Greyscale', self)
+        greyscale_visual_act.setStatusTip('Set Display Window to Grayscale')
+        greyscale_visual_act.triggered.connect(self.set_Greyscale)
         windowMenu.addAction(greyscale_visual_act)
 
         depthmap_visual_act = QAction('Depth Map', self)
+        depthmap_visual_act.setStatusTip('Set Display Window to Depthmap')
+        depthmap_visual_act.triggered.connect(self.set_Depthmap)
         windowMenu.addAction(depthmap_visual_act)
 
         datatable_act = QAction('Data Table', self)
+        datatable_act.triggered.connect(self.todo)
         windowMenu.addAction(datatable_act)
 
         #Create Settings Menu
         settingsMenu = menubar.addMenu('&Settings')
 
         preferences_act = QAction('&Preferences', self)
+        preferences_act.triggered.connect(self.todo)
         settingsMenu.addAction(preferences_act)
 
-        preprocessing_act = QAction('&Pre=Processing', self)
+        preprocessing_act = QAction('&Pre-Processing', self)
+        preprocessing_act.triggered.connect(self.todo)
         settingsMenu.addAction(preprocessing_act)
 
         self.setGeometry(960, 100, 960, 540)
@@ -155,6 +186,7 @@ class tabWidget(QWidget):
         self.tab_tools.hlayout = QHBoxLayout(self)
         self.tab_tools.hlayout.addStretch(0)
 
+        self.b1 = QCheckBox("Checkbox 1")
         self.pushButton1 = QPushButton("Toggle Isolate Sports Ball")
         self.pushButton1.clicked.connect(self.isolate_toggle_act)
         self.pushButton2 = QPushButton("DevTool 02")
@@ -164,6 +196,7 @@ class tabWidget(QWidget):
         self.tab_tools.vlayout01.addWidget(self.pushButton2)
         self.tab_tools.vlayout02.addWidget(self.pushButton3)
         self.tab_tools.vlayout02.addWidget(self.pushButton4)
+        self.tab_tools.hlayout.addWidget(self.b1)
         self.tab_tools.hlayout.addLayout(self.tab_tools.vlayout01)
         self.tab_tools.hlayout.addLayout(self.tab_tools.vlayout02)
         self.tab_tools.setLayout(self.tab_tools.hlayout)
