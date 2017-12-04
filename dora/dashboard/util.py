@@ -18,6 +18,9 @@ def setup_config():
     config.setValue("first_setup", 1)
     config.setValue("isolate_toggle", "False")
     config.setValue("core_ip", "0.0.0.0")
+    config.setValue("Camera", "Webcam")
+    config.setValue("Window", "RGB")
+    config.setValue("overlay_edges", "False")
     print("First Time Setup Complete")
     return config
 
@@ -32,6 +35,7 @@ def create_task():
     task["isolate_toggle"] = "False"
     task["core_ip"] = "0.0.0.0"
     task["Window"] = "RGB"
+    task["overlay_edges"] = "False"
 
     return task
 
@@ -48,11 +52,15 @@ def config_to_task(config, task):
     task["first_setup"] = config.value("first_setup")
     task["isolate_toggle"] = config.value("isolate_toggle")
     task["core_ip"] = config.value("core_ip")
+    task["Camera"] = config.value("Camera")
+    task["Window"] = config.value("Window")
+    task["overlay_edges"] = config.value("overlay_edges")
     
     
     data_to_send = {'Camera' : task['Camera'],
                     'isolate_sports_ball' : task['isolate_toggle'],
-                    'Window' : task['Window']}
+                    'Window' : task['Window'],
+                    'overlay_edges' : task['overlay_edges']}
     
     requests.post('http://localhost:8080', json=data_to_send)
 

@@ -53,9 +53,11 @@ class Core:
 
 
         self.dto = self.nn.run_inference(frame)
+
         overlayed_image = vision.overlay_image(frame, self.dto, 
                                                overlay_edges= config.settings['overlay_edges'],
                                                isolate_sports_ball=config.settings['isolate_sports_ball'])
+
 
         #Convert image to jpg
         retval, img_encoded = cv2.imencode('.jpg', overlayed_image)
@@ -126,7 +128,8 @@ class Core:
 
 def start_core():
     global core_instance
-    core_instance = Core(server_address='localhost', port=8080, dashboard_url='localhost')
+    core_instance = Core(server_address=settings.core_server_address,
+      port=settings.core_Server_port, dashboard_url=config.dashboard_address)
     return 0
 
 
