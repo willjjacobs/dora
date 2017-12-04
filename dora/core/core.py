@@ -20,7 +20,7 @@ class Core:
         # start webcam and neural net
         self.isolate_sports_ball = False
         self.cap = vision.Webcam()
-        # self.nn = NeuralNet.NeuralNet()
+        self.nn = NeuralNet.NeuralNet()
         self.server = dora_httpd_server(server_address, port)
         self.server.up()
 
@@ -28,7 +28,7 @@ class Core:
         #get frame and overlay
         frame = self.cap.get_frame()
         self.dto = self.nn.run_inference(frame)
-        overlayed_image = vision.overlay_image(frame, dto, self.isolate_sports_ball)
+        overlayed_image = vision.overlay_image(frame, self.dto, self.isolate_sports_ball)
         #Convert image to jpg
         retval, img_encoded = cv2.imencode('.jpg', overlayed_image)
         # TODO: check retval

@@ -1,7 +1,7 @@
 from PyQt5 import QtCore
 from PyQt5.QtCore import QSettings
 from dashboard.jsonsocket import *
-
+import requests
 #from jsonsocket import *
 
 
@@ -46,6 +46,8 @@ def config_to_task(config, task):
     task["first_setup"] = config.value("first_setup")
     task["isolate_toggle"] = config.value("isolate_toggle")
     task["core_ip"] = config.value("core_ip")
+    
+    requests.post('http://localhost:8080', data={ 'isolate_sports_ball' : task['isolate_toggle']})
 
 
     #Runs on program open

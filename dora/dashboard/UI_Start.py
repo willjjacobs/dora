@@ -246,7 +246,7 @@ class Thread(QThread):
 
     def run(self):
         while True:
-            r = requests.get('http://localhost:8080')
+            r = requests.get('http://localhost:8080/video_feed')
             nparr = np.fromstring(r.content, dtype=np.uint8)
             image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
             #find params and correct color channels
