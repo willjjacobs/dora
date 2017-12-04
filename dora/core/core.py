@@ -13,8 +13,9 @@ from core.neuralnet import NeuralNet
 import core.vision as vision
 from core.networking import dora_httpd_server
 
-global core_instance
+import config
 
+global core_instance
 
 
 class Core:
