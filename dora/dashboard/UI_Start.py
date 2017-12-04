@@ -188,20 +188,20 @@ class tabWidget(QWidget):
         # Add tabs to widget
         self.layout.addWidget(self.tabs)
         self.setLayout(self.layout)
-        
+
     @pyqtSlot()
     def isolate_toggle_act(self):
         if settings.value("isolate_toggle") == "True":
             settings.setValue("isolate_toggle", "False")
         else:
             settings.setValue("isolate_toggle", "True")
-            
+
         print(settings.value("isolate_toggle"))
         print (task["isolate_toggle"])
         config_to_task(settings, task)
         print (task["isolate_toggle"])
-        
-        
+
+
     @pyqtSlot()
     def on_command(self):
         console_input = self.console_input.text()
@@ -246,7 +246,8 @@ class Thread(QThread):
 
     def run(self):
         while True:
-            r = requests.get('http://localhost:8080/video_feed')
+            r = requests.get('http://' + config.core_server_address + ':' +
+              config.core_server_port + '/video_feed')
             nparr = np.fromstring(r.content, dtype=np.uint8)
             image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
             #find params and correct color channels
