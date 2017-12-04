@@ -45,17 +45,15 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
         data = data.decode("utf-8")
         data = json.loads(data)
 
-        self.send_response(200, "setting changed")
+
+        c = get_core_instance()
+
+
+
+        self.send_response(c.settingChanger(data))
         self.send_header('Content-type', 'application/json')
         self.end_headers()
-        c = get_core_instance()
-        c.settingChanger(data)
         c.settingPrinter()
-
-        c = get_core_instance()
-        c.settingChanger(data)
-        c.settingPrinter()
-
 
 class dora_httpd_server(object):
     def __init__(self, server_address='localhost', port='8080'):
