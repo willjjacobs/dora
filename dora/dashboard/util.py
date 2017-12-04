@@ -2,7 +2,7 @@ from PyQt5 import QtCore
 from PyQt5.QtCore import QSettings
 from dashboard.jsonsocket import *
 import requests
-#from jsonsocket import *
+from jsonsocket import *
 
 
 #runs first time program is started, sets up config file
@@ -27,9 +27,11 @@ def setup_config():
 def create_task():
     task = {}  #Create task object
 
+    task["Camera"] = "Webcam"
     task["first_setup"] = 0
     task["isolate_toggle"] = "False"
     task["core_ip"] = "0.0.0.0"
+    task["Window"] = "RGB"
 
     return task
 
@@ -47,7 +49,12 @@ def config_to_task(config, task):
     task["isolate_toggle"] = config.value("isolate_toggle")
     task["core_ip"] = config.value("core_ip")
     
-    requests.post('http://localhost:8080', data={ 'isolate_sports_ball' : task['isolate_toggle']})
+    
+    data_to_send = {'Camera' : task['Webcam'],
+                    'isolate_sports_ball' : task['isolate_toggle'],
+                    'Window' : task['Window']}
+    
+    requests.post('http://localhost:8080', json=data_to_send)
 
 
     #Runs on program open
