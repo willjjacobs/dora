@@ -128,8 +128,8 @@ class Core:
 
 def start_core():
     global core_instance
-    core_instance = Core(server_address=settings.core_server_address,
-      port=settings.core_Server_port, dashboard_url=config.dashboard_address)
+    core_instance = Core(server_address=config.core_server_address,
+      port=config.core_server_port, dashboard_url=config.dashboard_address)
     return 0
 
 

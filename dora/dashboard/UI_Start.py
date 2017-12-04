@@ -18,12 +18,14 @@ from dashboard.util import *
 #from util import *
 import socket
 import requests
+import config
 from core import vision
 from core.neuralnet import NeuralNet
 import tensorflow as tf
 
 settings = setup_config()
 task = create_task()
+
 class Window(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -279,8 +281,8 @@ class Thread(QThread):
 
     def run(self):
         while True:
-            r = requests.get('http://' + config.core_server_address + ':' +
-              config.core_server_port + '/video_feed')
+            r = requests.get('http://' + str(config.core_server_address) + ':' +
+            str(config.core_server_port) + '/video_feed')
             nparr = np.fromstring(r.content, dtype=np.uint8)
             image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
             #find params and correct color channels

@@ -1,6 +1,6 @@
 settings = {
-    'camera' : 'Webcam',
-    'window' : 'RGB',
+    'Camera' : 'Webcam',
+    'Window' : 'RGB',
     'isolate_sports_ball' : 'False',
     'overlay_edges' : 'False'
 }
