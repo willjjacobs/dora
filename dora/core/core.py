@@ -54,6 +54,8 @@ class Core:
 
         self.dto = self.nn.run_inference(frame)
 
+        print(config.settings['overlay_edges'])
+
         overlayed_image = vision.overlay_image(frame, self.dto, 
                                                overlay_edges= config.settings['overlay_edges'],
                                                isolate_sports_ball=config.settings['isolate_sports_ball'])
@@ -72,8 +74,15 @@ class Core:
     def settingChanger(self,stg):
         need_to_check = {'Window', 'Camera'}
         for k, v in config.settings.items():
-           if stg[k] != None and ~(k in need_to_check):
-              config.settings[k] = stg[k]
+
+            if stg[k] == 'True':
+                stg[k] = True
+            elif stg[k] == 'False':
+                stg[k] = False
+
+            if stg[k] != None and ~(k in need_to_check):
+                print(k)
+                config.settings[k] = stg[k]
 
         if stg['Camera'] == 'Kinect' and self.kinect == None:
             #TODO: return an error if no kinect
@@ -95,6 +104,7 @@ class Core:
                 return (200, "settings changed")
             else:
                 return (400, "setting not changed")
+        return (400, "unimplemented")
 
     def settingPrinter(self):
         for k, v in config.settings.items():
