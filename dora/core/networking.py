@@ -45,12 +45,10 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
         data = data.decode("utf-8")
         data = json.loads(data)
 
-
         c = get_core_instance()
 
-
-
-        self.send_response(c.settingChanger(data))
+        response = c.settingChanger(data)
+        self.send_response(response[0], response[1])
         self.send_header('Content-type', 'application/json')
         self.end_headers()
         c.settingPrinter()

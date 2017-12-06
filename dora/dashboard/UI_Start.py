@@ -281,10 +281,16 @@ class Thread(QThread):
 
     def run(self):
         while True:
-            r = requests.get('http://' + str(config.core_server_address) + ':' +
-            str(config.core_server_port) + '/video_feed')
+            try:
+                r = requests.get('http://' + str(config.core_server_address) + ':' +str(config.core_server_port) + '/video_feed')
+            except:
+                sleep(5)
+                continue
             nparr = np.fromstring(r.content, dtype=np.uint8)
-            image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+            try:
+                image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+            except:
+                continue
             #find params and correct color channels
             height, width, channel = image.shape
             bytesPerLine = channel * width
