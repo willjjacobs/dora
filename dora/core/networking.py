@@ -1,9 +1,12 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
+
 from requests import Request, Session
 import threading
+import json
 from core.core import *
 # import core.core
 # from core.core import get_core_instance
+
 
 class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
     def do_GET(self):
@@ -29,24 +32,28 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
                 return
             # no response
             self.send_response(200)
-
-        # except Exception as e:
-            # print(e)
-            # self.send_response(400)
-        # return
+            return
 
     def do_POST(self):
-        print('POST on ' + self.path)
+        from core.core import get_core_instance
+        # Doesn't do anything with posted data
 
-        content_len = int(self.headers.get('content-length', 0))
-        post_body = self.rfile.read(content_len)
-        json_data = json.loads(post_body)
+        cont_len = int(self.headers.get('content-length', 0))
+
+        data = self.rfile.read(cont_len)
+
+        data = data.decode("utf-8")
+        data = json.loads(data)
+
+
         c = get_core_instance()
 
-        c.perform_action(json_data)
 
-        self.send_response(200, "pranav")
+
+        self.send_response(c.settingChanger(data))
+        self.send_header('Content-type', 'application/json')
         self.end_headers()
+        c.settingPrinter()
 
 class dora_httpd_server(object):
     def __init__(self, server_address='localhost', port='8080'):
