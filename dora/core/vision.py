@@ -2,10 +2,10 @@ import numpy as np
 import cv2
 import sys
 import os
-from pylibfreenect2 import Freenect2, SyncMultiFrameListener
-from pylibfreenect2 import FrameType, Registration, Frame
-from pylibfreenect2 import createConsoleLogger, setGlobalLogger
-from pylibfreenect2 import LoggerLevel
+# from pylibfreenect2 import Freenect2, SyncMultiFrameListener
+# from pylibfreenect2 import FrameType, Registration, Frame
+# from pylibfreenect2 import createConsoleLogger, setGlobalLogger
+# from pylibfreenect2 import LoggerLevel
 from core.neuralnet.utils import visualization_utils as vis_util
 
 DEFAULT_RES = (240, 135)
@@ -188,10 +188,10 @@ def highest_point(eroded):
 def overlay_drivable_surface(highest_point, image):
     return cv2.addWeighted(highest_point, .5, image, .5, 0)
 
-#TODO
+
 def detect_drivable_surfaces(image):
     new_image = image.copy()
-    #denoise = denoise_color(new_image)
+    denoise = denoise_color(new_image)
     edges = detect_edge(new_image)
     filled = fill_edges(edges)
     eroded = erode_filled(filled)
@@ -199,6 +199,34 @@ def detect_drivable_surfaces(image):
     point, new_eroded = highest_point(smoothed_eroded)
     overlayed = overlay_drivable_surface(new_eroded, new_image)
     return overlayed
+
+def calibrate(depth):
+    calibration = 1/4500.0
+    new_depth = depth*calibration
+    return new_depth 
+
+def calculate_heights(depth, camera_height, fov = [70.6, 60]):
+    hfov = fov[0]
+    vfov = fov[1]
+    size = depth.shape
+    new_depth = calibrate(depth).copy()
+    heights = np.zeros((size[0],size[1]))
+    ang_per_hpix = hfov/size[0]
+    ang_per_vpix = vfox/size[1]
+    bottom_line = new_depth[:,size[1]-1]
+    r0 = np.mean(bottom_line)
+    alpha0 = np.acos(camera_height/r0)
+    for i in range(0,size[0]):
+        for j in range(0,size[1]):
+            alpha = alpha0 + (vfov - ang_per_vpix*j)
+            heights[i][j] = (camera_height - new_depth[i][j]*np.cos(alpha))
+    return heights
+
+def depth_drivable_surfaces(depth, camera_height, fov = [70.6, 60]):
+    heights = calculate_heights(depth,camera_height,fov)
+    return 
+
+
 
 
 # #given an array of objects, overlay object onto original image
