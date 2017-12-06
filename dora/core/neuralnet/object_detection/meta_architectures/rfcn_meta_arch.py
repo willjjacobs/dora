@@ -40,9 +40,9 @@ apply here.
 """
 import tensorflow as tf
 
-from object_detection.core import box_predictor
-from object_detection.meta_architectures import faster_rcnn_meta_arch
-from object_detection.utils import ops
+from core.neuralnet.object_detection.core import box_predictor
+from core.neuralnet.object_detection.meta_architectures import faster_rcnn_meta_arch
+from core.neuralnet.object_detection.utils import ops
 
 
 class RFCNMetaArch(faster_rcnn_meta_arch.FasterRCNNMetaArch):

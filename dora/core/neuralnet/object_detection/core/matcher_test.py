@@ -13,11 +13,11 @@
 # limitations under the License.
 # ==============================================================================
 
-"""Tests for object_detection.core.matcher."""
+"""Tests for core.neuralnet.object_detection.core.matcher."""
 import numpy as np
 import tensorflow as tf
 
-from object_detection.core import matcher
+from core.neuralnet.object_detection.core import matcher
 
 
 class AnchorMatcherTest(tf.test.TestCase):

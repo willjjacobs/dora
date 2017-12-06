@@ -13,10 +13,10 @@
 # limitations under the License.
 # ==============================================================================
 
-"""Tests for object_detection.utils.learning_schedules."""
+"""Tests for core.neuralnet.object_detection.utils.learning_schedules."""
 import tensorflow as tf
 
-from object_detection.utils import learning_schedules
+from core.neuralnet.object_detection.utils import learning_schedules
 
 
 class LearningSchedulesTest(tf.test.TestCase):

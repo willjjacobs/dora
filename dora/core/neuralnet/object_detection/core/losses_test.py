@@ -13,15 +13,15 @@
 # limitations under the License.
 # ==============================================================================
 
-"""Tests for google3.research.vale.object_detection.losses."""
+"""Tests for google3.research.vale.core.neuralnet.object_detection.losses."""
 import math
 
 import numpy as np
 import tensorflow as tf
 
-from object_detection.core import box_list
-from object_detection.core import losses
-from object_detection.core import matcher
+from core.neuralnet.object_detection.core import box_list
+from core.neuralnet.object_detection.core import losses
+from core.neuralnet.object_detection.core import matcher
 
 
 class WeightedL2LocalizationLossTest(tf.test.TestCase):

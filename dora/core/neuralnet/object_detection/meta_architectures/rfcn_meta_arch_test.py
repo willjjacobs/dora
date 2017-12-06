@@ -13,12 +13,12 @@
 # limitations under the License.
 # ==============================================================================
 
-"""Tests for object_detection.meta_architectures.rfcn_meta_arch."""
+"""Tests for core.neuralnet.object_detection.meta_architectures.rfcn_meta_arch."""
 
 import tensorflow as tf
 
-from object_detection.meta_architectures import faster_rcnn_meta_arch_test_lib
-from object_detection.meta_architectures import rfcn_meta_arch
+from core.neuralnet.object_detection.meta_architectures import faster_rcnn_meta_arch_test_lib
+from core.neuralnet.object_detection.meta_architectures import rfcn_meta_arch
 
 
 class RFCNMetaArchTest(

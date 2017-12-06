@@ -3,6 +3,7 @@ import io
 import numpy as np
 import os
 import pandas as pd
+import core.neuralnet.train
 import tensorflow as tf
 import xml.etree.ElementTree as ET
 
@@ -23,13 +24,11 @@ class NeuralNet:
 
     def __init__(self, graph_path=None, label_path = None):
         # If no parameters are present, uses default Network
-        self.train('d:\My Documents\My Projects\dora\dora\macncheese_dataset/train', 'd:\My Documents\My Projects\dora\dora\macncheese_dataset/test')
-        '''
         if graph_path:
             self.PATH_TO_CHECKPOINT = graph_path
         if label_path:
             self.PATH_TO_LABELS = label_path
-        self.init_network()'''
+        self.init_network()
 
     def init_network(self):
         self.detection_graph = tf.Graph()
@@ -73,18 +72,19 @@ class NeuralNet:
         self.init_network()
 
     def train(self, train_dir, test_dir):
-        # Generate CSV
+                # Generate CSV
+        data_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)),'data')
         for directory in [train_dir,test_dir]:
             xml_df = self.xml_to_csv(directory)
             if(directory == train_dir):
                 file = 'train'
             else:
                 file = 'test'
-            csv_path = os.path.join(directory, (file + '_label.csv'))
+            csv_path = os.path.join(data_dir, (file + '_label.csv'))
             xml_df.to_csv(csv_path, index=None)
 
             # Generate TFRecord
-            record_output_path = os.path.join(directory, (file + '.record'))
+            record_output_path = os.path.join(data_dir, (file + '.record'))
             writer = tf.python_io.TFRecordWriter(record_output_path)
             examples = pd.read_csv(csv_path)
             grouped = split(examples, 'filename')

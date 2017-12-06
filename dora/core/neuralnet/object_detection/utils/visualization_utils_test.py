@@ -13,7 +13,7 @@
 # limitations under the License.
 # ==============================================================================
 
-"""Tests for image.understanding.object_detection.core.visualization_utils.
+"""Tests for image.understanding.core.neuralnet.object_detection.core.visualization_utils.
 
 Testing with visualization in the following colab:
 https://drive.google.com/a/google.com/file/d/0B5HnKS_hMsNARERpU3MtU3I5RFE/view?usp=sharing
@@ -26,9 +26,9 @@ import numpy as np
 import PIL.Image as Image
 import tensorflow as tf
 
-from object_detection.utils import visualization_utils
+from core.neuralnet.object_detection.utils import visualization_utils
 
-_TESTDATA_PATH = 'object_detection/test_images'
+_TESTDATA_PATH = 'core.neuralnet.object_detection/test_images'
 
 
 class VisualizationUtilsTest(tf.test.TestCase):

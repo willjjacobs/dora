@@ -15,9 +15,9 @@ py_binary(
     deps = [
         ":trainer",
         "//tensorflow",
-        "//tensorflow_models/object_detection/builders:input_reader_builder",
-        "//tensorflow_models/object_detection/builders:model_builder",
-        "//tensorflow_models/object_detection/utils:config_util",
+        "//tensorflow_models/core.neuralnet.object_detection/builders:input_reader_builder",
+        "//tensorflow_models/core.neuralnet.object_detection/builders:model_builder",
+        "//tensorflow_models/core.neuralnet.object_detection/utils:config_util",
     ],
 )
 
@@ -26,13 +26,13 @@ py_library(
     srcs = ["trainer.py"],
     deps = [
         "//tensorflow",
-        "//tensorflow_models/object_detection/builders:optimizer_builder",
-        "//tensorflow_models/object_detection/builders:preprocessor_builder",
-        "//tensorflow_models/object_detection/core:batcher",
-        "//tensorflow_models/object_detection/core:preprocessor",
-        "//tensorflow_models/object_detection/core:standard_fields",
-        "//tensorflow_models/object_detection/utils:ops",
-        "//tensorflow_models/object_detection/utils:variables_helper",
+        "//tensorflow_models/core.neuralnet.object_detection/builders:optimizer_builder",
+        "//tensorflow_models/core.neuralnet.object_detection/builders:preprocessor_builder",
+        "//tensorflow_models/core.neuralnet.object_detection/core:batcher",
+        "//tensorflow_models/core.neuralnet.object_detection/core:preprocessor",
+        "//tensorflow_models/core.neuralnet.object_detection/core:standard_fields",
+        "//tensorflow_models/core.neuralnet.object_detection/utils:ops",
+        "//tensorflow_models/core.neuralnet.object_detection/utils:variables_helper",
         "//tensorflow_models/slim:model_deploy",
     ],
 )
@@ -43,10 +43,10 @@ py_test(
     deps = [
         ":trainer",
         "//tensorflow",
-        "//tensorflow_models/object_detection/core:losses",
-        "//tensorflow_models/object_detection/core:model",
-        "//tensorflow_models/object_detection/core:standard_fields",
-        "//tensorflow_models/object_detection/protos:train_py_pb2",
+        "//tensorflow_models/core.neuralnet.object_detection/core:losses",
+        "//tensorflow_models/core.neuralnet.object_detection/core:model",
+        "//tensorflow_models/core.neuralnet.object_detection/core:standard_fields",
+        "//tensorflow_models/core.neuralnet.object_detection/protos:train_py_pb2",
     ],
 )
 
@@ -57,13 +57,13 @@ py_library(
     ],
     deps = [
         "//tensorflow",
-        "//tensorflow_models/object_detection/core:box_list",
-        "//tensorflow_models/object_detection/core:box_list_ops",
-        "//tensorflow_models/object_detection/core:keypoint_ops",
-        "//tensorflow_models/object_detection/core:standard_fields",
-        "//tensorflow_models/object_detection/utils:label_map_util",
-        "//tensorflow_models/object_detection/utils:ops",
-        "//tensorflow_models/object_detection/utils:visualization_utils",
+        "//tensorflow_models/core.neuralnet.object_detection/core:box_list",
+        "//tensorflow_models/core.neuralnet.object_detection/core:box_list_ops",
+        "//tensorflow_models/core.neuralnet.object_detection/core:keypoint_ops",
+        "//tensorflow_models/core.neuralnet.object_detection/core:standard_fields",
+        "//tensorflow_models/core.neuralnet.object_detection/utils:label_map_util",
+        "//tensorflow_models/core.neuralnet.object_detection/utils:ops",
+        "//tensorflow_models/core.neuralnet.object_detection/utils:visualization_utils",
     ],
 )
 
@@ -72,11 +72,11 @@ py_library(
     srcs = ["evaluator.py"],
     deps = [
         "//tensorflow",
-        "//tensorflow_models/object_detection:eval_util",
-        "//tensorflow_models/object_detection/core:prefetcher",
-        "//tensorflow_models/object_detection/core:standard_fields",
-        "//tensorflow_models/object_detection/protos:eval_py_pb2",
-        "//tensorflow_models/object_detection/utils:object_detection_evaluation",
+        "//tensorflow_models/core.neuralnet.object_detection:eval_util",
+        "//tensorflow_models/core.neuralnet.object_detection/core:prefetcher",
+        "//tensorflow_models/core.neuralnet.object_detection/core:standard_fields",
+        "//tensorflow_models/core.neuralnet.object_detection/protos:eval_py_pb2",
+        "//tensorflow_models/core.neuralnet.object_detection/utils:core.neuralnet.object_detection_evaluation",
     ],
 )
 
@@ -88,10 +88,10 @@ py_binary(
     deps = [
         ":evaluator",
         "//tensorflow",
-        "//tensorflow_models/object_detection/builders:input_reader_builder",
-        "//tensorflow_models/object_detection/builders:model_builder",
-        "//tensorflow_models/object_detection/utils:config_util",
-        "//tensorflow_models/object_detection/utils:label_map_util",
+        "//tensorflow_models/core.neuralnet.object_detection/builders:input_reader_builder",
+        "//tensorflow_models/core.neuralnet.object_detection/builders:model_builder",
+        "//tensorflow_models/core.neuralnet.object_detection/utils:config_util",
+        "//tensorflow_models/core.neuralnet.object_detection/utils:label_map_util",
     ],
 )
 
@@ -103,9 +103,9 @@ py_library(
     deps = [
         "//tensorflow",
         "//tensorflow/python/tools:freeze_graph_lib",
-        "//tensorflow_models/object_detection/builders:model_builder",
-        "//tensorflow_models/object_detection/core:standard_fields",
-        "//tensorflow_models/object_detection/data_decoders:tf_example_decoder",
+        "//tensorflow_models/core.neuralnet.object_detection/builders:model_builder",
+        "//tensorflow_models/core.neuralnet.object_detection/core:standard_fields",
+        "//tensorflow_models/core.neuralnet.object_detection/data_decoders:tf_example_decoder",
     ],
 )
 
@@ -117,9 +117,9 @@ py_test(
     deps = [
         ":exporter",
         "//tensorflow",
-        "//tensorflow_models/object_detection/builders:model_builder",
-        "//tensorflow_models/object_detection/core:model",
-        "//tensorflow_models/object_detection/protos:pipeline_py_pb2",
+        "//tensorflow_models/core.neuralnet.object_detection/builders:model_builder",
+        "//tensorflow_models/core.neuralnet.object_detection/core:model",
+        "//tensorflow_models/core.neuralnet.object_detection/protos:pipeline_py_pb2",
     ],
 )
 
@@ -131,7 +131,7 @@ py_binary(
     deps = [
         ":exporter",
         "//tensorflow",
-        "//tensorflow_models/object_detection/protos:pipeline_py_pb2",
+        "//tensorflow_models/core.neuralnet.object_detection/protos:pipeline_py_pb2",
     ],
 )
 
@@ -144,8 +144,8 @@ py_binary(
         "//third_party/py/PIL:pil",
         "//third_party/py/lxml",
         "//tensorflow",
-        "//tensorflow_models/object_detection/utils:dataset_util",
-        "//tensorflow_models/object_detection/utils:label_map_util",
+        "//tensorflow_models/core.neuralnet.object_detection/utils:dataset_util",
+        "//tensorflow_models/core.neuralnet.object_detection/utils:label_map_util",
     ],
 )
 
@@ -169,7 +169,7 @@ py_binary(
         "//third_party/py/PIL:pil",
         "//third_party/py/lxml",
         "//tensorflow",
-        "//tensorflow_models/object_detection/utils:dataset_util",
-        "//tensorflow_models/object_detection/utils:label_map_util",
+        "//tensorflow_models/core.neuralnet.object_detection/utils:dataset_util",
+        "//tensorflow_models/core.neuralnet.object_detection/utils:label_map_util",
     ],
 )

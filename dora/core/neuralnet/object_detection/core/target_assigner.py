@@ -33,15 +33,15 @@ images must be handled externally.
 """
 import tensorflow as tf
 
-from object_detection.box_coders import faster_rcnn_box_coder
-from object_detection.box_coders import mean_stddev_box_coder
-from object_detection.core import box_coder as bcoder
-from object_detection.core import box_list
-from object_detection.core import box_list_ops
-from object_detection.core import matcher as mat
-from object_detection.core import region_similarity_calculator as sim_calc
-from object_detection.matchers import argmax_matcher
-from object_detection.matchers import bipartite_matcher
+from core.neuralnet.object_detection.box_coders import faster_rcnn_box_coder
+from core.neuralnet.object_detection.box_coders import mean_stddev_box_coder
+from core.neuralnet.object_detection.core import box_coder as bcoder
+from core.neuralnet.object_detection.core import box_list
+from core.neuralnet.object_detection.core import box_list_ops
+from core.neuralnet.object_detection.core import matcher as mat
+from core.neuralnet.object_detection.core import region_similarity_calculator as sim_calc
+from core.neuralnet.object_detection.matchers import argmax_matcher
+from core.neuralnet.object_detection.matchers import bipartite_matcher
 
 
 class TargetAssigner(object):
@@ -54,9 +54,9 @@ class TargetAssigner(object):
 
     Args:
       similarity_calc: a RegionSimilarityCalculator
-      matcher: an object_detection.core.Matcher used to match groundtruth to
+      matcher: an core.neuralnet.object_detection.core.Matcher used to match groundtruth to
         anchors.
-      box_coder: an object_detection.core.BoxCoder used to encode matching
+      box_coder: an core.neuralnet.object_detection.core.BoxCoder used to encode matching
         groundtruth boxes with respect to anchors.
       positive_class_weight: classification weight to be associated to positive
         anchors (default: 1.0)

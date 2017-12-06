@@ -21,7 +21,7 @@ import numpy as np
 import PIL.Image
 import tensorflow as tf
 
-from object_detection import create_pascal_tf_record
+from core.neuralnet.object_detection import create_pascal_tf_record
 
 
 class DictToTFExampleTest(tf.test.TestCase):

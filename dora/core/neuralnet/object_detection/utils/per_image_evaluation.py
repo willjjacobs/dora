@@ -20,8 +20,8 @@ detection is supported by default.
 """
 import numpy as np
 
-from object_detection.utils import np_box_list
-from object_detection.utils import np_box_list_ops
+from core.neuralnet.object_detection.utils import np_box_list
+from core.neuralnet.object_detection.utils import np_box_list_ops
 
 
 class PerImageEvaluation(object):
@@ -46,7 +46,7 @@ class PerImageEvaluation(object):
     self.nms_max_output_boxes = nms_max_output_boxes
     self.num_groundtruth_classes = num_groundtruth_classes
 
-  def compute_object_detection_metrics(
+  def compute_core.neuralnet.object_detection_metrics(
       self, detected_boxes, detected_scores, detected_class_labels,
       groundtruth_boxes, groundtruth_class_labels,
       groundtruth_is_difficult_lists, groundtruth_is_group_of_list):

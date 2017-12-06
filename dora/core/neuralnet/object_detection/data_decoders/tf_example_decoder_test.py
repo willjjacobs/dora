@@ -13,13 +13,13 @@
 # limitations under the License.
 # ==============================================================================
 
-"""Tests for object_detection.data_decoders.tf_example_decoder."""
+"""Tests for core.neuralnet.object_detection.data_decoders.tf_example_decoder."""
 
 import numpy as np
 import tensorflow as tf
 
-from object_detection.core import standard_fields as fields
-from object_detection.data_decoders import tf_example_decoder
+from core.neuralnet.object_detection.core import standard_fields as fields
+from core.neuralnet.object_detection.data_decoders import tf_example_decoder
 
 
 class TfExampleDecoderTest(tf.test.TestCase):

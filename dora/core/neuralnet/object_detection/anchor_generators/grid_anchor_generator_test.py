@@ -13,11 +13,11 @@
 # limitations under the License.
 # ==============================================================================
 
-"""Tests for object_detection.grid_anchor_generator."""
+"""Tests for core.neuralnet.core.neuralnet.core.neuralnet.core.neuralnet.core.neuralnet.core.neuralnet.object_detection.grid_anchor_generator."""
 
 import tensorflow as tf
 
-from object_detection.anchor_generators import grid_anchor_generator
+from core.neuralnet.object_detection.anchor_generators import grid_anchor_generator
 
 
 class GridAnchorGeneratorTest(tf.test.TestCase):

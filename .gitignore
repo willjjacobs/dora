@@ -106,3 +106,11 @@ ENV/
 dora/NeuralNet/ssd_mobilenet_v1_coco_11_06_2017/model\.ckpt\.data-00000-of-00001
 
 dora/core/ssd_mobilenet_v1_coco_11_06_2017/model\.ckpt\.data-00000-of-00001
+
+*.tar
+
+dora/core/neuralnet/ssd_mobilenet_v1_coco_11_06_2017\.tar\.gz
+
+*.gz
+
+dora/core/neuralnet/ssd_mobilenet_v1_coco_11_06_2017/model\.ckpt\.data-00000-of-00001

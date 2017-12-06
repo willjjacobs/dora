@@ -13,12 +13,12 @@
 # limitations under the License.
 # ==============================================================================
 
-"""Tests for google3.research.vale.object_detection.minibatch_sampler."""
+"""Tests for google3.research.vale.core.neuralnet.object_detection.minibatch_sampler."""
 
 import numpy as np
 import tensorflow as tf
 
-from object_detection.core import minibatch_sampler
+from core.neuralnet.object_detection.core import minibatch_sampler
 
 
 class MinibatchSamplerTest(tf.test.TestCase):

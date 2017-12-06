@@ -13,13 +13,13 @@
 # limitations under the License.
 # ==============================================================================
 
-"""Tests for object_detection.box_coder.keypoint_box_coder."""
+"""Tests for core.neuralnet.object_detection.box_coder.keypoint_box_coder."""
 
 import tensorflow as tf
 
-from object_detection.box_coders import keypoint_box_coder
-from object_detection.core import box_list
-from object_detection.core import standard_fields as fields
+from core.neuralnet.object_detection.box_coders import keypoint_box_coder
+from core.neuralnet.object_detection.core import box_list
+from core.neuralnet.object_detection.core import standard_fields as fields
 
 
 class KeypointBoxCoderTest(tf.test.TestCase):

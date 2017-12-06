@@ -13,15 +13,15 @@
 # limitations under the License.
 # ==============================================================================
 
-"""Tests for object_detection.export_inference_graph."""
+"""Tests for core.neuralnet.object_detection.export_inference_graph."""
 import os
 import numpy as np
 import six
 import tensorflow as tf
-from object_detection import exporter
-from object_detection.builders import model_builder
-from object_detection.core import model
-from object_detection.protos import pipeline_pb2
+from core.neuralnet.object_detection import exporter
+from core.neuralnet.object_detection.builders import model_builder
+from core.neuralnet.object_detection.core import model
+from core.neuralnet.object_detection.protos import pipeline_pb2
 
 if six.PY2:
   import mock  # pylint: disable=g-import-not-at-top

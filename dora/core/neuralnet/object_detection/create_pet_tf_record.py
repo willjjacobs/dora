@@ -13,7 +13,7 @@
 # limitations under the License.
 # ==============================================================================
 
-r"""Convert the Oxford pet dataset to TFRecord for object_detection.
+r"""Convert the Oxford pet dataset to TFRecord for core.neuralnet.object_detection.
 
 See: O. M. Parkhi, A. Vedaldi, A. Zisserman, C. V. Jawahar
      Cats and Dogs
@@ -36,8 +36,8 @@ from lxml import etree
 import PIL.Image
 import tensorflow as tf
 
-from object_detection.utils import dataset_util
-from object_detection.utils import label_map_util
+from core.neuralnet.object_detection.utils import dataset_util
+from core.neuralnet.object_detection.utils import label_map_util
 
 flags = tf.app.flags
 flags.DEFINE_string('data_dir', '', 'Root directory to raw pet dataset.')

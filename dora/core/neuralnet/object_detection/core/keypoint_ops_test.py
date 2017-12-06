@@ -13,11 +13,11 @@
 # limitations under the License.
 # ==============================================================================
 
-"""Tests for object_detection.core.keypoint_ops."""
+"""Tests for core.neuralnet.object_detection.core.keypoint_ops."""
 import numpy as np
 import tensorflow as tf
 
-from object_detection.core import keypoint_ops
+from core.neuralnet.object_detection.core import keypoint_ops
 
 
 class KeypointOpsTest(tf.test.TestCase):

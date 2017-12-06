@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ==============================================================================
-"""object_detection_evaluation module.
+"""core.neuralnet.object_detection_evaluation module.
 
 ObjectDetectionEvaluation is a class which manages ground truth information of a
 object detection dataset, and computes frequently used detection metrics such as
@@ -33,10 +33,10 @@ import collections
 import logging
 import numpy as np
 
-from object_detection.core import standard_fields
-from object_detection.utils import label_map_util
-from object_detection.utils import metrics
-from object_detection.utils import per_image_evaluation
+from core.neuralnet.object_detection.core import standard_fields
+from core.neuralnet.object_detection.utils import label_map_util
+from core.neuralnet.object_detection.utils import metrics
+from core.neuralnet.object_detection.utils import per_image_evaluation
 
 
 class DetectionEvaluator(object):
@@ -491,7 +491,7 @@ class ObjectDetectionEvaluation(object):
       groundtruth_is_difficult_list = np.array([], dtype=bool)
       groundtruth_is_group_of_list = np.array([], dtype=bool)
     scores, tp_fp_labels, is_class_correctly_detected_in_image = (
-        self.per_image_eval.compute_object_detection_metrics(
+        self.per_image_eval.compute_core.neuralnet.object_detection_metrics(
             detected_boxes, detected_scores, detected_class_labels,
             groundtruth_boxes, groundtruth_class_labels,
             groundtruth_is_difficult_list, groundtruth_is_group_of_list))

@@ -13,15 +13,15 @@
 # limitations under the License.
 # ==============================================================================
 
-"""Tests for object_detection.core.preprocessor."""
+"""Tests for core.neuralnet.object_detection.core.preprocessor."""
 
 import numpy as np
 import six
 
 import tensorflow as tf
 
-from object_detection.core import preprocessor
-from object_detection.core import standard_fields as fields
+from core.neuralnet.object_detection.core import preprocessor
+from core.neuralnet.object_detection.core import standard_fields as fields
 
 if six.PY2:
   import mock  # pylint: disable=g-import-not-at-top

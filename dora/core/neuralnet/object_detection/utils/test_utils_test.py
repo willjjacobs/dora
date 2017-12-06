@@ -13,12 +13,12 @@
 # limitations under the License.
 # ==============================================================================
 
-"""Tests for object_detection.utils.test_utils."""
+"""Tests for core.neuralnet.object_detection.utils.test_utils."""
 
 import numpy as np
 import tensorflow as tf
 
-from object_detection.utils import test_utils
+from core.neuralnet.object_detection.utils import test_utils
 
 
 class TestUtilsTest(tf.test.TestCase):

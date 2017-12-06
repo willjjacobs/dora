@@ -13,12 +13,12 @@
 # limitations under the License.
 # ==============================================================================
 
-"""Tests for object_detection.utils.dataset_util."""
+"""Tests for core.neuralnet.object_detection.utils.dataset_util."""
 
 import os
 import tensorflow as tf
 
-from object_detection.utils import dataset_util
+from core.neuralnet.object_detection.utils import dataset_util
 
 
 class DatasetUtilTest(tf.test.TestCase):

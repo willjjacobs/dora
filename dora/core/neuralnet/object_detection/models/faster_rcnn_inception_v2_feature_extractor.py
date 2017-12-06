@@ -20,8 +20,8 @@ https://arxiv.org/abs/1512.00567
 """
 import tensorflow as tf
 
-from object_detection.meta_architectures import faster_rcnn_meta_arch
-from nets import inception_v2
+from core.neuralnet.object_detection.meta_architectures import faster_rcnn_meta_arch
+from core.neuralnet.slim.nets import inception_v2
 
 slim = tf.contrib.slim
 

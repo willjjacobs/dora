@@ -13,12 +13,12 @@
 # limitations under the License.
 # ==============================================================================
 
-"""Tests for object_detection.np_box_ops."""
+"""Tests for core.neuralnet.object_detection.np_box_ops."""
 
 import numpy as np
 import tensorflow as tf
 
-from object_detection.utils import np_box_ops
+from core.neuralnet.object_detection.utils import np_box_ops
 
 
 class BoxOpsTests(tf.test.TestCase):

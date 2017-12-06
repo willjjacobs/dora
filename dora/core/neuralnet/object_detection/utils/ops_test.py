@@ -13,12 +13,12 @@
 # limitations under the License.
 # ==============================================================================
 
-"""Tests for object_detection.utils.ops."""
+"""Tests for core.neuralnet.object_detection.utils.ops."""
 import numpy as np
 import tensorflow as tf
 
-from object_detection.core import standard_fields as fields
-from object_detection.utils import ops
+from core.neuralnet.object_detection.core import standard_fields as fields
+from core.neuralnet.object_detection.utils import ops
 
 
 class NormalizedToImageCoordinatesTest(tf.test.TestCase):

@@ -53,7 +53,7 @@ py_library(
     deps = [
         ":box_list",
         "//tensorflow",
-        "//tensorflow_models/object_detection/utils:shape_utils",
+        "//tensorflow_models/core.neuralnet.object_detection/utils:shape_utils",
     ],
 )
 
@@ -113,7 +113,7 @@ py_library(
         ":box_list",
         ":box_list_ops",
         "//tensorflow",
-        "//tensorflow_models/object_detection/utils:ops",
+        "//tensorflow_models/core.neuralnet.object_detection/utils:ops",
     ],
 )
 
@@ -236,11 +236,11 @@ py_library(
         ":matcher",
         ":region_similarity_calculator",
         "//tensorflow",
-        "//tensorflow_models/object_detection/box_coders:faster_rcnn_box_coder",
-        "//tensorflow_models/object_detection/box_coders:mean_stddev_box_coder",
-        "//tensorflow_models/object_detection/core:box_coder",
-        "//tensorflow_models/object_detection/matchers:argmax_matcher",
-        "//tensorflow_models/object_detection/matchers:bipartite_matcher",
+        "//tensorflow_models/core.neuralnet.object_detection/box_coders:faster_rcnn_box_coder",
+        "//tensorflow_models/core.neuralnet.object_detection/box_coders:mean_stddev_box_coder",
+        "//tensorflow_models/core.neuralnet.object_detection/core:box_coder",
+        "//tensorflow_models/core.neuralnet.object_detection/matchers:argmax_matcher",
+        "//tensorflow_models/core.neuralnet.object_detection/matchers:bipartite_matcher",
     ],
 )
 
@@ -254,8 +254,8 @@ py_test(
         ":region_similarity_calculator",
         ":target_assigner",
         "//tensorflow",
-        "//tensorflow_models/object_detection/box_coders:mean_stddev_box_coder",
-        "//tensorflow_models/object_detection/matchers:bipartite_matcher",
+        "//tensorflow_models/core.neuralnet.object_detection/box_coders:mean_stddev_box_coder",
+        "//tensorflow_models/core.neuralnet.object_detection/matchers:bipartite_matcher",
     ],
 )
 
@@ -274,9 +274,9 @@ py_library(
     srcs = ["box_predictor.py"],
     deps = [
         "//tensorflow",
-        "//tensorflow_models/object_detection/utils:ops",
-        "//tensorflow_models/object_detection/utils:shape_utils",
-        "//tensorflow_models/object_detection/utils:static_shape",
+        "//tensorflow_models/core.neuralnet.object_detection/utils:ops",
+        "//tensorflow_models/core.neuralnet.object_detection/utils:shape_utils",
+        "//tensorflow_models/core.neuralnet.object_detection/utils:static_shape",
     ],
 )
 
@@ -286,8 +286,8 @@ py_test(
     deps = [
         ":box_predictor",
         "//tensorflow",
-        "//tensorflow_models/object_detection/builders:hyperparams_builder",
-        "//tensorflow_models/object_detection/protos:hyperparams_py_pb2",
+        "//tensorflow_models/core.neuralnet.object_detection/builders:hyperparams_builder",
+        "//tensorflow_models/core.neuralnet.object_detection/protos:hyperparams_py_pb2",
     ],
 )
 
@@ -298,7 +298,7 @@ py_library(
     ],
     deps = [
         "//tensorflow",
-        "//tensorflow_models/object_detection/core:box_list_ops",
+        "//tensorflow_models/core.neuralnet.object_detection/core:box_list_ops",
     ],
 )
 
@@ -309,7 +309,7 @@ py_test(
     ],
     deps = [
         ":region_similarity_calculator",
-        "//tensorflow_models/object_detection/core:box_list",
+        "//tensorflow_models/core.neuralnet.object_detection/core:box_list",
     ],
 )
 
@@ -330,7 +330,7 @@ py_library(
     ],
     deps = [
         "//tensorflow",
-        "//tensorflow_models/object_detection/utils:ops",
+        "//tensorflow_models/core.neuralnet.object_detection/utils:ops",
     ],
 )
 

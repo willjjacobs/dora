@@ -47,10 +47,10 @@ import tensorflow as tf
 
 from tensorflow.python.ops import control_flow_ops
 
-from object_detection.core import box_list
-from object_detection.core import box_list_ops
-from object_detection.core import keypoint_ops
-from object_detection.core import standard_fields as fields
+from core.neuralnet.object_detection.core import box_list
+from core.neuralnet.object_detection.core import box_list_ops
+from core.neuralnet.object_detection.core import keypoint_ops
+from core.neuralnet.object_detection.core import standard_fields as fields
 
 
 def _apply_with_random_selector(x, func, num_cases):

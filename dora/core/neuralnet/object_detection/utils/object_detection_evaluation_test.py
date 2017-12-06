@@ -13,13 +13,13 @@
 # limitations under the License.
 # ==============================================================================
 
-"""Tests for object_detection.utils.object_detection_evaluation."""
+"""Tests for core.neuralnet.object_detection.utils.core.neuralnet.object_detection_evaluation."""
 
 import numpy as np
 import tensorflow as tf
 
-from object_detection.core import standard_fields
-from object_detection.utils import object_detection_evaluation
+from core.neuralnet.object_detection.core import standard_fields
+from core.neuralnet.object_detection.utils import core.neuralnet.object_detection_evaluation
 
 
 class OpenImagesV2EvaluationTest(tf.test.TestCase):
@@ -36,7 +36,7 @@ class OpenImagesV2EvaluationTest(tf.test.TestCase):
         'name': 'elephant'
     }]
 
-    oiv2_evaluator = object_detection_evaluation.OpenImagesDetectionEvaluator(
+    oiv2_evaluator = core.neuralnet.object_detection_evaluation.OpenImagesDetectionEvaluator(
         categories)
     image_key1 = 'img1'
     groundtruth_boxes1 = np.array(
@@ -105,7 +105,7 @@ class PascalEvaluationTest(tf.test.TestCase):
                   {'id': 2, 'name': 'dog'},
                   {'id': 3, 'name': 'elephant'}]
     #  Add groundtruth
-    pascal_evaluator = object_detection_evaluation.PascalDetectionEvaluator(
+    pascal_evaluator = core.neuralnet.object_detection_evaluation.PascalDetectionEvaluator(
         categories)
     image_key1 = 'img1'
     groundtruth_boxes1 = np.array([[0, 0, 1, 1], [0, 0, 2, 2], [0, 0, 3, 3]],
@@ -168,7 +168,7 @@ class PascalEvaluationTest(tf.test.TestCase):
                   {'id': 2, 'name': 'dog'},
                   {'id': 3, 'name': 'elephant'}]
     #  Add groundtruth
-    pascal_evaluator = object_detection_evaluation.PascalDetectionEvaluator(
+    pascal_evaluator = core.neuralnet.object_detection_evaluation.PascalDetectionEvaluator(
         categories)
     image_key1 = 'img1'
     groundtruth_boxes1 = np.array([[0, 0, 1, 1], [0, 0, 2, 2], [0, 0, 3, 3]],
@@ -198,7 +198,7 @@ class WeightedPascalEvaluationTest(tf.test.TestCase):
   def create_and_add_common_ground_truth(self):
     #  Add groundtruth
     self.wp_eval = (
-        object_detection_evaluation.WeightedPascalDetectionEvaluator(
+        core.neuralnet.object_detection_evaluation.WeightedPascalDetectionEvaluator(
             self.categories))
 
     image_key1 = 'img1'
@@ -301,7 +301,7 @@ class WeightedPascalEvaluationTest(tf.test.TestCase):
   def test_value_error_on_duplicate_images(self):
     #  Add groundtruth
     self.wp_eval = (
-        object_detection_evaluation.WeightedPascalDetectionEvaluator(
+        core.neuralnet.object_detection_evaluation.WeightedPascalDetectionEvaluator(
             self.categories))
     image_key1 = 'img1'
     groundtruth_boxes1 = np.array([[0, 0, 1, 1], [0, 0, 2, 2], [0, 0, 3, 3]],
@@ -325,7 +325,7 @@ class ObjectDetectionEvaluationTest(tf.test.TestCase):
 
   def setUp(self):
     num_groundtruth_classes = 3
-    self.od_eval = object_detection_evaluation.ObjectDetectionEvaluation(
+    self.od_eval = core.neuralnet.object_detection_evaluation.ObjectDetectionEvaluation(
         num_groundtruth_classes)
 
     image_key1 = 'img1'

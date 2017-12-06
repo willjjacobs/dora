@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ==============================================================================
-"""Tests for object_detection.utils.config_util."""
+"""Tests for core.neuralnet.object_detection.utils.config_util."""
 
 import os
 
@@ -21,12 +21,12 @@ import tensorflow.google as tf
 
 from google.protobuf import text_format
 
-from object_detection.protos import eval_pb2
-from object_detection.protos import input_reader_pb2
-from object_detection.protos import model_pb2
-from object_detection.protos import pipeline_pb2
-from object_detection.protos import train_pb2
-from object_detection.utils import config_util
+from core.neuralnet.object_detection.protos import eval_pb2
+from core.neuralnet.object_detection.protos import input_reader_pb2
+from core.neuralnet.object_detection.protos import model_pb2
+from core.neuralnet.object_detection.protos import pipeline_pb2
+from core.neuralnet.object_detection.protos import train_pb2
+from core.neuralnet.object_detection.utils import config_util
 
 
 def _write_config(config, config_path):

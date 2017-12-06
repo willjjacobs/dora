@@ -13,12 +13,12 @@
 # limitations under the License.
 # ==============================================================================
 
-"""Tests for object_detection.models.faster_rcnn_resnet_v1_feature_extractor."""
+"""Tests for core.neuralnet.object_detection.models.faster_rcnn_resnet_v1_feature_extractor."""
 
 import numpy as np
 import tensorflow as tf
 
-from object_detection.models import faster_rcnn_resnet_v1_feature_extractor as faster_rcnn_resnet_v1
+from core.neuralnet.object_detection.models import faster_rcnn_resnet_v1_feature_extractor as faster_rcnn_resnet_v1
 
 
 class FasterRcnnResnetV1FeatureExtractorTest(tf.test.TestCase):
