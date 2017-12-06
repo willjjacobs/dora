@@ -2,10 +2,10 @@ import numpy as np
 import cv2
 import sys
 import os
-#from pylibfreenect2 import Freenect2, SyncMultiFrameListener
-#from pylibfreenect2 import FrameType, Registration, Frame
-#from pylibfreenect2 import createConsoleLogger, setGlobalLogger
-#from pylibfreenect2 import LoggerLevel
+from pylibfreenect2 import Freenect2, SyncMultiFrameListener
+from pylibfreenect2 import FrameType, Registration, Frame
+from pylibfreenect2 import createConsoleLogger, setGlobalLogger
+from pylibfreenect2 import LoggerLevel
 from core.neuralnet.utils import visualization_utils as vis_util
 
 DEFAULT_RES = (240, 135)
@@ -13,6 +13,18 @@ WEBCAM_PORT = 0
 ADJUSTMENT_FRAMES = 2
 DENOISING_PARAMS = [10, 10, 7, 21]
 
+#Optimize Drivable Surfaces
+#Depth map
+
+def Selector(args, camera_port = 0, file = ""):
+    if (args == 'kinect'):
+        return Kinect()
+    elif (args == 'webcam'):
+        return Webcam()
+    elif (args == 'filefeed'):
+        return FileFeed(file)
+    else: 
+        return Camera(camera_port)
 
 #ADD SELECTOR 
 #Class for connection to Kinect camera using pylibfreenect2
@@ -46,13 +58,19 @@ class Kinect(object):
         self.registered = Frame(512, 424, 4)
 
     def get_frame(self):
-        return self.listener.waitForNewFrame()["color"]
+        frame = self.listener.waitForNewFrame()
+        rgb = frame["color"].asarray().copy()
+        self.listener.release(frame)
+        return rgb
     def close(self):
         self.device.stop()
-        self.device.close()
+        #self.device.close()
         return 0
     def get_depth(self):
-        return self.listener.waitForNewFrame()["depth"]
+        frame = self.listener.waitForNewFrame()
+        depth = frame["depth"].asarray().copy()
+        self.listener.release(frame)
+        return depth / 4500.
 
 #Class for webcam connection
 class Webcam(object):
@@ -70,14 +88,16 @@ class Webcam(object):
 #Class for arbritrary camera connection
 #TODO
 class Camera(object):
-    def __init__(self):
-        pass
+    def __init__(self, camera_port):
+        self.camera = cv2.VideoCapture(camera_port)
     def get_frame(self):
-        pass
-    def get_depth(self):
-        pass
+        for i in range(0, ADJUSTMENT_FRAMES):
+            self.camera.read()
+        retval, im = self.camera.read()
+        return im
     def close(self):
-        pass
+        del (self.camera)
+        return 0
 
 class FileFeed(object):
     def __init__(self, file):
@@ -171,8 +191,8 @@ def overlay_drivable_surface(highest_point, image):
 #TODO
 def detect_drivable_surfaces(image):
     new_image = image.copy()
-    denoise = denoise_color(new_image)
-    edges = detect_edge(denoise)
+    #denoise = denoise_color(new_image)
+    edges = detect_edge(new_image)
     filled = fill_edges(edges)
     eroded = erode_filled(filled)
     smoothed_eroded = cv2.GaussianBlur(eroded, (15, 15), 0)
