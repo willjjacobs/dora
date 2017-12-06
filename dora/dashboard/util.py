@@ -61,7 +61,8 @@ def config_to_task(config, task):
                     'isolate_sports_ball' : task['isolate_toggle'],
                     'Window' : task['Window'],
                     'overlay_edges' : task['overlay_edges']}
-    
+    print(task["isolate_toggle"])
+    print(task["overlay_edges"])
     requests.post('http://localhost:8080', json=data_to_send)
 
 

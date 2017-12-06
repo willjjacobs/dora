@@ -231,10 +231,19 @@ class tabWidget(QWidget):
         else:
             settings.setValue("isolate_toggle", "True")
 
-        print(settings.value("isolate_toggle"))
-        print (task["isolate_toggle"])
+        #print(settings.value("isolate_toggle"))
+        #print (task["isolate_toggle"])
         config_to_task(settings, task)
-        print (task["isolate_toggle"])
+        #print (task["isolate_toggle"])
+        
+    @pyqtSlot()
+    def detect_edge_act(self):
+        if settings.value("overlay_edges") == "True":
+            settings.setValue("overlay_edges", "False")
+        else:
+            settings.setValue("overlay_edges", "True")
+            
+        config_to_task(settings, task)
 
 
     @pyqtSlot()
