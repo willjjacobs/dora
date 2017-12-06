@@ -191,7 +191,7 @@ class tabWidget(QWidget):
         self.b1 = QCheckBox("Checkbox 1")
         self.pushButton1 = QPushButton("Toggle Isolate Sports Ball")
         self.pushButton1.clicked.connect(self.isolate_toggle_act)
-        self.pushButton2 = QPushButton("DevTool 02")
+        self.pushButton2 = QPushButton("Toggle Edge Detection")
         self.pushButton2.clicked.connect(self.detect_edges_act)
         self.pushButton3 = QPushButton("DevTool 03")
         self.pushButton4 = QPushButton("DevTool 04")
@@ -238,7 +238,7 @@ class tabWidget(QWidget):
         #print (task["isolate_toggle"])
         
     @pyqtSlot()
-    def detect_edge_act(self):
+    def detect_edges_act(self):
         if settings.value("overlay_edges") == "True":
             settings.setValue("overlay_edges", "False")
         else:
