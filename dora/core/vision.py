@@ -206,27 +206,59 @@ def calibrate(depth):
     return new_depth 
 
 def calculate_heights(depth, camera_height, fov = [70.6, 60]):
+    kth0 = np.radians(30)
     hfov = fov[0]
     vfov = fov[1]
     size = depth.shape
-    new_depth = calibrate(depth).copy()
+    new_depth = (depth).copy()
     heights = np.zeros((size[0],size[1]))
     ang_per_hpix = hfov/size[0]
-    ang_per_vpix = vfox/size[1]
-    bottom_line = new_depth[:,size[1]-1]
-    r0 = np.mean(bottom_line)
-    alpha0 = np.acos(camera_height/r0)
+    ang_per_vpix = vfov/size[1]
+    bottom_line = new_depth[size[0]-1,:]
+    top_line = new_depth[int((size[0]-1)/2),:]
+    r0 = 0
+    count = 0
+    for i in range(0,len(bottom_line)):
+        if bottom_line[i] > 5:
+            count+=1
+            r0+=bottom_line[i]
+    r0 = r0/count
+    rtop = np.mean(top_line)
+    alpha0 = np.arccos(camera_height/r0)
+
     for i in range(0,size[0]):
-        for j in range(0,size[1]):
-            alpha = alpha0 + (vfov - ang_per_vpix*j)
-            heights[i][j] = (camera_height - new_depth[i][j]*np.cos(alpha))
-    return heights
+        alpha = alpha0 + (np.radians(vfov) - np.radians(ang_per_vpix*(i)))
+        for j in range(0,size[1]):  
+            new_depth[i][j] = (camera_height - new_depth[i][j]*np.cos(alpha) - new_depth[i][j]*np.cos(kth0))
+    return new_depth
 
-def depth_drivable_surfaces(depth, camera_height, fov = [70.6, 60]):
+def fill_edges_depth(edges, threshold = 5):
+    dims = edges.shape
+    threshold = edges.max()/threshold
+    filled = edges.copy()
+    pix = 255
+    for x in range(dims[1] - 1, -1, -1):
+        for y in range(dims[0] - 1, -1, -1):
+            if filled[y][x] > threshold and pix == 255 and y < dims[0] - 50: 
+                pix = 0
+            else:
+                filled[y][x] = pix
+        pix = 255
+    return filled
+
+
+#Optimize
+def depth_drivable_surfaces(color, depth, camera_height, fov = [70.6, 60]):
     heights = calculate_heights(depth,camera_height,fov)
-    return 
-
-
+    heights = convert_color(heights)
+    heights = denoise_color(heights)
+    heights = convert_greyscale(heights)
+    gx, gy = np.gradient(heights,2)
+    gtot = np.sqrt(gx**2 + gy**2)
+    filled = fill_edges_depth(gtot)
+    filled = filled.astype("uint8")
+    overlay = overlay_drivable_surface(color,filled)
+    return overlay
 
 
 # #given an array of objects, overlay object onto original image
