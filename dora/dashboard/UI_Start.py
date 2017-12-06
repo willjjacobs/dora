@@ -192,6 +192,7 @@ class tabWidget(QWidget):
         self.pushButton1 = QPushButton("Toggle Isolate Sports Ball")
         self.pushButton1.clicked.connect(self.isolate_toggle_act)
         self.pushButton2 = QPushButton("DevTool 02")
+        self.pushButton2.clicked.connect(self.detect_edges_act)
         self.pushButton3 = QPushButton("DevTool 03")
         self.pushButton4 = QPushButton("DevTool 04")
         self.tab_tools.vlayout01.addWidget(self.pushButton1)
