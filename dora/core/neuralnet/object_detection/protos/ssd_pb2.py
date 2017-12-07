@@ -21,7 +21,7 @@ from core.neuralnet.object_detection.protos import image_resizer_pb2 as object__
 from core.neuralnet.object_detection.protos import matcher_pb2 as object__detection_dot_protos_dot_matcher__pb2
 from core.neuralnet.object_detection.protos import losses_pb2 as object__detection_dot_protos_dot_losses__pb2
 from core.neuralnet.object_detection.protos import post_processing_pb2 as object__detection_dot_protos_dot_post__processing__pb2
-from object_detection.protos import region_similarity_calculator_pb2 as object__detection_dot_protos_dot_region__similarity__calculator__pb2
+from core.neuralnet.object_detection.protos import region_similarity_calculator_pb2 as object__detection_dot_protos_dot_region__similarity__calculator__pb2
 
 
 DESCRIPTOR = _descriptor.FileDescriptor(

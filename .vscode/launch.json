@@ -12,7 +12,7 @@
             "pythonPath": "${config:python.pythonPath}",
             "program": "${file}",
             "cwd": "${workspaceRoot}",
-            "args": ["server"],
+            "args": ["train"],
             "env": {},
             "envFile": "${workspaceRoot}/.env",
             "debugOptions": [

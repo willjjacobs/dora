@@ -29,7 +29,7 @@ from core.neuralnet.object_detection.meta_architectures import rfcn_meta_arch
 from core.neuralnet.object_detection.meta_architectures import ssd_meta_arch
 from core.neuralnet.object_detection.models import faster_rcnn_inception_resnet_v2_feature_extractor as frcnn_inc_res
 from core.neuralnet.object_detection.models import faster_rcnn_inception_v2_feature_extractor as frcnn_inc_v2
-from core.neuralnet.object_detection.models import faster_rcnn_nas_feature_extractor as frcnn_nas
+#from core.neuralnet.object_detection.models import faster_rcnn_nas_feature_extractor as frcnn_nas
 from core.neuralnet.object_detection.models import faster_rcnn_resnet_v1_feature_extractor as frcnn_resnet_v1
 from core.neuralnet.object_detection.models.embedded_ssd_mobilenet_v1_feature_extractor import EmbeddedSSDMobileNetV1FeatureExtractor
 from core.neuralnet.object_detection.models.ssd_inception_v2_feature_extractor import SSDInceptionV2FeatureExtractor
@@ -47,8 +47,8 @@ SSD_FEATURE_EXTRACTOR_CLASS_MAP = {
 
 # A map of names to Faster R-CNN feature extractors.
 FASTER_RCNN_FEATURE_EXTRACTOR_CLASS_MAP = {
-    'faster_rcnn_nas':
-    frcnn_nas.FasterRCNNNASFeatureExtractor,
+    #'faster_rcnn_nas':
+    #frcnn_nas.FasterRCNNNASFeatureExtractor,
     'faster_rcnn_inception_resnet_v2':
     frcnn_inc_res.FasterRCNNInceptionResnetV2FeatureExtractor,
     'faster_rcnn_inception_v2':
