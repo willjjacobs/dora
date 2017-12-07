@@ -101,6 +101,7 @@ class Camera(object):
 
 class FileFeed(object):
     def __init__(self, file):
+        print(file)
         self.feed = cv2.VideoCapture(file)
     def get_frame(self):
         retval, im = self.feed.read()
@@ -119,12 +120,6 @@ def convert_greyscale(image):
 def convert_color(image):
     color_image = cv2.cvtColor(image, cv2.COLOR_GRAY2BGR)
     return color_image
-
-def rotate_image(image, angle):
-    rows, cols, extra = image.shape
-    M = cv2.getRotationMatrix2D((cols / 2, rows / 2), angle, 1)
-    new_image = cv2.warpAffine(image, M, (cols, rows))
-    return new_image
 
 #Smooths color images
 def denoise_color(image):
@@ -188,8 +183,8 @@ def highest_point(eroded):
 def overlay_drivable_surface(highest_point, image):
     return cv2.addWeighted(highest_point, .5, image, .5, 0)
 
-
-def detect_drivable_surfaces(image):
+#Affected by color changes and texture 
+def detect_drivable_surfaces_color(image):
     new_image = image.copy()
     denoise = denoise_color(new_image)
     edges = detect_edge(new_image)
@@ -200,8 +195,9 @@ def detect_drivable_surfaces(image):
     overlayed = overlay_drivable_surface(new_eroded, new_image)
     return overlayed
 
+#TODO
 def calibrate(depth):
-    calibration = 1/4500.0
+    calibration = 1
     new_depth = depth*calibration
     return new_depth 
 
@@ -210,7 +206,7 @@ def calculate_heights(depth, camera_height, fov = [70.6, 60]):
     hfov = fov[0]
     vfov = fov[1]
     size = depth.shape
-    new_depth = (depth).copy()
+    new_depth = calibrate(depth.copy())
     heights = np.zeros((size[0],size[1]))
     ang_per_hpix = hfov/size[0]
     ang_per_vpix = vfov/size[1]
@@ -225,7 +221,6 @@ def calculate_heights(depth, camera_height, fov = [70.6, 60]):
     r0 = r0/count
     rtop = np.mean(top_line)
     alpha0 = np.arccos(camera_height/r0)
-
     for i in range(0,size[0]):
         alpha = alpha0 + (np.radians(vfov) - np.radians(ang_per_vpix*(i)))
         for j in range(0,size[1]):  
@@ -246,7 +241,6 @@ def fill_edges_depth(edges, threshold = 5):
         pix = 255
     return filled
 
-
 #Optimize
 def depth_drivable_surfaces(color, depth, camera_height, fov = [70.6, 60]):
     heights = calculate_heights(depth,camera_height,fov)
@@ -259,7 +253,6 @@ def depth_drivable_surfaces(color, depth, camera_height, fov = [70.6, 60]):
     filled = filled.astype("uint8")
     overlay = overlay_drivable_surface(color,filled)
     return overlay
-
 
 # #given an array of objects, overlay object onto original image
 # #TODO get vis_util working for box overlay
@@ -295,6 +288,8 @@ def depth_drivable_surfaces(color, depth, camera_height, fov = [70.6, 60]):
 #         line_thickness=4)
 
 #     return new_image
+
+
 
 #given an array of objects, overlay object onto original image
 #TODO get vis_util working for box overlay
