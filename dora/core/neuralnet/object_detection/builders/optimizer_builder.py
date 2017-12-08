@@ -16,7 +16,9 @@
 """Functions to build DetectionModel training optimizers."""
 
 import tensorflow as tf
-from object_detection.utils import learning_schedules
+from core.neuralnet.object_detection.utils import learning_schedules
+
+slim = tf.contrib.slim
 
 
 def build(optimizer_config, global_summaries):
@@ -87,7 +89,7 @@ def _create_learning_rate(learning_rate_config, global_summaries):
     config = learning_rate_config.exponential_decay_learning_rate
     learning_rate = tf.train.exponential_decay(
         config.initial_learning_rate,
-        tf.train.get_or_create_global_step(),
+        slim.get_or_create_global_step(),
         config.decay_steps,
         config.decay_factor,
         staircase=config.staircase)
@@ -100,20 +102,11 @@ def _create_learning_rate(learning_rate_config, global_summaries):
     learning_rate_sequence = [config.initial_learning_rate]
     learning_rate_sequence += [x.learning_rate for x in config.schedule]
     learning_rate = learning_schedules.manual_stepping(
-        tf.train.get_or_create_global_step(), learning_rate_step_boundaries,
+        slim.get_or_create_global_step(), learning_rate_step_boundaries,
         learning_rate_sequence)
-
-  if learning_rate_type == 'cosine_decay_learning_rate':
-    config = learning_rate_config.cosine_decay_learning_rate
-    learning_rate = learning_schedules.cosine_decay_with_warmup(
-        tf.train.get_or_create_global_step(),
-        config.learning_rate_base,
-        config.total_steps,
-        config.warmup_learning_rate,
-        config.warmup_steps)
 
   if learning_rate is None:
     raise ValueError('Learning_rate %s not supported.' % learning_rate_type)
 
-  global_summaries.add(tf.summary.scalar('Learning_Rate', learning_rate))
+  global_summaries.add(tf.summary.scalar('Learning Rate', learning_rate))
   return learning_rate

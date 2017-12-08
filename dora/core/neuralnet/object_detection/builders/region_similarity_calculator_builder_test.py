@@ -18,9 +18,9 @@
 import tensorflow as tf
 
 from google.protobuf import text_format
-from object_detection.builders import region_similarity_calculator_builder
-from object_detection.core import region_similarity_calculator
-from object_detection.protos import region_similarity_calculator_pb2 as sim_calc_pb2
+from core.neuralnet.object_detection.builders import region_similarity_calculator_builder
+from core.neuralnet.object_detection.core import region_similarity_calculator
+from core.neuralnet.object_detection.protos import region_similarity_calculator_pb2 as sim_calc_pb2
 
 
 class RegionSimilarityCalculatorBuilderTest(tf.test.TestCase):

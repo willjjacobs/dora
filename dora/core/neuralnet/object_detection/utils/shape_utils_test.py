@@ -17,7 +17,7 @@
 
 import tensorflow as tf
 
-from object_detection.utils import shape_utils
+from core.neuralnet.object_detection.utils import shape_utils
 
 
 class UtilTest(tf.test.TestCase):

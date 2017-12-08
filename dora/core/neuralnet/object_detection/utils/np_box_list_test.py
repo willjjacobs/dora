@@ -18,7 +18,7 @@
 import numpy as np
 import tensorflow as tf
 
-from object_detection.utils import np_box_list
+from core.neuralnet.object_detection.utils import np_box_list
 
 
 class BoxListTest(tf.test.TestCase):

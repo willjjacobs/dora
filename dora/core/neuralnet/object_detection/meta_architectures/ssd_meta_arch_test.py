@@ -18,13 +18,14 @@ import functools
 import numpy as np
 import tensorflow as tf
 
-from object_detection.core import anchor_generator
-from object_detection.core import box_list
-from object_detection.core import losses
-from object_detection.core import post_processing
-from object_detection.core import region_similarity_calculator as sim_calc
-from object_detection.meta_architectures import ssd_meta_arch
-from object_detection.utils import test_utils
+from tensorflow.python.training import saver as tf_saver
+from core.neuralnet.object_detection.core import anchor_generator
+from core.neuralnet.object_detection.core import box_list
+from core.neuralnet.object_detection.core import losses
+from core.neuralnet.object_detection.core import post_processing
+from core.neuralnet.object_detection.core import region_similarity_calculator as sim_calc
+from core.neuralnet.object_detection.meta_architectures import ssd_meta_arch
+from core.neuralnet.object_detection.utils import test_utils
 
 slim = tf.contrib.slim
 
@@ -33,12 +34,7 @@ class FakeSSDFeatureExtractor(ssd_meta_arch.SSDFeatureExtractor):
 
   def __init__(self):
     super(FakeSSDFeatureExtractor, self).__init__(
-        is_training=True,
-        depth_multiplier=0,
-        min_depth=0,
-        pad_to_multiple=1,
-        batch_norm_trainable=True,
-        conv_hyperparams=None)
+        depth_multiplier=0, min_depth=0, conv_hyperparams=None)
 
   def preprocess(self, resized_inputs):
     return tf.identity(resized_inputs)
@@ -59,7 +55,7 @@ class MockAnchorGenerator2x2(anchor_generator.AnchorGenerator):
   def num_anchors_per_location(self):
     return [1]
 
-  def _generate(self, feature_map_shape_list, im_height, im_width):
+  def _generate(self, feature_map_shape_list):
     return box_list.BoxList(
         tf.constant([[0, 0, .5, .5],
                      [0, .5, .5, 1],
@@ -151,7 +147,6 @@ class SsdMetaArchTest(tf.test.TestCase):
         self.assertTrue('box_encodings' in prediction_dict)
         self.assertTrue('class_predictions_with_background' in prediction_dict)
         self.assertTrue('feature_maps' in prediction_dict)
-        self.assertTrue('anchors' in prediction_dict)
 
         init_op = tf.global_variables_initializer()
       with self.test_session(graph=tf_graph) as sess:
@@ -247,7 +242,7 @@ class SsdMetaArchTest(tf.test.TestCase):
 
   def test_restore_map_for_detection_ckpt(self):
     init_op = tf.global_variables_initializer()
-    saver = tf.train.Saver()
+    saver = tf_saver.Saver()
     save_path = self.get_temp_dir()
     with self.test_session() as sess:
       sess.run(init_op)

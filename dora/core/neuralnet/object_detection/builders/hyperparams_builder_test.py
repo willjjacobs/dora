@@ -20,8 +20,9 @@ import tensorflow as tf
 
 from google.protobuf import text_format
 
-from object_detection.builders import hyperparams_builder
-from object_detection.protos import hyperparams_pb2
+# TODO: Rewrite third_party imports.
+from core.neuralnet.object_detection.builders import hyperparams_builder
+from core.neuralnet.object_detection.protos import hyperparams_pb2
 
 slim = tf.contrib.slim
 

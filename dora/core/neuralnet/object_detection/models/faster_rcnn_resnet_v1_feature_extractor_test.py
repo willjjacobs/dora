@@ -18,7 +18,7 @@
 import numpy as np
 import tensorflow as tf
 
-from object_detection.models import faster_rcnn_resnet_v1_feature_extractor as faster_rcnn_resnet_v1
+from core.neuralnet.object_detection.models import faster_rcnn_resnet_v1_feature_extractor as faster_rcnn_resnet_v1
 
 
 class FasterRcnnResnetV1FeatureExtractorTest(tf.test.TestCase):
@@ -37,7 +37,6 @@ class FasterRcnnResnetV1FeatureExtractorTest(tf.test.TestCase):
     return feature_extractor_map[architecture](
         is_training=False,
         first_stage_features_stride=first_stage_features_stride,
-        batch_norm_trainable=False,
         reuse_weights=None,
         weight_decay=0.0)
 

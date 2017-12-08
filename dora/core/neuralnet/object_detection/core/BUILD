@@ -265,11 +265,6 @@ py_library(
 )
 
 py_library(
-    name = "data_parser",
-    srcs = ["data_parser.py"],
-)
-
-py_library(
     name = "box_predictor",
     srcs = ["box_predictor.py"],
     deps = [

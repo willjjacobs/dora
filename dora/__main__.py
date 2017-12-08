@@ -20,6 +20,11 @@ def main(args=sys.argv):
         if (args[1] == 'client'):
             from dashboard.UI_Start import ui_main
             return ui_main()
+        if (args[1] == 'train'):
+            from core.neuralnet.NeuralNet import NeuralNet
+            n = NeuralNet()
+            if args[2] and args[3]:
+                n.train(args[2], args[3])
         else:  # (len(sys.argv) > 2):
             print("Sample usage: \n"
                   "To launch the dashboard: python dora client\n"
