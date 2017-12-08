@@ -2,10 +2,10 @@ import numpy as np
 import cv2
 import sys
 import os
-#from pylibfreenect2 import Freenect2, SyncMultiFrameListener
-#from pylibfreenect2 import FrameType, Registration, Frame
-#from pylibfreenect2 import createConsoleLogger, setGlobalLogger
-#from pylibfreenect2 import LoggerLevel
+# from pylibfreenect2 import Freenect2, SyncMultiFrameListener
+# from pylibfreenect2 import FrameType, Registration, Frame
+# from pylibfreenect2 import createConsoleLogger, setGlobalLogger
+# from pylibfreenect2 import LoggerLevel
 from core.neuralnet.utils import visualization_utils as vis_util
 
 DEFAULT_RES = (240, 135)
@@ -13,6 +13,18 @@ WEBCAM_PORT = 0
 ADJUSTMENT_FRAMES = 2
 DENOISING_PARAMS = [10, 10, 7, 21]
 
+#Optimize Drivable Surfaces
+#Depth map
+
+def Selector(args, camera_port = 0, file = ""):
+    if (args == 'kinect'):
+        return Kinect()
+    elif (args == 'webcam'):
+        return Webcam()
+    elif (args == 'filefeed'):
+        return FileFeed(file)
+    else: 
+        return Camera(camera_port)
 
 #ADD SELECTOR 
 #Class for connection to Kinect camera using pylibfreenect2
@@ -46,13 +58,19 @@ class Kinect(object):
         self.registered = Frame(512, 424, 4)
 
     def get_frame(self):
-        return self.listener.waitForNewFrame()["color"]
+        frame = self.listener.waitForNewFrame()
+        rgb = frame["color"].asarray().copy()
+        self.listener.release(frame)
+        return rgb
     def close(self):
         self.device.stop()
-        self.device.close()
+        #self.device.close()
         return 0
     def get_depth(self):
-        return self.listener.waitForNewFrame()["depth"]
+        frame = self.listener.waitForNewFrame()
+        depth = frame["depth"].asarray().copy()
+        self.listener.release(frame)
+        return depth / 4500.
 
 #Class for webcam connection
 class Webcam(object):
@@ -70,17 +88,20 @@ class Webcam(object):
 #Class for arbritrary camera connection
 #TODO
 class Camera(object):
-    def __init__(self):
-        pass
+    def __init__(self, camera_port):
+        self.camera = cv2.VideoCapture(camera_port)
     def get_frame(self):
-        pass
-    def get_depth(self):
-        pass
+        for i in range(0, ADJUSTMENT_FRAMES):
+            self.camera.read()
+        retval, im = self.camera.read()
+        return im
     def close(self):
-        pass
+        del (self.camera)
+        return 0
 
 class FileFeed(object):
     def __init__(self, file):
+        print(file)
         self.feed = cv2.VideoCapture(file)
     def get_frame(self):
         retval, im = self.feed.read()
@@ -99,12 +120,6 @@ def convert_greyscale(image):
 def convert_color(image):
     color_image = cv2.cvtColor(image, cv2.COLOR_GRAY2BGR)
     return color_image
-
-def rotate_image(image, angle):
-    rows, cols, extra = image.shape
-    M = cv2.getRotationMatrix2D((cols / 2, rows / 2), angle, 1)
-    new_image = cv2.warpAffine(image, M, (cols, rows))
-    return new_image
 
 #Smooths color images
 def denoise_color(image):
@@ -168,11 +183,11 @@ def highest_point(eroded):
 def overlay_drivable_surface(highest_point, image):
     return cv2.addWeighted(highest_point, .5, image, .5, 0)
 
-#TODO
-def detect_drivable_surfaces(image):
+#Affected by color changes and texture 
+def detect_drivable_surfaces_color(image):
     new_image = image.copy()
     denoise = denoise_color(new_image)
-    edges = detect_edge(denoise)
+    edges = detect_edge(new_image)
     filled = fill_edges(edges)
     eroded = erode_filled(filled)
     smoothed_eroded = cv2.GaussianBlur(eroded, (15, 15), 0)
@@ -180,6 +195,68 @@ def detect_drivable_surfaces(image):
     overlayed = overlay_drivable_surface(new_eroded, new_image)
     return overlayed
 
+#TODO
+def calibrate(depth):
+    calibration = 1
+    new_depth = depth*calibration
+    return new_depth 
+
+def calculate_heights(depth, camera_height, fov = [70.6, 60]):
+    kth0 = np.radians(30)
+    hfov = fov[0]
+    vfov = fov[1]
+    size = depth.shape
+    new_depth = calibrate(depth.copy())
+    heights = np.zeros((size[0],size[1]))
+    ang_per_hpix = hfov/size[0]
+    ang_per_vpix = vfov/size[1]
+    bottom_line = new_depth[size[0]-1,:]
+    top_line = new_depth[int((size[0]-1)/2),:]
+    r0 = 0
+    count = 0
+    for i in range(0,len(bottom_line)):
+        if bottom_line[i] > 5:
+            count+=1
+            r0+=bottom_line[i]
+    r0 = r0/count
+    rtop = np.mean(top_line)
+    alpha0 = np.arccos(camera_height/r0)
+    for i in range(0,size[0]):
+        alpha = alpha0 + (np.radians(vfov) - np.radians(ang_per_vpix*(i)))
+        for j in range(0,size[1]):  
+            new_depth[i][j] = (camera_height - new_depth[i][j]*np.cos(alpha) - new_depth[i][j]*np.cos(kth0))
+    return new_depth
+
+def fill_edges_depth(edges, threshold = 5):
+    dims = edges.shape
+    threshold = edges.max()/threshold
+    filled = edges.copy()
+    pix = 255
+    for x in range(dims[1] - 1, -1, -1):
+        for y in range(dims[0] - 1, -1, -1):
+            if filled[y][x] > threshold and pix == 255 and y < dims[0] - 50: 
+                pix = 0
+            else:
+                filled[y][x] = pix
+        pix = 255
+    return filled
+
+#Optimize
+def depth_drivable_surfaces(color, depth, camera_height, fov = [70.6, 60]):
+    heights = calculate_heights(depth,camera_height,fov)
+    heights = convert_color(heights)
+    heights = denoise_color(heights)
+    #heights = cv2.GaussianBlur(heights, (15, 15), 0)
+    heights = convert_greyscale(heights)
+    gx, gy = np.gradient(heights,50)
+    gtot = np.sqrt(gx**2 + gy**2)
+    kernel = np.ones((5,5),np.float32)/50
+    gtot = cv2.filter2D(gtot,-1,kernel)
+    # #gtot = cv2.GaussianBlur(gtot,(5,5),0)
+    filled = fill_edges_depth(gtot)
+    filled = filled.astype("uint8")
+    overlay = overlay_drivable_surface(color,filled)
+    return overlay
 
 # #given an array of objects, overlay object onto original image
 # #TODO get vis_util working for box overlay
@@ -215,6 +292,8 @@ def detect_drivable_surfaces(image):
 #         line_thickness=4)
 
 #     return new_image
+
+
 
 #given an array of objects, overlay object onto original image
 #TODO get vis_util working for box overlay

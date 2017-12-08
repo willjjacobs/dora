@@ -10,32 +10,58 @@ from time import sleep
 from PyQt5.QtWidgets import (
     QMainWindow, QAction, QTabWidget, QVBoxLayout, QHBoxLayout, QGroupBox,
     QGridLayout, QDialog, qApp, QApplication, QWidget, QLineEdit, QPushButton,
-    QMessageBox, QLabel, QFrame, QTableWidget, QTableWidgetItem)
+    QMessageBox, QLabel, QFrame, QTableWidget, QTableWidgetItem, QCheckBox)
 from PyQt5.QtCore import QCoreApplication, pyqtSlot, QSettings, QThread, pyqtSignal, Qt
 from PyQt5.QtGui import QIcon, QImage, QPixmap, QFont
 #from PyQt5.QtCore.QString import QString
 from dashboard.util import *
+#from util import *
 import socket
 import requests
+import config
 from core import vision
 from core.neuralnet import NeuralNet
 import tensorflow as tf
-import time
+
+settings = setup_config()
+task = create_task()
 
 class Window(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        self.settings = setup_config()
-        open_event(self.settings)
-        self.task = create_task()
+        #settings = setup_config()
+        open_event(settings)
+        #task = create_task()
         self.initUI()
 
     @pyqtSlot()
     def app_quit(self):
         print("Quitting")
-        close_event(self.settings)
+        close_event(settings)
         QCoreApplication.quit()
+        
+    @pyqtSlot()
+    def todo(self):
+        print("ToDo")
+        
+    @pyqtSlot()
+    def set_RGB(self):
+        settings.setValue("Window", "RGB")
+        config_to_task(settings, task)
+        print("Setting Display to " + task["Window"])
+        
+    @pyqtSlot()
+    def set_Greyscale(self):
+        settings.setValue("Window", "Greyscale")
+        config_to_task(settings, task)
+        print("Setting Display to " + task["Window"])
+        
+    @pyqtSlot()
+    def set_Depthmap(self):
+        settings.setValue("Window", "Depthmap")
+        config_to_task(settings, task)
+        print("Setting Display to " + task["Window"])
 
     def initUI(self):
         #Create Window Widgets
@@ -101,24 +127,33 @@ class Window(QMainWindow):
         windowMenu = menubar.addMenu('&Window')
 
         RGB_visual_act = QAction('&RGB', self)
+        RGB_visual_act.setStatusTip('Set Display Window to RGB')
+        RGB_visual_act.triggered.connect(self.set_RGB)
         windowMenu.addAction(RGB_visual_act)
 
         greyscale_visual_act = QAction('Greyscale', self)
+        greyscale_visual_act.setStatusTip('Set Display Window to Grayscale')
+        greyscale_visual_act.triggered.connect(self.set_Greyscale)
         windowMenu.addAction(greyscale_visual_act)
 
         depthmap_visual_act = QAction('Depth Map', self)
+        depthmap_visual_act.setStatusTip('Set Display Window to Depthmap')
+        depthmap_visual_act.triggered.connect(self.set_Depthmap)
         windowMenu.addAction(depthmap_visual_act)
 
         datatable_act = QAction('Data Table', self)
+        datatable_act.triggered.connect(self.todo)
         windowMenu.addAction(datatable_act)
 
         #Create Settings Menu
         settingsMenu = menubar.addMenu('&Settings')
 
         preferences_act = QAction('&Preferences', self)
+        preferences_act.triggered.connect(self.todo)
         settingsMenu.addAction(preferences_act)
 
-        preprocessing_act = QAction('&Pre=Processing', self)
+        preprocessing_act = QAction('&Pre-Processing', self)
+        preprocessing_act.triggered.connect(self.todo)
         settingsMenu.addAction(preprocessing_act)
 
         self.setGeometry(960, 100, 960, 540)
@@ -153,15 +188,18 @@ class tabWidget(QWidget):
         self.tab_tools.hlayout = QHBoxLayout(self)
         self.tab_tools.hlayout.addStretch(0)
 
-        self.pushButton1 = QPushButton("Print Task")
-        #self.pushButton1.clicked.connect(print_task(task))
-        self.pushButton2 = QPushButton("DevTool 02")
+        self.b1 = QCheckBox("Checkbox 1")
+        self.pushButton1 = QPushButton("Toggle Isolate Sports Ball")
+        self.pushButton1.clicked.connect(self.isolate_toggle_act)
+        self.pushButton2 = QPushButton("Toggle Edge Detection")
+        self.pushButton2.clicked.connect(self.detect_edges_act)
         self.pushButton3 = QPushButton("DevTool 03")
         self.pushButton4 = QPushButton("DevTool 04")
         self.tab_tools.vlayout01.addWidget(self.pushButton1)
         self.tab_tools.vlayout01.addWidget(self.pushButton2)
         self.tab_tools.vlayout02.addWidget(self.pushButton3)
         self.tab_tools.vlayout02.addWidget(self.pushButton4)
+        self.tab_tools.hlayout.addWidget(self.b1)
         self.tab_tools.hlayout.addLayout(self.tab_tools.vlayout01)
         self.tab_tools.hlayout.addLayout(self.tab_tools.vlayout02)
         self.tab_tools.setLayout(self.tab_tools.hlayout)
@@ -186,6 +224,28 @@ class tabWidget(QWidget):
         # Add tabs to widget
         self.layout.addWidget(self.tabs)
         self.setLayout(self.layout)
+
+    @pyqtSlot()
+    def isolate_toggle_act(self):
+        if settings.value("isolate_toggle") == "True":
+            settings.setValue("isolate_toggle", "False")
+        else:
+            settings.setValue("isolate_toggle", "True")
+
+        #print(settings.value("isolate_toggle"))
+        #print (task["isolate_toggle"])
+        config_to_task(settings, task)
+        #print (task["isolate_toggle"])
+        
+    @pyqtSlot()
+    def detect_edges_act(self):
+        if settings.value("overlay_edges") == "True":
+            settings.setValue("overlay_edges", "False")
+        else:
+            settings.setValue("overlay_edges", "True")
+            
+        config_to_task(settings, task)
+
 
     @pyqtSlot()
     def on_command(self):
@@ -232,9 +292,9 @@ class Thread(QThread):
     def run(self):
         while True:
             try:
-                r = requests.get('http://localhost:8080')
+                r = requests.get('http://' + str(config.core_server_address) + ':' +str(config.core_server_port) + '/video_feed')
             except:
-                time.sleep(5)
+                sleep(5)
                 continue
             nparr = np.fromstring(r.content, dtype=np.uint8)
             try:
