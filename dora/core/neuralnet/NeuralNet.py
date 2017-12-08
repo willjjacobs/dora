@@ -142,8 +142,8 @@ class NeuralNet:
 
     # TO-DO replace this with label map
 def class_text_to_int(row_label):
-    if row_label == 'macncheese':
-        return 1
+    if row_label == 'Rocks':
+        return 92
     else:
         None
 
