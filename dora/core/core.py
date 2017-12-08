@@ -27,6 +27,7 @@ class Core:
         self.kinect = None
 
         self.nn = NeuralNet.NeuralNet()
+        self.nn.init_network()
         self.server = dora_httpd_server(server_address, port)
         self.server.up()
 
@@ -74,7 +75,6 @@ class Core:
     def settingChanger(self,stg):
         need_to_check = {'Window', 'Camera'}
         for k, v in config.settings.items():
-
             if stg[k] == 'True':
                 stg[k] = True
             elif stg[k] == 'False':
