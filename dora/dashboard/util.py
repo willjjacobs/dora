@@ -63,7 +63,7 @@ def config_to_task(config, task):
                     'overlay_edges' : task['overlay_edges']}
     print(task["isolate_toggle"])
     print(task["overlay_edges"])
-    requests.post('http://localhost:8080', json=data_to_send)
+    requests.post('http://' + str(config.core_server_address) + ':' +str(config.core_server_port), json=data_to_send)
 
 
     #Runs on program open
