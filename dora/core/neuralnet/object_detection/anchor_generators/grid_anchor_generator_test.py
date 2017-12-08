@@ -13,7 +13,7 @@
 # limitations under the License.
 # ==============================================================================
 
-"""Tests for core.neuralnet.core.neuralnet.core.neuralnet.core.neuralnet.core.neuralnet.core.neuralnet.object_detection.grid_anchor_generator."""
+"""Tests for object_detection.grid_anchor_generator."""
 
 import tensorflow as tf
 

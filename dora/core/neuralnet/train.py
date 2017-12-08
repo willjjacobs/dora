@@ -48,7 +48,7 @@ import tensorflow as tf
 
 from google.protobuf import text_format
 
-import core.neuralnet.trainer
+import core.neuralnet.trainer as trainer
 from core.neuralnet.object_detection.builders import input_reader_builder
 from core.neuralnet.object_detection.builders import model_builder
 from core.neuralnet.object_detection.protos import input_reader_pb2
@@ -194,5 +194,5 @@ def train():
                 worker_job_name, is_chief, train_dir)
 
 
-if __name__ == '__main__':
-  tf.app.run()
+#if __name__ == '__main__':
+#  tf.app.run()

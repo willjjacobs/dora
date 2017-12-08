@@ -13,7 +13,7 @@
 # limitations under the License.
 # ==============================================================================
 
-"""Tests for core.neuralnet.object_detection.utils.shape_utils."""
+"""Tests for object_detection.utils.shape_utils."""
 
 import tensorflow as tf
 

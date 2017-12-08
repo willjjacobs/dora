@@ -13,7 +13,7 @@
 # limitations under the License.
 # ==============================================================================
 
-"""Tests for core.neuralnet.object_detection.models.faster_rcnn_resnet_v1_feature_extractor."""
+"""Tests for object_detection.models.faster_rcnn_resnet_v1_feature_extractor."""
 
 import numpy as np
 import tensorflow as tf
@@ -37,7 +37,6 @@ class FasterRcnnResnetV1FeatureExtractorTest(tf.test.TestCase):
     return feature_extractor_map[architecture](
         is_training=False,
         first_stage_features_stride=first_stage_features_stride,
-        batch_norm_trainable=False,
         reuse_weights=None,
         weight_decay=0.0)
 

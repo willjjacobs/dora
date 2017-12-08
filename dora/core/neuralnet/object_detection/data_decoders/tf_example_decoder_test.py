@@ -13,7 +13,7 @@
 # limitations under the License.
 # ==============================================================================
 
-"""Tests for core.neuralnet.object_detection.data_decoders.tf_example_decoder."""
+"""Tests for object_detection.data_decoders.tf_example_decoder."""
 
 import numpy as np
 import tensorflow as tf

@@ -13,7 +13,7 @@
 # limitations under the License.
 # ==============================================================================
 
-"""Tests for core.neuralnet.object_detection.box_coder.mean_stddev_boxcoder."""
+"""Tests for object_detection.box_coder.mean_stddev_boxcoder."""
 
 import tensorflow as tf
 

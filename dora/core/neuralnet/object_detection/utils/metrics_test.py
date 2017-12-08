@@ -13,7 +13,7 @@
 # limitations under the License.
 # ==============================================================================
 
-"""Tests for core.neuralnet.object_detection.metrics."""
+"""Tests for object_detection.metrics."""
 
 import numpy as np
 import tensorflow as tf

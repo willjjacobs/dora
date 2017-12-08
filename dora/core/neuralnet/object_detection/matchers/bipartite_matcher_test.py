@@ -13,7 +13,7 @@
 # limitations under the License.
 # ==============================================================================
 
-"""Tests for core.neuralnet.object_detection.core.bipartite_matcher."""
+"""Tests for object_detection.core.bipartite_matcher."""
 
 import tensorflow as tf
 

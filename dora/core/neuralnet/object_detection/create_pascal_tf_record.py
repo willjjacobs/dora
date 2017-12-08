@@ -13,7 +13,7 @@
 # limitations under the License.
 # ==============================================================================
 
-r"""Convert raw PASCAL dataset to TFRecord for core.neuralnet.object_detection.
+r"""Convert raw PASCAL dataset to TFRecord for object_detection.
 
 Example usage:
     ./create_pascal_tf_record --data_dir=/home/user/VOCdevkit \

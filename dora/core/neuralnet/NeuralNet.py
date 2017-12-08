@@ -1,9 +1,13 @@
+
+import datetime
 import glob
 import io
 import numpy as np
 import os
 import pandas as pd
-import core.neuralnet.train
+import core.neuralnet.train as train
+import core.neuralnet.object_detection.export_inference_graph as export
+from stat import S_ISREG, ST_MTIME, ST_MODE
 import tensorflow as tf
 import xml.etree.ElementTree as ET
 
@@ -28,7 +32,6 @@ class NeuralNet:
             self.PATH_TO_CHECKPOINT = graph_path
         if label_path:
             self.PATH_TO_LABELS = label_path
-        self.init_network()
 
     def init_network(self):
         self.detection_graph = tf.Graph()
@@ -73,7 +76,10 @@ class NeuralNet:
 
     def train(self, train_dir, test_dir):
                 # Generate CSV
-        data_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)),'data')
+        current_file_dir = os.path.dirname(os.path.abspath(__file__))
+        data_dir = os.path.join(current_file_dir,'data')
+        training_dir = os.path.join(current_file_dir,'training')
+        config_file_path = os.path.join(data_dir, 'training.config')
         for directory in [train_dir,test_dir]:
             xml_df = self.xml_to_csv(directory)
             if(directory == train_dir):
@@ -92,6 +98,27 @@ class NeuralNet:
                 tf_example = create_tf_example(group, directory)
                 writer.write(tf_example.SerializeToString())
             writer.close()
+               
+        try:
+            train.train()
+        except:
+            print("Exporting graph file")
+            # get all entries in the directory w/ stats
+            entries = (os.path.join(training_dir, fn) for fn in os.listdir(training_dir))
+            entries = ((os.stat(path), path) for path in entries)
+
+            # leave only regular files, insert creation date
+            entries = ((stat[ST_MTIME], path) for stat, path in entries if S_ISREG(stat[ST_MODE]))
+            for mdate, path in sorted(entries, reverse=True):
+                file_name = os.path.basename(path)
+                if "model.ckpt-" in file_name:
+                    checkpoint = os.path.splitext(file_name)[0]
+                    break
+            checkpoint_path = os.path.join(training_dir,checkpoint)
+            output_path = os.path.join(training_dir, ('inference_graph_' + str(datetime.date.today())))
+            export.export("image_tensor", config_file_path, checkpoint_path, output_path)
+
+        
 
     def xml_to_csv(self, path):
         xml_list = []

@@ -13,13 +13,14 @@
 # limitations under the License.
 # ==============================================================================
 
-"""Tests core.neuralnet.object_detection.core.hyperparams_builder."""
+"""Tests object_detection.core.hyperparams_builder."""
 
 import numpy as np
 import tensorflow as tf
 
 from google.protobuf import text_format
 
+# TODO: Rewrite third_party imports.
 from core.neuralnet.object_detection.builders import hyperparams_builder
 from core.neuralnet.object_detection.protos import hyperparams_pb2
 

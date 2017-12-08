@@ -13,7 +13,7 @@
 # limitations under the License.
 # ==============================================================================
 
-"""Tests for core.neuralnet.object_detection.box_coder.faster_rcnn_box_coder."""
+"""Tests for object_detection.box_coder.faster_rcnn_box_coder."""
 
 import tensorflow as tf
 

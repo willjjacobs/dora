@@ -13,7 +13,7 @@
 # limitations under the License.
 # ==============================================================================
 
-"""Tests for core.neuralnet.object_detection.utils.variables_helper."""
+"""Tests for object_detection.utils.variables_helper."""
 import os
 
 import tensorflow as tf

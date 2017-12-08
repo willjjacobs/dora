@@ -13,7 +13,7 @@
 # limitations under the License.
 # ==============================================================================
 
-"""Tests for core.neuralnet.object_detection.core.box_predictor."""
+"""Tests for object_detection.core.box_predictor."""
 
 import numpy as np
 import tensorflow as tf

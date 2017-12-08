@@ -13,7 +13,7 @@
 # limitations under the License.
 # ==============================================================================
 
-r"""Convert the Oxford pet dataset to TFRecord for core.neuralnet.object_detection.
+r"""Convert the Oxford pet dataset to TFRecord for object_detection.
 
 See: O. M. Parkhi, A. Vedaldi, A. Zisserman, C. V. Jawahar
      Cats and Dogs

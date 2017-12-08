@@ -13,7 +13,7 @@
 # limitations under the License.
 # ==============================================================================
 
-"""Tests for core.neuralnet.object_detection.core.keypoint_ops."""
+"""Tests for object_detection.core.keypoint_ops."""
 import numpy as np
 import tensorflow as tf
 
@@ -158,38 +158,6 @@ class KeypointOpsTest(tf.test.TestCase):
         [[0.4, 0.6], [0.6, 0.4], [0.5, 0.5]],
     ])
     output = keypoint_ops.flip_horizontal(keypoints, 0.5, flip_permutation)
-
-    with self.test_session() as sess:
-      output_, expected_keypoints_ = sess.run([output, expected_keypoints])
-      self.assertAllClose(output_, expected_keypoints_)
-
-  def test_flip_vertical(self):
-    keypoints = tf.constant([
-        [[0.1, 0.1], [0.2, 0.2], [0.3, 0.3]],
-        [[0.4, 0.4], [0.5, 0.5], [0.6, 0.6]]
-    ])
-    flip_permutation = [0, 2, 1]
-
-    expected_keypoints = tf.constant([
-        [[0.9, 0.1], [0.7, 0.3], [0.8, 0.2]],
-        [[0.6, 0.4], [0.4, 0.6], [0.5, 0.5]],
-    ])
-    output = keypoint_ops.flip_vertical(keypoints, 0.5, flip_permutation)
-
-    with self.test_session() as sess:
-      output_, expected_keypoints_ = sess.run([output, expected_keypoints])
-      self.assertAllClose(output_, expected_keypoints_)
-
-  def test_rot90(self):
-    keypoints = tf.constant([
-        [[0.1, 0.1], [0.2, 0.2], [0.3, 0.3]],
-        [[0.4, 0.6], [0.5, 0.6], [0.6, 0.7]]
-    ])
-    expected_keypoints = tf.constant([
-        [[0.9, 0.1], [0.8, 0.2], [0.7, 0.3]],
-        [[0.4, 0.4], [0.4, 0.5], [0.3, 0.6]],
-    ])
-    output = keypoint_ops.rot90(keypoints)
 
     with self.test_session() as sess:
       output_, expected_keypoints_ = sess.run([output, expected_keypoints])

@@ -20,6 +20,7 @@ class Core:
         # start webcam and neural net
         self.cap = vision.Webcam()
         self.nn = NeuralNet.NeuralNet()
+        self.nn.init_network()
         self.server = Server(ip_addr=host, port=port)
         self.server.setName('DORA HTTP Server')
         self.server.start()  # starts server thread

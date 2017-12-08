@@ -13,7 +13,7 @@
 # limitations under the License.
 # ==============================================================================
 
-"""Tests for core.neuralnet.object_detection.core.prefetcher."""
+"""Tests for object_detection.core.prefetcher."""
 import tensorflow as tf
 
 from core.neuralnet.object_detection.core import prefetcher
