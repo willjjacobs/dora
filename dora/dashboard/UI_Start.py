@@ -44,6 +44,7 @@ class Window(QMainWindow):
     @pyqtSlot()
     def todo(self):
         print("ToDo")
+
         
     @pyqtSlot()
     def set_RGB(self):
@@ -62,6 +63,14 @@ class Window(QMainWindow):
         settings.setValue("Window", "Depthmap")
         config_to_task(settings, task)
         print("Setting Display to " + task["Window"])
+
+    @pyqtSlot()
+    def set_dds(self):
+        settings.setValue("Window", "DDS")
+        config_to_task(settings, task)
+        
+        print("Setting Display to " + task["Window"])
+
 
     def initUI(self):
         #Create Window Widgets
@@ -142,7 +151,7 @@ class Window(QMainWindow):
         windowMenu.addAction(depthmap_visual_act)
 
         dds_act = QAction('Detect Drivable Surfaces', self)
-        dds_act.triggered.connect(self.todo)
+        dds_act.triggered.connect(self.set_dds)
         windowMenu.addAction(dds_act)
 
         #Create Settings Menu
