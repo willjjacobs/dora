@@ -2,10 +2,10 @@ import numpy as np
 import cv2
 import sys
 import os
-# from pylibfreenect2 import Freenect2, SyncMultiFrameListener
-# from pylibfreenect2 import FrameType, Registration, Frame
-# from pylibfreenect2 import createConsoleLogger, setGlobalLogger
-# from pylibfreenect2 import LoggerLevel
+from pylibfreenect2 import Freenect2, SyncMultiFrameListener
+from pylibfreenect2 import FrameType, Registration, Frame
+from pylibfreenect2 import createConsoleLogger, setGlobalLogger
+from pylibfreenect2 import LoggerLevel
 from core.neuralnet.utils import visualization_utils as vis_util
 
 DEFAULT_RES = (240, 135)
@@ -17,11 +17,11 @@ DENOISING_PARAMS = [10, 10, 7, 21]
 #Depth map
 
 def Selector(args, camera_port = 0, file = ""):
-    if (args == 'kinect'):
+    if (args == 'Kinect'):
         return Kinect()
-    elif (args == 'webcam'):
+    elif (args == 'Webcam'):
         return Webcam()
-    elif (args == 'filefeed'):
+    elif (args == 'Filefeed'):
         return FileFeed(file)
     else: 
         return Camera(camera_port)
@@ -42,6 +42,7 @@ class Kinect(object):
                 from pylibfreenect2 import CpuPacketPipeline
                 pipeline = CpuPacketPipeline()
         print("Packet pipeline:", type(pipeline).__name__)
+        self.type = "Kinect"
         self.fn = Freenect2()
         self.num_devices = self.fn.enumerateDevices()
         if self.num_devices == 0:
@@ -60,6 +61,7 @@ class Kinect(object):
     def get_frame(self):
         frame = self.listener.waitForNewFrame()
         rgb = frame["color"].asarray().copy()
+        rgb = cv2.cvtColor(rgb, cv2.COLOR_BGRA2BGR)
         self.listener.release(frame)
         return rgb
     def close(self):
@@ -76,6 +78,7 @@ class Kinect(object):
 class Webcam(object):
     def __init__(self, camera_port=WEBCAM_PORT):
         self.camera = cv2.VideoCapture(camera_port)
+        self.type = "Webcam"
     def get_frame(self):
         for i in range(0, ADJUSTMENT_FRAMES):
             self.camera.read()
@@ -89,6 +92,7 @@ class Webcam(object):
 #TODO
 class Camera(object):
     def __init__(self, camera_port):
+        self.type = "Camera"
         self.camera = cv2.VideoCapture(camera_port)
     def get_frame(self):
         for i in range(0, ADJUSTMENT_FRAMES):
@@ -101,7 +105,7 @@ class Camera(object):
 
 class FileFeed(object):
     def __init__(self, file):
-        print(file)
+        self.type = "Filefeed"
         self.feed = cv2.VideoCapture(file)
     def get_frame(self):
         retval, im = self.feed.read()
@@ -212,14 +216,15 @@ def calculate_heights(depth, camera_height, fov = [70.6, 60]):
     ang_per_vpix = vfov/size[1]
     bottom_line = new_depth[size[0]-1,:]
     top_line = new_depth[int((size[0]-1)/2),:]
-    r0 = 0
-    count = 0
-    for i in range(0,len(bottom_line)):
-        if bottom_line[i] > 5:
-            count+=1
-            r0+=bottom_line[i]
-    r0 = r0/count
-    rtop = np.mean(top_line)
+    # r0 = 0
+    # count = 0
+    # for i in range(0,len(bottom_line)):
+    #     if bottom_line[i] > 5:
+    #         count+=1
+    #         r0+=bottom_line[i]
+    # r0 = r0/count
+    r0 = np.mean(bottom_line)
+    print(r0)
     alpha0 = np.arccos(camera_height/r0)
     for i in range(0,size[0]):
         alpha = alpha0 + (np.radians(vfov) - np.radians(ang_per_vpix*(i)))
@@ -234,7 +239,7 @@ def fill_edges_depth(edges, threshold = 5):
     pix = 255
     for x in range(dims[1] - 1, -1, -1):
         for y in range(dims[0] - 1, -1, -1):
-            if filled[y][x] > threshold and pix == 255 and y < dims[0] - 50: 
+            if filled[y][x] > threshold and pix == 255 and y < dims[0] - dims[0]/10: 
                 pix = 0
             else:
                 filled[y][x] = pix
@@ -244,7 +249,7 @@ def fill_edges_depth(edges, threshold = 5):
 #Optimize
 def depth_drivable_surfaces(color, depth, camera_height, fov = [70.6, 60]):
     heights = calculate_heights(depth,camera_height,fov)
-    heights = convert_color(heights)
+    heights = convert_color(heights).astype("uint8")
     heights = denoise_color(heights)
     #heights = cv2.GaussianBlur(heights, (15, 15), 0)
     heights = convert_greyscale(heights)
@@ -255,7 +260,8 @@ def depth_drivable_surfaces(color, depth, camera_height, fov = [70.6, 60]):
     # #gtot = cv2.GaussianBlur(gtot,(5,5),0)
     filled = fill_edges_depth(gtot)
     filled = filled.astype("uint8")
-    overlay = overlay_drivable_surface(color,filled)
+    overlay = overlay_drivable_surface(depth.astype("uint8"),filled)
+    overlay = convert_color(overlay)
     return overlay
 
 # #given an array of objects, overlay object onto original image
@@ -333,6 +339,7 @@ def overlay_image(image, dto, overlay_edges=True, isolate_sports_ball=False):
         classes.astype(np.int32),
         scores,
         category_index,
+        min_score_thresh = 0.15,
         use_normalized_coordinates=True,
         line_thickness=4)
     return new_image

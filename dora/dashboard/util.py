@@ -18,8 +18,10 @@ def setup_config():
     config.setValue("first_setup", 1)
     config.setValue("isolate_toggle", "False")
     config.setValue("core_ip", "0.0.0.0")
-    config.setValue("Camera", "Webcam")
-    config.setValue("Window", "RGB")
+    config.setValue("Camera",configfile.settings["Camera"])
+    #config.setValue("Camera", "Webcam")
+    #config.setValue("Camera", "Kinect")
+    config.setValue("Window", configfile.settings["Window"])
     config.setValue("overlay_edges", "False")
     print("First Time Setup Complete")
     return config
@@ -30,6 +32,7 @@ def setup_config():
 def create_task():
     task = {}  #Create task object
 
+    # task["Camera"] = "Webcam"
     task["Camera"] = "Webcam"
     task["first_setup"] = 0
     task["isolate_toggle"] = "False"

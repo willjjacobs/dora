@@ -23,9 +23,11 @@ class Core:
     def __init__(self, server_address='localhost', port=8080, dashboard_url='localhost'):
         #self.settingInit()
         # start webcam and neural net
-        self.camera = vision.Webcam()
-        self.kinect = None
+        #self.camera = vision.Webcam()
+        #self.kinect = None
+        #self.kinect = vision.Selector(config.settings['Camera'])
 
+        self.cap = None
         self.nn = NeuralNet.NeuralNet()
         self.nn.init_network()
         self.server = dora_httpd_server(server_address, port)
@@ -34,17 +36,27 @@ class Core:
     def get_latest_image(self):
         #get frame and overlay
 
+        if self.cap is None:
+            self.cap = vision.Selector(config.settings['Camera'])
+        elif self.cap.type != config.settings['Camera']:
+            self.cap.close()
+            self.cap = vision.Selector(config.settings['Camera'])
+
         if config.settings['Window'] =='RGB' or config.settings['Window'] =='Greyscale' :
             if config.settings['Camera'] == 'Kinect':
                 print("window RGB, camera Kinect")
-                frame = self.kinect.get_frame()
+                frame = self.cap.get_frame()
+                # #vision.adjust_resolution(, (212, 256))
+                # new_depth = depth.copy()
+                # new_depth *= (255.0/depth.max())
+                # frame = vision.depth_drivable_surfaces(depth,new_depth,1)
             elif config.settings['Camera'] == 'Webcam':
                 print("window RGB, camera webcam")
-                frame = self.camera.get_frame()
+                frame = self.cap.get_frame()
         elif config.settings['Window'] == 'Depthmap':
             print("window Depth Map")
             if config.settings['Camera'] == 'Kinect':
-                frame = self.kinect.get_depth()
+                frame = self.cap.get_depth()
 
 
 
@@ -85,9 +97,9 @@ class Core:
                 print(k)
                 config.settings[k] = stg[k]
 
-        if stg['Camera'] == 'Kinect' and self.kinect == None:
-            #TODO: return an error if no kinect
-            self.kinect = vision.Kinect()
+        # if stg['Camera'] == 'Kinect' and self.kinect == None:
+        #     #TODO: return an error if no kinect
+        #     self.kinect = vision.Kinect()
 
         if stg['Window'] == 'RGB':
             if stg['Camera'] == 'Kinect':
