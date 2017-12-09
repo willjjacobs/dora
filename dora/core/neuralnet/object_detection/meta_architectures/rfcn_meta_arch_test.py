@@ -17,8 +17,8 @@
 
 import tensorflow as tf
 
-from object_detection.meta_architectures import faster_rcnn_meta_arch_test_lib
-from object_detection.meta_architectures import rfcn_meta_arch
+from core.neuralnet.object_detection.meta_architectures import faster_rcnn_meta_arch_test_lib
+from core.neuralnet.object_detection.meta_architectures import rfcn_meta_arch
 
 
 class RFCNMetaArchTest(
@@ -50,15 +50,6 @@ class RFCNMetaArchTest(
   def _get_model(self, box_predictor, **common_kwargs):
     return rfcn_meta_arch.RFCNMetaArch(
         second_stage_rfcn_box_predictor=box_predictor, **common_kwargs)
-
-  def _get_box_classifier_features_shape(self,
-                                         image_size,
-                                         batch_size,
-                                         max_num_proposals,
-                                         initial_crop_size,
-                                         maxpool_stride,
-                                         num_features):
-    return (batch_size, image_size, image_size, num_features)
 
 
 if __name__ == '__main__':

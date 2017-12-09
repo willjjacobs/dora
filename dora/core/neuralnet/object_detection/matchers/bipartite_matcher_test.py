@@ -17,7 +17,7 @@
 
 import tensorflow as tf
 
-from object_detection.matchers import bipartite_matcher
+from core.neuralnet.object_detection.matchers import bipartite_matcher
 
 
 class GreedyBipartiteMatcherTest(tf.test.TestCase):

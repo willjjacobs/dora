@@ -18,8 +18,8 @@
 import numpy as np
 import tensorflow as tf
 
-from object_detection.utils import np_box_list
-from object_detection.utils import np_box_list_ops
+from core.neuralnet.object_detection.utils import np_box_list
+from core.neuralnet.object_detection.utils import np_box_list_ops
 
 
 class AreaRelatedTest(tf.test.TestCase):

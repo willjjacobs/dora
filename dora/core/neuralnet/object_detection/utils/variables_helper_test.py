@@ -18,7 +18,7 @@ import os
 
 import tensorflow as tf
 
-from object_detection.utils import variables_helper
+from core.neuralnet.object_detection.utils import variables_helper
 
 
 class FilterVariablesTest(tf.test.TestCase):

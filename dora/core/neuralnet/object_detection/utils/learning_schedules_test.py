@@ -16,7 +16,7 @@
 """Tests for object_detection.utils.learning_schedules."""
 import tensorflow as tf
 
-from object_detection.utils import learning_schedules
+from core.neuralnet.object_detection.utils import learning_schedules
 
 
 class LearningSchedulesTest(tf.test.TestCase):
@@ -35,25 +35,6 @@ class LearningSchedulesTest(tf.test.TestCase):
     with self.test_session() as sess:
       output_rates = []
       for input_global_step in range(8):
-        output_rate = sess.run(learning_rate,
-                               feed_dict={global_step: input_global_step})
-        output_rates.append(output_rate)
-      self.assertAllClose(output_rates, exp_rates)
-
-  def testCosineDecayWithWarmup(self):
-    global_step = tf.placeholder(tf.int32, [])
-    learning_rate_base = 1.0
-    total_steps = 100
-    warmup_learning_rate = 0.1
-    warmup_steps = 9
-    input_global_steps = [0, 4, 8, 9, 100]
-    exp_rates = [0.1, 0.5, 0.9, 1.0, 0]
-    learning_rate = learning_schedules.cosine_decay_with_warmup(
-        global_step, learning_rate_base, total_steps,
-        warmup_learning_rate, warmup_steps)
-    with self.test_session() as sess:
-      output_rates = []
-      for input_global_step in input_global_steps:
         output_rate = sess.run(learning_rate,
                                feed_dict={global_step: input_global_step})
         output_rates.append(output_rate)

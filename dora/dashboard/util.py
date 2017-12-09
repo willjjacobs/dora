@@ -1,7 +1,7 @@
 from PyQt5 import QtCore
 from PyQt5.QtCore import QSettings
 from dashboard.jsonsocket import *
-
+import requests
 #from jsonsocket import *
 
 
@@ -16,8 +16,11 @@ def setup_config():
         print("Not First Time Setup")
         return config
     config.setValue("first_setup", 1)
-    config.setValue("test_value2", 2)
+    config.setValue("isolate_toggle", "False")
     config.setValue("core_ip", "0.0.0.0")
+    config.setValue("Camera", "Webcam")
+    config.setValue("Window", "RGB")
+    config.setValue("overlay_edges", "False")
     print("First Time Setup Complete")
     return config
 
@@ -27,9 +30,12 @@ def setup_config():
 def create_task():
     task = {}  #Create task object
 
+    task["Camera"] = "Webcam"
     task["first_setup"] = 0
-    task["test_value2"] = 0
+    task["isolate_toggle"] = "False"
     task["core_ip"] = "0.0.0.0"
+    task["Window"] = "RGB"
+    task["overlay_edges"] = "False"
 
     return task
 
@@ -37,15 +43,27 @@ def create_task():
     #Testing Method
 def print_task(task):
     print(task["first_setup"])
-    print(task["test_value2"])
+    print(task["isolate_toggle"])
     print(task["core_ip"])
 
 
     #updates task object with config file data
 def config_to_task(config, task):
     task["first_setup"] = config.value("first_setup")
-    task["test_value2"] = config.value("test_value2")
+    task["isolate_toggle"] = config.value("isolate_toggle")
     task["core_ip"] = config.value("core_ip")
+    task["Camera"] = config.value("Camera")
+    task["Window"] = config.value("Window")
+    task["overlay_edges"] = config.value("overlay_edges")
+    
+    
+    data_to_send = {'Camera' : task['Camera'],
+                    'isolate_sports_ball' : task['isolate_toggle'],
+                    'Window' : task['Window'],
+                    'overlay_edges' : task['overlay_edges']}
+    print(task["isolate_toggle"])
+    print(task["overlay_edges"])
+    requests.post('http://localhost:8080', json=data_to_send)
 
 
     #Runs on program open

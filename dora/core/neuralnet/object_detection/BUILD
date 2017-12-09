@@ -7,6 +7,7 @@ package(
 licenses(["notice"])
 
 # Apache 2.0
+
 py_binary(
     name = "train",
     srcs = [
@@ -17,7 +18,10 @@ py_binary(
         "//tensorflow",
         "//tensorflow_models/object_detection/builders:input_reader_builder",
         "//tensorflow_models/object_detection/builders:model_builder",
-        "//tensorflow_models/object_detection/utils:config_util",
+        "//tensorflow_models/object_detection/protos:input_reader_py_pb2",
+        "//tensorflow_models/object_detection/protos:model_py_pb2",
+        "//tensorflow_models/object_detection/protos:pipeline_py_pb2",
+        "//tensorflow_models/object_detection/protos:train_py_pb2",
     ],
 )
 
@@ -29,7 +33,6 @@ py_library(
         "//tensorflow_models/object_detection/builders:optimizer_builder",
         "//tensorflow_models/object_detection/builders:preprocessor_builder",
         "//tensorflow_models/object_detection/core:batcher",
-        "//tensorflow_models/object_detection/core:preprocessor",
         "//tensorflow_models/object_detection/core:standard_fields",
         "//tensorflow_models/object_detection/utils:ops",
         "//tensorflow_models/object_detection/utils:variables_helper",
@@ -57,12 +60,8 @@ py_library(
     ],
     deps = [
         "//tensorflow",
-        "//tensorflow_models/object_detection/core:box_list",
-        "//tensorflow_models/object_detection/core:box_list_ops",
-        "//tensorflow_models/object_detection/core:keypoint_ops",
-        "//tensorflow_models/object_detection/core:standard_fields",
         "//tensorflow_models/object_detection/utils:label_map_util",
-        "//tensorflow_models/object_detection/utils:ops",
+        "//tensorflow_models/object_detection/utils:object_detection_evaluation",
         "//tensorflow_models/object_detection/utils:visualization_utils",
     ],
 )
@@ -73,10 +72,11 @@ py_library(
     deps = [
         "//tensorflow",
         "//tensorflow_models/object_detection:eval_util",
+        "//tensorflow_models/object_detection/core:box_list",
+        "//tensorflow_models/object_detection/core:box_list_ops",
         "//tensorflow_models/object_detection/core:prefetcher",
         "//tensorflow_models/object_detection/core:standard_fields",
         "//tensorflow_models/object_detection/protos:eval_py_pb2",
-        "//tensorflow_models/object_detection/utils:object_detection_evaluation",
     ],
 )
 
@@ -90,7 +90,10 @@ py_binary(
         "//tensorflow",
         "//tensorflow_models/object_detection/builders:input_reader_builder",
         "//tensorflow_models/object_detection/builders:model_builder",
-        "//tensorflow_models/object_detection/utils:config_util",
+        "//tensorflow_models/object_detection/protos:eval_py_pb2",
+        "//tensorflow_models/object_detection/protos:input_reader_py_pb2",
+        "//tensorflow_models/object_detection/protos:model_py_pb2",
+        "//tensorflow_models/object_detection/protos:pipeline_py_pb2",
         "//tensorflow_models/object_detection/utils:label_map_util",
     ],
 )

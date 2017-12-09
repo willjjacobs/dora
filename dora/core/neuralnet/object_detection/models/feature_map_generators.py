@@ -25,6 +25,7 @@ of final feature maps.
 """
 import collections
 import tensorflow as tf
+from core.neuralnet.object_detection.utils import ops
 slim = tf.contrib.slim
 
 
@@ -58,13 +59,12 @@ def multi_resolution_feature_maps(feature_map_layout, depth_multiplier,
      based on the spatial shape and depth configuration. Note that the current
      implementation only supports generating new layers using convolution of
      stride 2 resulting in a spatial resolution reduction by a factor of 2.
-     By default convolution kernel size is set to 3, and it can be customized
-     by caller.
 
   An example of the configuration for Inception V3:
   {
     'from_layer': ['Mixed_5d', 'Mixed_6e', 'Mixed_7c', '', '', ''],
-    'layer_depth': [-1, -1, -1, 512, 256, 128]
+    'layer_depth': [-1, -1, -1, 512, 256, 128],
+    'anchor_strides': [16, 32, 64, -1, -1, -1]
   }
 
   Args:
@@ -72,12 +72,14 @@ def multi_resolution_feature_maps(feature_map_layout, depth_multiplier,
       layouts in the following format (Inception V2/V3 respectively):
       {
         'from_layer': ['Mixed_3c', 'Mixed_4c', 'Mixed_5c', '', '', ''],
-        'layer_depth': [-1, -1, -1, 512, 256, 128]
+        'layer_depth': [-1, -1, -1, 512, 256, 128],
+        'anchor_strides': [16, 32, 64, -1, -1, -1]
       }
       or
       {
         'from_layer': ['Mixed_5d', 'Mixed_6e', 'Mixed_7c', '', '', '', ''],
-        'layer_depth': [-1, -1, -1, 512, 256, 128]
+        'layer_depth': [-1, -1, -1, 512, 256, 128],
+        'anchor_strides': [16, 32, 64, -1, -1, -1]
       }
       If 'from_layer' is specified, the specified feature map is directly used
       as a box predictor layer, and the layer_depth is directly infered from the
@@ -88,11 +90,14 @@ def multi_resolution_feature_maps(feature_map_layout, depth_multiplier,
       Note that the current implementation only supports generating new layers
       using convolutions of stride 2 (resulting in a spatial resolution
       reduction by a factor of 2), and will be extended to a more flexible
-      design. Convolution kernel size is set to 3 by default, and can be
-      customized by 'conv_kernel_size' parameter (similarily, 'conv_kernel_size'
-      should be set to -1 if 'from_layer' is specified). The created convolution
-      operation will be a normal 2D convolution by default, and a depthwise
-      convolution followed by 1x1 convolution if 'use_depthwise' is set to True.
+      design. Finally, the optional 'anchor_strides' can be used to specify the
+      anchor stride at each layer where 'from_layer' is specified. Our
+      convention is to set 'anchor_strides' to -1 whenever at the positions that
+      'from_layer' is an empty string, and anchor strides at these layers will
+      be inferred from the previous layer's anchor strides and the current
+      layer's stride length. In the case where 'anchor_strides' is not
+      specified, the anchor strides will default to the image width and height
+      divided by the number of anchors.
     depth_multiplier: Depth multiplier for convolutional layers.
     min_depth: Minimum depth for convolutional layers.
     insert_1x1_conv: A boolean indicating whether an additional 1x1 convolution
@@ -115,14 +120,14 @@ def multi_resolution_feature_maps(feature_map_layout, depth_multiplier,
   feature_map_keys = []
   feature_maps = []
   base_from_layer = ''
+  feature_map_strides = None
   use_depthwise = False
+  if 'anchor_strides' in feature_map_layout:
+    feature_map_strides = (feature_map_layout['anchor_strides'])
   if 'use_depthwise' in feature_map_layout:
     use_depthwise = feature_map_layout['use_depthwise']
-  for index, from_layer in enumerate(feature_map_layout['from_layer']):
-    layer_depth = feature_map_layout['layer_depth'][index]
-    conv_kernel_size = 3
-    if 'conv_kernel_size' in feature_map_layout:
-      conv_kernel_size = feature_map_layout['conv_kernel_size'][index]
+  for index, (from_layer, layer_depth) in enumerate(
+      zip(feature_map_layout['from_layer'], feature_map_layout['layer_depth'])):
     if from_layer:
       feature_map = image_features[from_layer]
       base_from_layer = from_layer
@@ -140,13 +145,12 @@ def multi_resolution_feature_maps(feature_map_layout, depth_multiplier,
             stride=1,
             scope=layer_name)
       stride = 2
-      layer_name = '{}_2_Conv2d_{}_{}x{}_s2_{}'.format(
-          base_from_layer, index, conv_kernel_size, conv_kernel_size,
-          depth_fn(layer_depth))
+      layer_name = '{}_2_Conv2d_{}_3x3_s2_{}'.format(
+          base_from_layer, index, depth_fn(layer_depth))
       if use_depthwise:
         feature_map = slim.separable_conv2d(
-            intermediate_layer,
-            None, [conv_kernel_size, conv_kernel_size],
+            ops.pad_to_multiple(intermediate_layer, stride),
+            None, [3, 3],
             depth_multiplier=1,
             padding='SAME',
             stride=stride,
@@ -159,11 +163,16 @@ def multi_resolution_feature_maps(feature_map_layout, depth_multiplier,
             scope=layer_name)
       else:
         feature_map = slim.conv2d(
-            intermediate_layer,
-            depth_fn(layer_depth), [conv_kernel_size, conv_kernel_size],
+            ops.pad_to_multiple(intermediate_layer, stride),
+            depth_fn(layer_depth), [3, 3],
             padding='SAME',
             stride=stride,
             scope=layer_name)
+
+      if (index > 0 and feature_map_strides and
+          feature_map_strides[index - 1] > 0):
+        feature_map_strides[index] = (
+            stride * feature_map_strides[index - 1])
       feature_map_keys.append(layer_name)
     feature_maps.append(feature_map)
   return collections.OrderedDict(

@@ -16,7 +16,7 @@
 """Builder function to construct tf-slim arg_scope for convolution, fc ops."""
 import tensorflow as tf
 
-from object_detection.protos import hyperparams_pb2
+from core.neuralnet.object_detection.protos import hyperparams_pb2
 
 slim = tf.contrib.slim
 
@@ -163,6 +163,7 @@ def _build_batch_norm_params(batch_norm, is_training):
       'center': batch_norm.center,
       'scale': batch_norm.scale,
       'epsilon': batch_norm.epsilon,
+      'fused': True,
       'is_training': is_training and batch_norm.train,
   }
   return batch_norm_params

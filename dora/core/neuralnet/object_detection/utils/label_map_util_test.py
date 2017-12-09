@@ -19,8 +19,8 @@ import os
 import tensorflow as tf
 
 from google.protobuf import text_format
-from object_detection.protos import string_int_label_map_pb2
-from object_detection.utils import label_map_util
+from core.neuralnet.object_detection.protos import string_int_label_map_pb2
+from core.neuralnet.object_detection.utils import label_map_util
 
 
 class LabelMapUtilTest(tf.test.TestCase):
@@ -50,26 +50,6 @@ class LabelMapUtilTest(tf.test.TestCase):
       f.write(label_map_string)
 
     label_map_dict = label_map_util.get_label_map_dict(label_map_path)
-    self.assertEqual(label_map_dict['dog'], 1)
-    self.assertEqual(label_map_dict['cat'], 2)
-
-  def test_get_label_map_dict_display(self):
-    label_map_string = """
-      item {
-        id:2
-        display_name:'cat'
-      }
-      item {
-        id:1
-        display_name:'dog'
-      }
-    """
-    label_map_path = os.path.join(self.get_temp_dir(), 'label_map.pbtxt')
-    with tf.gfile.Open(label_map_path, 'wb') as f:
-      f.write(label_map_string)
-
-    label_map_dict = label_map_util.get_label_map_dict(
-        label_map_path, use_display_name=True)
     self.assertEqual(label_map_dict['dog'], 1)
     self.assertEqual(label_map_dict['cat'], 2)
 
@@ -180,34 +160,6 @@ class LabelMapUtilTest(tf.test.TestCase):
         },
         2: {
             'name': u'2',
-            'id': 2
-        }
-    }, category_index)
-
-  def test_create_category_index_from_labelmap(self):
-    label_map_string = """
-      item {
-        id:2
-        name:'cat'
-      }
-      item {
-        id:1
-        name:'dog'
-      }
-    """
-    label_map_path = os.path.join(self.get_temp_dir(), 'label_map.pbtxt')
-    with tf.gfile.Open(label_map_path, 'wb') as f:
-      f.write(label_map_string)
-
-    category_index = label_map_util.create_category_index_from_labelmap(
-        label_map_path)
-    self.assertDictEqual({
-        1: {
-            'name': u'dog',
-            'id': 1
-        },
-        2: {
-            'name': u'cat',
             'id': 2
         }
     }, category_index)

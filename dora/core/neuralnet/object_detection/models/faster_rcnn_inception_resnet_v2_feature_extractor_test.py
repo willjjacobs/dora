@@ -17,7 +17,7 @@
 
 import tensorflow as tf
 
-from object_detection.models import faster_rcnn_inception_resnet_v2_feature_extractor as frcnn_inc_res
+from core.neuralnet.object_detection.models import faster_rcnn_inception_resnet_v2_feature_extractor as frcnn_inc_res
 
 
 class FasterRcnnInceptionResnetV2FeatureExtractorTest(tf.test.TestCase):
@@ -26,7 +26,6 @@ class FasterRcnnInceptionResnetV2FeatureExtractorTest(tf.test.TestCase):
     return frcnn_inc_res.FasterRCNNInceptionResnetV2FeatureExtractor(
         is_training=False,
         first_stage_features_stride=first_stage_features_stride,
-        batch_norm_trainable=False,
         reuse_weights=None,
         weight_decay=0.0)
 

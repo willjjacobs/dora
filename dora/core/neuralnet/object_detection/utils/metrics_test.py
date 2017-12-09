@@ -18,7 +18,7 @@
 import numpy as np
 import tensorflow as tf
 
-from object_detection.utils import metrics
+from core.neuralnet.object_detection.utils import metrics
 
 
 class MetricsTest(tf.test.TestCase):

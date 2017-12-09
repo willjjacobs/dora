@@ -23,9 +23,9 @@ to box coordinates):
   th = log(h / ha)
   tw = log(w / wa)
   tky0 = (ky0 - ya) / ha
-  tkx0 = (kx0 - xa) / wa
+  tkx0 = (kx0 - xa) / ha
   tky1 = (ky1 - ya) / ha
-  tkx1 = (kx1 - xa) / wa
+  tkx1 = (kx1 - xa) / ha
   ...
   where x, y, w, h denote the box's center coordinates, width and height
   respectively. Similarly, xa, ya, wa, ha denote the anchor's center
@@ -37,9 +37,9 @@ to box coordinates):
 
 import tensorflow as tf
 
-from object_detection.core import box_coder
-from object_detection.core import box_list
-from object_detection.core import standard_fields as fields
+from core.neuralnet.object_detection.core import box_coder
+from core.neuralnet.object_detection.core import box_list
+from core.neuralnet.object_detection.core import standard_fields as fields
 
 EPSILON = 1e-8
 
