@@ -1,9 +1,9 @@
 from PyQt5 import QtCore
 from PyQt5.QtCore import QSettings
-from dashboard.jsonsocket import *
+#from dashboard.jsonsocket import *
 import requests
 #from jsonsocket import *
-
+import config as configfile
 
 #runs first time program is started, sets up config file
 #Currently set up to always treat as first time
@@ -18,8 +18,10 @@ def setup_config():
     config.setValue("first_setup", 1)
     config.setValue("isolate_toggle", "False")
     config.setValue("core_ip", "0.0.0.0")
-    config.setValue("Camera", "Webcam")
-    config.setValue("Window", "RGB")
+    config.setValue("Camera",configfile.settings["Camera"])
+    #config.setValue("Camera", "Webcam")
+    #config.setValue("Camera", "Kinect")
+    config.setValue("Window", configfile.settings["Window"])
     config.setValue("overlay_edges", "False")
     print("First Time Setup Complete")
     return config
@@ -30,6 +32,7 @@ def setup_config():
 def create_task():
     task = {}  #Create task object
 
+    # task["Camera"] = "Webcam"
     task["Camera"] = "Webcam"
     task["first_setup"] = 0
     task["isolate_toggle"] = "False"
@@ -63,7 +66,9 @@ def config_to_task(config, task):
                     'overlay_edges' : task['overlay_edges']}
     print(task["isolate_toggle"])
     print(task["overlay_edges"])
-    requests.post('http://localhost:8080', json=data_to_send)
+
+    requests.post('http://' + str(configfile.core_server_address) + ':' +str(configfile.core_server_port), json=data_to_send)
+
 
 
     #Runs on program open

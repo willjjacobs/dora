@@ -23,47 +23,58 @@ class Core:
     def __init__(self, server_address='localhost', port=8080, dashboard_url='localhost'):
         #self.settingInit()
         # start webcam and neural net
-        self.camera = vision.Webcam()
-        self.kinect = None
+        #self.camera = vision.Webcam()
+        #self.kinect = None
+        #self.kinect = vision.Selector(config.settings['Camera'])
 
+        self.cap = None
         self.nn = NeuralNet.NeuralNet()
+        self.nn.init_network()
         self.server = dora_httpd_server(server_address, port)
         self.server.up()
 
     def get_latest_image(self):
         #get frame and overlay
 
-        if config.settings['Window'] =='RGB':
+        ret_frame = None 
+
+        if self.cap is None:
+            self.cap = vision.Selector(config.settings['Camera'])
+        elif self.cap.type != config.settings['Camera']:
+            self.cap.close()
+            self.cap = vision.Selector(config.settings['Camera'])
+
+        if config.settings['Window'] =='RGB' or config.settings['Window'] =='Greyscale' :
             if config.settings['Camera'] == 'Kinect':
                 print("window RGB, camera Kinect")
-                frame = self.kinect.get_frame()
+                frame = self.cap.get_frame()
+                # #vision.adjust_resolution(, (212, 256))
+                # new_depth = depth.copy()
+                # new_depth *= (255.0/depth.max())
+                # frame = vision.depth_drivable_surfaces(depth,new_depth,1)
             elif config.settings['Camera'] == 'Webcam':
                 print("window RGB, camera webcam")
-                frame = self.camera.get_frame()
-        elif config.settings['Window'] == 'Depth Map':
+                frame = self.cap.get_frame()
+        
+            self.dto = self.nn.run_inference(frame)
+
+            print(config.settings['overlay_edges'])
+
+            ret_frame = vision.overlay_image(frame, self.dto, 
+                                                   overlay_edges= config.settings['overlay_edges'],
+                                                   isolate_sports_ball=config.settings['isolate_sports_ball'])
+
+            if config.settings['Window'] == 'Greyscale' :
+                ret_frame = vision.convert_greyscale(ret_frame)
+            #Convert image to jpg
+        elif config.settings['Window'] == 'Depthmap':
             print("window Depth Map")
             if config.settings['Camera'] == 'Kinect':
-                frame = self.kinect.get_depth()
-        """
-        else:
-            print("grey scale")
-            frame = self.kinect.get_depth()
-        """
+                ret_frame = self.cap.get_depth() * 500.0
 
-
-
-        self.dto = self.nn.run_inference(frame)
-
-        print(config.settings['overlay_edges'])
-
-        overlayed_image = vision.overlay_image(frame, self.dto, 
-                                               overlay_edges= config.settings['overlay_edges'],
-                                               isolate_sports_ball=config.settings['isolate_sports_ball'])
-
-
-        #Convert image to jpg
-        retval, img_encoded = cv2.imencode('.jpg', overlayed_image)
         # TODO: check retval
+        retval, img_encoded = cv2.imencode('.jpg', ret_frame)
+
         return img_encoded
     """
     def settingInit(self):
@@ -74,7 +85,6 @@ class Core:
     def settingChanger(self,stg):
         need_to_check = {'Window', 'Camera'}
         for k, v in config.settings.items():
-
             if stg[k] == 'True':
                 stg[k] = True
             elif stg[k] == 'False':
@@ -84,9 +94,9 @@ class Core:
                 print(k)
                 config.settings[k] = stg[k]
 
-        if stg['Camera'] == 'Kinect' and self.kinect == None:
-            #TODO: return an error if no kinect
-            self.kinect = vision.Kinect()
+        # if stg['Camera'] == 'Kinect' and self.kinect == None:
+        #     #TODO: return an error if no kinect
+        #     self.kinect = vision.Kinect()
 
         if stg['Window'] == 'RGB':
             if stg['Camera'] == 'Kinect':
@@ -97,13 +107,22 @@ class Core:
                 config.settings['Window'] = 'RGB'
                 config.settings['Camera'] = 'Webcam'
                 return (200, "settings changed")
-        elif stg['Window'] == 'Depth Map':
+        elif stg['Window'] == 'Depthmap':
             if stg['Camera'] == 'Kinect':
-                config.settings['Window'] = 'Depth Map'
+                config.settings['Window'] = 'Depthmap'
                 config.settings['Camera'] = 'Kinect'
                 return (200, "settings changed")
             else:
                 return (400, "setting not changed")
+        elif stg['Window'] == 'Greyscale':
+            if stg['Camera'] == 'Kinect':
+                config.settings['Window'] = 'Greyscale'
+                config.settings['Camera'] = 'Kinect'
+                return (200, "settings changed")
+            elif stg['Camera'] == 'Webcam':
+                config.settings['Window'] = 'Greyscale'
+                config.settings['Camera'] = 'Webcam'
+                return (200, "settings changed")
         return (400, "unimplemented")
 
     def settingPrinter(self):

@@ -5,3 +5,6 @@ class NeuralNetDTO:
         self.classes = classes
         self.scores = scores
         self.depths = None
+
+    def as_dict(self):
+        return self.scores

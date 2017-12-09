@@ -14,14 +14,14 @@ from PyQt5.QtWidgets import (
 from PyQt5.QtCore import QCoreApplication, pyqtSlot, QSettings, QThread, pyqtSignal, Qt
 from PyQt5.QtGui import QIcon, QImage, QPixmap, QFont
 #from PyQt5.QtCore.QString import QString
+#from dashboard.util import *
 from dashboard.util import *
-#from util import *
 import socket
 import requests
 import config
-from core import vision
-from core.neuralnet import NeuralNet
-import tensorflow as tf
+#from core import vision
+#from core.neuralnet import NeuralNet
+#import tensorflow as tf
 
 settings = setup_config()
 task = create_task()
@@ -44,6 +44,7 @@ class Window(QMainWindow):
     @pyqtSlot()
     def todo(self):
         print("ToDo")
+
         
     @pyqtSlot()
     def set_RGB(self):
@@ -62,6 +63,14 @@ class Window(QMainWindow):
         settings.setValue("Window", "Depthmap")
         config_to_task(settings, task)
         print("Setting Display to " + task["Window"])
+
+    @pyqtSlot()
+    def set_dds(self):
+        settings.setValue("Window", "DDS")
+        config_to_task(settings, task)
+        
+        print("Setting Display to " + task["Window"])
+
 
     def initUI(self):
         #Create Window Widgets
@@ -141,9 +150,9 @@ class Window(QMainWindow):
         depthmap_visual_act.triggered.connect(self.set_Depthmap)
         windowMenu.addAction(depthmap_visual_act)
 
-        datatable_act = QAction('Data Table', self)
-        datatable_act.triggered.connect(self.todo)
-        windowMenu.addAction(datatable_act)
+        dds_act = QAction('Detect Drivable Surfaces', self)
+        dds_act.triggered.connect(self.set_dds)
+        windowMenu.addAction(dds_act)
 
         #Create Settings Menu
         settingsMenu = menubar.addMenu('&Settings')
@@ -193,8 +202,10 @@ class tabWidget(QWidget):
         self.pushButton1.clicked.connect(self.isolate_toggle_act)
         self.pushButton2 = QPushButton("Toggle Edge Detection")
         self.pushButton2.clicked.connect(self.detect_edges_act)
-        self.pushButton3 = QPushButton("DevTool 03")
-        self.pushButton4 = QPushButton("DevTool 04")
+        self.pushButton3 = QPushButton("Kinect")
+        self.pushButton3.clicked.connect(self.toggle_kinect)
+        self.pushButton4 = QPushButton("Webcam")
+        self.pushButton4.clicked.connect(self.toggle_webcam)
         self.tab_tools.vlayout01.addWidget(self.pushButton1)
         self.tab_tools.vlayout01.addWidget(self.pushButton2)
         self.tab_tools.vlayout02.addWidget(self.pushButton3)
@@ -246,6 +257,15 @@ class tabWidget(QWidget):
             
         config_to_task(settings, task)
 
+    @pyqtSlot()
+    def toggle_kinect(self):
+        settings.setValue("Camera","Kinect")
+        config_to_task(settings, task)
+
+    @pyqtSlot()
+    def toggle_webcam(self):
+        settings.setValue("Camera","Webcam")
+        config_to_task(settings, task)
 
     @pyqtSlot()
     def on_command(self):
