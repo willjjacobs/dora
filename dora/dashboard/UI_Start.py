@@ -15,7 +15,7 @@ from PyQt5.QtCore import QCoreApplication, pyqtSlot, QSettings, QThread, pyqtSig
 from PyQt5.QtGui import QIcon, QImage, QPixmap, QFont
 #from PyQt5.QtCore.QString import QString
 #from dashboard.util import *
-from util import *
+from dashboard.util import *
 import socket
 import requests
 import config
