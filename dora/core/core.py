@@ -36,6 +36,8 @@ class Core:
     def get_latest_image(self):
         #get frame and overlay
 
+        ret_frame = None 
+
         if self.cap is None:
             self.cap = vision.Selector(config.settings['Camera'])
         elif self.cap.type != config.settings['Camera']:
@@ -53,27 +55,26 @@ class Core:
             elif config.settings['Camera'] == 'Webcam':
                 print("window RGB, camera webcam")
                 frame = self.cap.get_frame()
+        
+            self.dto = self.nn.run_inference(frame)
+
+            print(config.settings['overlay_edges'])
+
+            ret_frame = vision.overlay_image(frame, self.dto, 
+                                                   overlay_edges= config.settings['overlay_edges'],
+                                                   isolate_sports_ball=config.settings['isolate_sports_ball'])
+
+            if config.settings['Window'] == 'Greyscale' :
+                ret_frame = vision.convert_greyscale(ret_frame)
+            #Convert image to jpg
         elif config.settings['Window'] == 'Depthmap':
             print("window Depth Map")
             if config.settings['Camera'] == 'Kinect':
-                frame = self.cap.get_depth()
+                ret_frame = self.cap.get_depth() * 500.0
 
-        self.dto = self.nn.run_inference(frame)
-
-        print(config.settings['overlay_edges'])
-
-        overlayed_image = vision.overlay_image(frame, self.dto, 
-                                               overlay_edges= config.settings['overlay_edges'],
-                                               isolate_sports_ball=config.settings['isolate_sports_ball'])
-
-        if config.settings['Window'] == 'Greyscale' :
-            overlayed_image = vision.convert_greyscale(overlayed_image)
-
-
-        #Convert image to jpg
-
-        retval, img_encoded = cv2.imencode('.jpg', overlayed_image)
         # TODO: check retval
+        retval, img_encoded = cv2.imencode('.jpg', ret_frame)
+
         return img_encoded
     """
     def settingInit(self):

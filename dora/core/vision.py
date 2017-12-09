@@ -72,7 +72,7 @@ class Kinect(object):
         frame = self.listener.waitForNewFrame()
         depth = frame["depth"].asarray().copy()
         self.listener.release(frame)
-        return depth / 4500.
+        return depth / 4500.0
 
 #Class for webcam connection
 class Webcam(object):
