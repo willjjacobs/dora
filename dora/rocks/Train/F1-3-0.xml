@@ -1,16 +1,40 @@
 <annotation>
-	<folder>Forset-1</folder>
-	<filename>3-0.jpg</filename>
-	<path>/media/ysabri/A02843E92843BCD2/Users/hacoo/Desktop/CS506/dora/dora/rocks/Forset-1/3-0.jpg</path>
+	<folder>Train</folder>
+	<filename>F1-3-0.jpg</filename>
+	<path>/media/ysabri/A02843E92843BCD2/Users/hacoo/Desktop/CS506/dora/dora/rocks/Train/F1-3-0.jpg</path>
 	<source>
 		<database>Unknown</database>
 	</source>
 	<size>
-		<width>960</width>
-		<height>639</height>
+		<width>800</width>
+		<height>533</height>
 		<depth>3</depth>
 	</size>
 	<segmented>0</segmented>
+	<object>
+		<name>Rocks</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>207</xmin>
+			<ymin>420</ymin>
+			<xmax>368</xmax>
+			<ymax>526</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>Rocks</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>478</xmin>
+			<ymin>384</ymin>
+			<xmax>630</xmax>
+			<ymax>478</ymax>
+		</bndbox>
+	</object>
 	<object>
 		<name>Rocks</name>
 		<pose>Unspecified</pose>
@@ -18,33 +42,9 @@
 		<difficult>0</difficult>
 		<bndbox>
 			<xmin>1</xmin>
-			<ymin>523</ymin>
-			<xmax>117</xmax>
-			<ymax>635</ymax>
-		</bndbox>
-	</object>
-	<object>
-		<name>Rocks</name>
-		<pose>Unspecified</pose>
-		<truncated>0</truncated>
-		<difficult>0</difficult>
-		<bndbox>
-			<xmin>254</xmin>
-			<ymin>523</ymin>
-			<xmax>440</xmax>
-			<ymax>619</ymax>
-		</bndbox>
-	</object>
-	<object>
-		<name>Rocks</name>
-		<pose>Unspecified</pose>
-		<truncated>0</truncated>
-		<difficult>0</difficult>
-		<bndbox>
-			<xmin>577</xmin>
-			<ymin>469</ymin>
-			<xmax>744</xmax>
-			<ymax>562</ymax>
+			<ymin>427</ymin>
+			<xmax>111</xmax>
+			<ymax>533</ymax>
 		</bndbox>
 	</object>
 </annotation>

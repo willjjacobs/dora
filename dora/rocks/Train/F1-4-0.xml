@@ -1,13 +1,13 @@
 <annotation>
-	<folder>Forset-1</folder>
-	<filename>4-0.jpg</filename>
-	<path>/media/ysabri/A02843E92843BCD2/Users/hacoo/Desktop/CS506/dora/dora/rocks/Forset-1/4-0.jpg</path>
+	<folder>Train</folder>
+	<filename>F1-4-0.jpg</filename>
+	<path>/media/ysabri/A02843E92843BCD2/Users/hacoo/Desktop/CS506/dora/dora/rocks/Train/F1-4-0.jpg</path>
 	<source>
 		<database>Unknown</database>
 	</source>
 	<size>
-		<width>960</width>
-		<height>639</height>
+		<width>800</width>
+		<height>533</height>
 		<depth>3</depth>
 	</size>
 	<segmented>0</segmented>
@@ -17,10 +17,10 @@
 		<truncated>1</truncated>
 		<difficult>0</difficult>
 		<bndbox>
-			<xmin>586</xmin>
-			<ymin>425</ymin>
-			<xmax>905</xmax>
-			<ymax>639</ymax>
+			<xmin>478</xmin>
+			<ymin>353</ymin>
+			<xmax>764</xmax>
+			<ymax>533</ymax>
 		</bndbox>
 	</object>
 </annotation>

@@ -1,13 +1,13 @@
 <annotation>
-	<folder>Desert-1</folder>
-	<filename>4-1.jpg</filename>
-	<path>/media/ysabri/A02843E92843BCD2/Users/hacoo/Desktop/CS506/dora/dora/rocks/Desert-1/4-1.jpg</path>
+	<folder>Train</folder>
+	<filename>D1-4-1.jpg</filename>
+	<path>/media/ysabri/A02843E92843BCD2/Users/hacoo/Desktop/CS506/dora/dora/rocks/Train/D1-4-1.jpg</path>
 	<source>
 		<database>Unknown</database>
 	</source>
 	<size>
-		<width>3872</width>
-		<height>2592</height>
+		<width>800</width>
+		<height>536</height>
 		<depth>3</depth>
 	</size>
 	<segmented>0</segmented>
@@ -17,10 +17,10 @@
 		<truncated>1</truncated>
 		<difficult>0</difficult>
 		<bndbox>
-			<xmin>248</xmin>
-			<ymin>1452</ymin>
-			<xmax>1220</xmax>
-			<ymax>2592</ymax>
+			<xmin>49</xmin>
+			<ymin>291</ymin>
+			<xmax>255</xmax>
+			<ymax>536</ymax>
 		</bndbox>
 	</object>
 </annotation>
