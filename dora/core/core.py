@@ -58,10 +58,6 @@ class Core:
             if config.settings['Camera'] == 'Kinect':
                 frame = self.cap.get_depth()
 
-
-
-
-
         self.dto = self.nn.run_inference(frame)
 
         print(config.settings['overlay_edges'])

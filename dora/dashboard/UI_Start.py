@@ -141,9 +141,9 @@ class Window(QMainWindow):
         depthmap_visual_act.triggered.connect(self.set_Depthmap)
         windowMenu.addAction(depthmap_visual_act)
 
-        datatable_act = QAction('Data Table', self)
-        datatable_act.triggered.connect(self.todo)
-        windowMenu.addAction(datatable_act)
+        dds_act = QAction('Detect Drivable Surfaces', self)
+        dds_act.triggered.connect(self.todo)
+        windowMenu.addAction(dds_act)
 
         #Create Settings Menu
         settingsMenu = menubar.addMenu('&Settings')
