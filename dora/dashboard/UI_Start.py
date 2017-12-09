@@ -14,14 +14,14 @@ from PyQt5.QtWidgets import (
 from PyQt5.QtCore import QCoreApplication, pyqtSlot, QSettings, QThread, pyqtSignal, Qt
 from PyQt5.QtGui import QIcon, QImage, QPixmap, QFont
 #from PyQt5.QtCore.QString import QString
-from dashboard.util import *
-#from util import *
+#from dashboard.util import *
+from util import *
 import socket
 import requests
 import config
-from core import vision
-from core.neuralnet import NeuralNet
-import tensorflow as tf
+#from core import vision
+#from core.neuralnet import NeuralNet
+#import tensorflow as tf
 
 settings = setup_config()
 task = create_task()

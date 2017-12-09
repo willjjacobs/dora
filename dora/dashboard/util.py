@@ -1,6 +1,6 @@
 from PyQt5 import QtCore
 from PyQt5.QtCore import QSettings
-from dashboard.jsonsocket import *
+#from dashboard.jsonsocket import *
 import requests
 #from jsonsocket import *
 import config as configfile
