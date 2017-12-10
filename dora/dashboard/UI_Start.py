@@ -364,11 +364,23 @@ class tabWidget(QWidget):
 class dataWidget(QWidget):
     def __init__(self, Window):
         super(QWidget, self).__init__(Window)
+        vLabels = ["", "", "", "", "", "", "", "", "", ""]
+        hLabels = ["OBJ#", "Type", "Location", "Certainty", "Distance"]
         self.layout = QVBoxLayout()
 
         self.data = QTableWidget()
-        self.data.setRowCount(7)
+        self.data.setRowCount(10)
+        self.data.setRowHeight(0,1)
         self.data.setColumnCount(5)
+        
+        self.data.setHorizontalHeaderLabels(hLabels)
+        self.data.setVerticalHeaderLabels(vLabels)
+        self.data.setColumnWidth(0,40)
+        self.data.setColumnWidth(0,70)
+        self.data.setColumnWidth(0,70)
+        self.data.setColumnWidth(0,40)
+        self.data.setColumnWidth(4,95)
+      
 
         self.layout.addWidget(self.data)
         self.setLayout(self.layout)
