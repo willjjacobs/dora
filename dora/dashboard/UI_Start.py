@@ -9,8 +9,8 @@ import json
 from time import sleep
 from PyQt5.QtWidgets import (
     QMainWindow, QAction, QTabWidget, QVBoxLayout, QHBoxLayout, QGroupBox,
-    QGridLayout, QDialog, qApp, QApplication, QWidget, QLineEdit, QPushButton,
-    QMessageBox, QLabel, QFrame, QTableWidget, QTableWidgetItem, QCheckBox)
+    QGridLayout, QDialog, qApp, QTextEdit, QApplication, QWidget, QLineEdit, QPushButton,
+    QMessageBox, QLabel, QFrame, QTableWidget, QTableWidgetItem, QCheckBox, QComboBox)
 from PyQt5.QtCore import QCoreApplication, pyqtSlot, QSettings, QThread, pyqtSignal, Qt
 from PyQt5.QtGui import QIcon, QImage, QPixmap, QFont
 #from PyQt5.QtCore.QString import QString
@@ -44,6 +44,83 @@ class Window(QMainWindow):
     @pyqtSlot()
     def todo(self):
         print("ToDo")
+        
+    @pyqtSlot()
+    def display_hardware(self):
+        hardwareD = QDialog()
+        hardwareD.setMinimumSize(400,300)
+        btnLayout = QHBoxLayout(self)
+        layout = QVBoxLayout(self)
+        textBox = QTextEdit()
+        text = open('dora\dashboard\hardware.txt').read()
+        textBox.setPlainText(text)
+        textBox.setReadOnly(True)
+        
+        exitButton = QPushButton("Close", hardwareD)
+        exitButton.setMaximumWidth(100)
+        exitButton.clicked.connect(hardwareD.close)
+        hardwareD.setWindowTitle("Rover Hardware")
+        hardwareD.setWindowModality(Qt.ApplicationModal)
+        layout.addWidget(textBox)
+        layout.addLayout(btnLayout)
+        btnLayout.addStretch(0)
+        btnLayout.addWidget(exitButton)
+        btnLayout.addStretch(0)
+        hardwareD.setLayout(layout)
+        hardwareD.exec_()
+        print("Rover Hardware")
+        
+    @pyqtSlot()
+    def display_about(self):
+        aboutD = QDialog()
+        aboutD.setMinimumSize(400,300)
+        btnLayout = QHBoxLayout(self)
+        layout = QVBoxLayout(self)
+        textBox = QTextEdit()
+        text1 = open('about.txt').read()
+        textBox.setPlainText(text1)
+        textBox.setReadOnly(True)
+        
+        exitButton = QPushButton("Close", aboutD)
+        exitButton.setMaximumWidth(100)
+        exitButton.clicked.connect(aboutD.close)
+        aboutD.setWindowTitle("About")
+        aboutD.setWindowModality(Qt.ApplicationModal)
+        layout.addWidget(textBox)
+        layout.addLayout(btnLayout)
+        btnLayout.addStretch(0)
+        btnLayout.addWidget(exitButton)
+        btnLayout.addStretch(0)
+        aboutD.setLayout(layout)
+        aboutD.exec_()
+        print("About")
+        
+    @pyqtSlot()
+    def display_credits(self):
+        creditsD = QDialog()
+        creditsD.setMinimumSize(400,300)
+        btnLayout = QHBoxLayout(self)
+        layout = QVBoxLayout(self)
+        textBox = QTextEdit()
+        text2 = open('dora\dashboard\credits.txt').read()
+        textBox.setPlainText(text2)
+        textBox.setReadOnly(True)
+        
+        exitButton = QPushButton("Close", creditsD)
+        exitButton.setMaximumWidth(100)
+        exitButton.clicked.connect(creditsD.close)
+        creditsD.setWindowTitle("Project Credits")
+        creditsD.setWindowModality(Qt.ApplicationModal)
+        layout.addWidget(textBox)
+        layout.addLayout(btnLayout)
+        btnLayout.addStretch(0)
+        btnLayout.addWidget(exitButton)
+        btnLayout.addStretch(0)
+        creditsD.setLayout(layout)
+        creditsD.exec_()
+        print("Credits")
+        
+    
 
         
     @pyqtSlot()
@@ -98,32 +175,35 @@ class Window(QMainWindow):
         doraMenu = menubar.addMenu('&DORA')  #Create DORA Menu
 
         hardwareAct = QAction('&Hardware', self)  #Add Hardware to DORA
+        hardwareAct.triggered.connect(self.display_hardware)
         doraMenu.addAction(hardwareAct)
 
         aboutAct = QAction('&About', self)  #Add About to DORA
+        aboutAct.triggered.connect(self.display_about)
         doraMenu.addAction(aboutAct)
 
         creditsAct = QAction('&Credits', self)  #Add Credits to DORA
+        creditsAct.triggered.connect(self.display_credits)
         doraMenu.addAction(creditsAct)
 
         fileMenu = menubar.addMenu('&File')
 
-        loadHardwareProfileAct = QAction('&Load Hardware Profile', self)
-        fileMenu.addAction(loadHardwareProfileAct)
-
         loadImageAct = QAction('&Load Image', self)
+        loadImageAct.setStatusTip('TODO')
         fileMenu.addAction(loadImageAct)
 
         load_video_stream_act = QAction('&Load Video Stream', self)
         #load_video_stream_act.setShortcut('Ctrl+V')
-        #load_video_stream_act.setStatusTip('Connects to video stream for display')
+        load_video_stream_act.setStatusTip('TODO')
         #load_video_stream_act.triggered.connect(self.load_video_stream_wrapper)
         fileMenu.addAction(load_video_stream_act)
 
         load_neural_net_act = QAction('&Load Neural Net', self)
+        load_neural_net_act.setStatusTip('TODO')
         fileMenu.addAction(load_neural_net_act)
 
         save_image_act = QAction('&Save Image', self)
+        save_image_act.setStatusTip('TODO')
         fileMenu.addAction(save_image_act)
 
         exitAct = QAction('&Exit', self)
@@ -154,17 +234,6 @@ class Window(QMainWindow):
         dds_act.triggered.connect(self.set_dds)
         windowMenu.addAction(dds_act)
 
-        #Create Settings Menu
-        settingsMenu = menubar.addMenu('&Settings')
-
-        preferences_act = QAction('&Preferences', self)
-        preferences_act.triggered.connect(self.todo)
-        settingsMenu.addAction(preferences_act)
-
-        preprocessing_act = QAction('&Pre-Processing', self)
-        preprocessing_act.triggered.connect(self.todo)
-        settingsMenu.addAction(preprocessing_act)
-
         self.setGeometry(960, 100, 960, 540)
         self.setWindowTitle('DORA')
 
@@ -192,12 +261,16 @@ class tabWidget(QWidget):
         # Create Tools tab
         self.tab_tools.vlayout01 = QVBoxLayout(self)
         self.tab_tools.vlayout02 = QVBoxLayout(self)
-        self.tab_tools.vlayout01.addStretch(1)
-        self.tab_tools.vlayout02.addStretch(1)
         self.tab_tools.hlayout = QHBoxLayout(self)
-        self.tab_tools.hlayout.addStretch(0)
-
-        self.b1 = QCheckBox("Checkbox 1")
+        #self.tab_tools.hlayout.addStretch(0)
+        self.isolateToggle = QCheckBox("Isolate Sports Balls")
+        self.isolateToggle.stateChanged.connect(self.isolate_toggle_act)
+        self.toggleEdgeDetection = QCheckBox("Toggle Edge Detection")
+        self.toggleEdgeDetection.stateChanged.connect(self.detect_edges_act)
+        self.cameraSelect = QComboBox(self)
+        self.cameraSelect.addItem("Webcam")
+        self.cameraSelect.addItem("Kinect")
+        self.cameraSelect.currentIndexChanged.connect(self.selectionchange)
         self.pushButton1 = QPushButton("Toggle Isolate Sports Ball")
         self.pushButton1.clicked.connect(self.isolate_toggle_act)
         self.pushButton2 = QPushButton("Toggle Edge Detection")
@@ -206,13 +279,13 @@ class tabWidget(QWidget):
         self.pushButton3.clicked.connect(self.toggle_kinect)
         self.pushButton4 = QPushButton("Webcam")
         self.pushButton4.clicked.connect(self.toggle_webcam)
-        self.tab_tools.vlayout01.addWidget(self.pushButton1)
-        self.tab_tools.vlayout01.addWidget(self.pushButton2)
-        self.tab_tools.vlayout02.addWidget(self.pushButton3)
-        self.tab_tools.vlayout02.addWidget(self.pushButton4)
-        self.tab_tools.hlayout.addWidget(self.b1)
+        self.tab_tools.vlayout01.addWidget(self.cameraSelect)
+        self.tab_tools.vlayout02.addWidget(self.isolateToggle)
+        self.tab_tools.vlayout02.addWidget(self.toggleEdgeDetection)
         self.tab_tools.hlayout.addLayout(self.tab_tools.vlayout01)
+        self.tab_tools.hlayout.addStretch(1)
         self.tab_tools.hlayout.addLayout(self.tab_tools.vlayout02)
+        self.tab_tools.hlayout.addStretch(3)
         self.tab_tools.setLayout(self.tab_tools.hlayout)
 
         # Create Console tab
@@ -235,6 +308,15 @@ class tabWidget(QWidget):
         # Add tabs to widget
         self.layout.addWidget(self.tabs)
         self.setLayout(self.layout)
+        
+    def selectionchange(self,i):
+        print (self.cameraSelect.currentText() + " selected as input device.")
+        if self.cameraSelect.currentText() == "Webcam":
+            self.toggle_webcam()
+        else:
+            self.toggle_kinect()
+        
+        
 
     @pyqtSlot()
     def isolate_toggle_act(self):

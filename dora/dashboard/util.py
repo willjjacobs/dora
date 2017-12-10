@@ -75,14 +75,12 @@ def config_to_task(config, task):
 def open_event(config):
     #settings.setValue('testValue', 17)
     open_value = config.value("openValue")
-    print('open_value = ' + str(open_value))
 
 
     #runs on program close
 def close_event(config):
     config.setValue('openValue', 22)
     open_value = config.value("openValue")
-    print('open_value = ' + str(open_value))
 
 
 def send_task(host, port):
