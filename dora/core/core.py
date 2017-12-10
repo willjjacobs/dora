@@ -72,6 +72,14 @@ class Core:
             if config.settings['Camera'] == 'Kinect':
                 ret_frame = self.cap.get_depth() * 500.0
 
+        elif config.settings['Window'] == 'DDS':
+            print("window DDS")
+            if config.settings['Camera'] == 'Kinect':
+                depth = vision.adjust_resolution(self.cap.get_depth(), (212, 256))
+                new_depth = depth.copy()
+                new_depth *= (255.0/depth.max())
+                ret_frame = vision.depth_drivable_surfaces(depth,new_depth,1)
+
         # TODO: check retval
         retval, img_encoded = cv2.imencode('.jpg', ret_frame)
 

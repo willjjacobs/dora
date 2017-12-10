@@ -308,7 +308,7 @@ def overlay_image(image, dto, overlay_edges=True, isolate_sports_ball=False):
     new_image = image.copy()
     edges = None
     if overlay_edges:
-        edges = detect_edge(image)
+        edges = detect_edge(denoise_color(image))
         edges = convert_color(edges)
         new_image = cv2.addWeighted(new_image, .5, edges, .5, 0)
 
