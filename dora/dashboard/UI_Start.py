@@ -42,11 +42,11 @@ class Window(QMainWindow):
         print("Quitting")
         close_event(settings)
         QCoreApplication.quit()
-        
+
     @pyqtSlot()
     def todo(self):
         print("ToDo")
-        
+
     @pyqtSlot()
     def display_hardware(self):
         hardwareD = QDialog()
@@ -57,7 +57,7 @@ class Window(QMainWindow):
         text = open('dora/dashboard/hardware.txt').read()
         textBox.setPlainText(text)
         textBox.setReadOnly(True)
-        
+
         exitButton = QPushButton("Close", hardwareD)
         exitButton.setMaximumWidth(100)
         exitButton.clicked.connect(hardwareD.close)
@@ -71,7 +71,7 @@ class Window(QMainWindow):
         hardwareD.setLayout(layout)
         hardwareD.exec_()
         print("Rover Hardware")
-        
+
     @pyqtSlot()
     def display_about(self):
         aboutD = QDialog()
@@ -82,7 +82,7 @@ class Window(QMainWindow):
         text1 = open('dora/dashboard/about.txt').read()
         textBox.setPlainText(text1)
         textBox.setReadOnly(True)
-        
+
         exitButton = QPushButton("Close", aboutD)
         exitButton.setMaximumWidth(100)
         exitButton.clicked.connect(aboutD.close)
@@ -96,7 +96,7 @@ class Window(QMainWindow):
         aboutD.setLayout(layout)
         aboutD.exec_()
         print("About")
-        
+
     @pyqtSlot()
     def display_credits(self):
         creditsD = QDialog()
@@ -107,7 +107,7 @@ class Window(QMainWindow):
         text2 = open('dora/dashboard/credits.txt').read()
         textBox.setPlainText(text2)
         textBox.setReadOnly(True)
-        
+
         exitButton = QPushButton("Close", creditsD)
         exitButton.setMaximumWidth(100)
         exitButton.clicked.connect(creditsD.close)
@@ -121,22 +121,22 @@ class Window(QMainWindow):
         creditsD.setLayout(layout)
         creditsD.exec_()
         print("Credits")
-        
-    
 
-        
+
+
+
     @pyqtSlot()
     def set_RGB(self):
         settings.setValue("Window", "RGB")
         config_to_task(settings, task)
         print("Setting Display to " + task["Window"])
-        
+
     @pyqtSlot()
     def set_Greyscale(self):
         settings.setValue("Window", "Greyscale")
         config_to_task(settings, task)
         print("Setting Display to " + task["Window"])
-        
+
     @pyqtSlot()
     def set_Depthmap(self):
         if settings.value("Camera") == "Webcam":
@@ -153,7 +153,7 @@ class Window(QMainWindow):
             self.tab_widget.cameraSelect.setCurrentIndex(1)
         settings.setValue("Window", "DDS")
         config_to_task(settings, task)
-        
+
     @pyqtSlot()
     def set_registered(self):
         if settings.value("Camera") == "Webcam":
@@ -161,7 +161,7 @@ class Window(QMainWindow):
             self.tab_widget.cameraSelect.setCurrentIndex(1)
         settings.setValue("Window", "Registered")
         config_to_task(settings, task)
-        
+
         print("Setting Display to " + task["Window"])
 
 
@@ -249,7 +249,7 @@ class Window(QMainWindow):
         dds_act = QAction('Detect Drivable Surfaces', self)
         dds_act.triggered.connect(self.set_dds)
         windowMenu.addAction(dds_act)
-        
+
         registered_act = QAction("Show Registered Image", self)
         registered_act.triggered.connect(self.set_registered)
         windowMenu.addAction(registered_act)
@@ -328,15 +328,15 @@ class tabWidget(QWidget):
         # Add tabs to widget
         self.layout.addWidget(self.tabs)
         self.setLayout(self.layout)
-        
+
     def selectionchange(self,i):
         print (self.cameraSelect.currentText() + " selected as input device.")
         if self.cameraSelect.currentText() == "Webcam":
             self.toggle_webcam()
         else:
             self.toggle_kinect()
-        
-        
+
+
 
     @pyqtSlot()
     def isolate_toggle_act(self):
@@ -349,14 +349,14 @@ class tabWidget(QWidget):
         #print (task["isolate_toggle"])
         config_to_task(settings, task)
         #print (task["isolate_toggle"])
-        
+
     @pyqtSlot()
     def detect_edges_act(self):
         if settings.value("overlay_edges") == "True":
             settings.setValue("overlay_edges", "False")
         else:
             settings.setValue("overlay_edges", "True")
-            
+
         config_to_task(settings, task)
 
     @pyqtSlot()
@@ -384,39 +384,49 @@ class tabWidget(QWidget):
 
 
 class dataWidget(QWidget):
+    data = None # class variable
+    NUM_ROWS = 10
+    NUM_COLS = 5
+
     def __init__(self, Window):
         super(QWidget, self).__init__(Window)
         vLabels = ["", "", "", "", "", "", "", "", "", ""]
         hLabels = ["OBJ#", "Type", "Location", "Certainty", "Distance"]
         self.layout = QVBoxLayout()
 
-        self.data = QTableWidget()
-        self.data.setRowCount(10)
-        self.data.setRowHeight(0,1)
-        self.data.setColumnCount(5)
-        
-        self.data.setHorizontalHeaderLabels(hLabels)
-        self.data.setVerticalHeaderLabels(vLabels)
-        self.data.setColumnWidth(0,40)
-        self.data.setColumnWidth(4,95)
-        y = 0
-        itemArray = []
-        for x in range(0,4):
-            itemArray.append([])
-            
-        for x in range(0,4):
-            for y in range(0,8):
-                itemArray[x].append(QTableWidgetItem(str(x) + ", " + str(y), 0))
-                y = y + 1
-            y = 0
-            
-        self.data.setItem(1,1, itemArray[3][1])
-        self.data.setItem(1,2, itemArray[3][2])
-        
-      
+        data = QTableWidget()
+        data.setRowCount(dataWidget.NUM_ROWS)
+        data.setRowHeight(0,1)
+        data.setColumnCount(dataWidget.NUM_COLS)
 
-        self.layout.addWidget(self.data)
+        data.setHorizontalHeaderLabels(hLabels)
+        data.setVerticalHeaderLabels(vLabels)
+        data.setColumnWidth(0,40)
+        data.setColumnWidth(4,95)
+
+        # initialize all cells empty
+        # for x in range(dataWidget.NUM_ROWS):
+        #     for y in range(dataWidget.NUM_COLS):
+        #         data.setItem(x, y, QTableWidgetItem(""))
+
+        dataWidget.data = data # actually assign to class
+        self.layout.addWidget(data)
         self.setLayout(self.layout)
+
+    def update_table(dto):
+        print(dto)
+
+        # initialize all cells empty
+        for x in range(dataWidget.NUM_ROWS):
+            for y in range(dataWidget.NUM_COLS):
+                dataWidget.data.setItem(x, y, QTableWidgetItem(""))
+
+        for row in range(len(dto)):
+            # QTableWidgetItem name = dataWidget.data.item(row + 1, 0)
+            dataWidget.data.setItem(row + 1, 0, QTableWidgetItem(dto[row][0]))
+            dataWidget.data.setItem(row + 1, 1, QTableWidgetItem(dto[row][1]))
+
+        # dataWidget.data.update()
 
 
 class vidWidgetL(QWidget):
@@ -440,9 +450,12 @@ class Thread(QThread):
         while True:
             try:
                 r = requests.get('http://' + str(config.core_server_address) + ':' +str(config.core_server_port) + '/video_feed')
+                r_dto = requests.get('http://' + str(config.core_server_address) + ':' +str(config.core_server_port) + '/dto')
             except:
                 sleep(5)
                 continue
+            dataWidget.update_table(r_dto.json())
+
             nparr = np.fromstring(r.content, dtype=np.uint8)
             try:
                 image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
