@@ -1,15 +1,6 @@
-import pytest
-
 import cv2
 import os
 import dora.core.neuralnet.NeuralNet as NeuralNet
-
-
-@pytest.fixture(scope="module")
-def neural_net():
-    nn = NeuralNet.NeuralNet()
-    nn.init_network()
-    return nn
 
 
 def test_neural_net_instantiate_successful(neural_net):
@@ -28,7 +19,6 @@ def test_neural_net_instantiate_successful(neural_net):
     assert neural_net.sess is not None
 
 
-# @pytest.mark.skipif(True, reason="Method is too slow")
 def test_nn_inference(neural_net):
     img_path = os.path.join(
         os.path.dirname(os.path.abspath(__file__)), 'test_image.jpg')

@@ -76,8 +76,6 @@ class NeuralNet:
             ],
             feed_dict={self.image_tensor: image_np_expanded})
         # Visualization of the results of a detection.
-        '''
-        '''
         dto = DTO.NeuralNetDTO(boxes, self.category_index, classes, scores)
         return dto
 
@@ -155,7 +153,7 @@ class NeuralNet:
         return xml_df
 
 
-    # TO-DO replace this with label map
+# TO-DO replace this with label map
 def class_text_to_int(row_label):
     if row_label == 'Rocks':
         return 92
