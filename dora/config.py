@@ -5,7 +5,7 @@ settings = {
     'overlay_edges' : False
 }
 
-core_server_address = 'localhost'
+core_server_address = '10.140.9.85'
 core_server_port = 8080
 dashboard_address = 'localhost'
 dashboard_port = 8080

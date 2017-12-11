@@ -1,6 +1,8 @@
 """
 DORA Dashboard main file
 Author: Wills
+Update drop down on visual change
+add Button to Registered Image
 """
 import sys
 import numpy as np
@@ -52,7 +54,7 @@ class Window(QMainWindow):
         btnLayout = QHBoxLayout(self)
         layout = QVBoxLayout(self)
         textBox = QTextEdit()
-        text = open('dora\dashboard\hardware.txt').read()
+        text = open('dora/dashboard/hardware.txt').read()
         textBox.setPlainText(text)
         textBox.setReadOnly(True)
         
@@ -77,7 +79,7 @@ class Window(QMainWindow):
         btnLayout = QHBoxLayout(self)
         layout = QVBoxLayout(self)
         textBox = QTextEdit()
-        text1 = open('about.txt').read()
+        text1 = open('dora/dashboard/about.txt').read()
         textBox.setPlainText(text1)
         textBox.setReadOnly(True)
         
@@ -102,7 +104,7 @@ class Window(QMainWindow):
         btnLayout = QHBoxLayout(self)
         layout = QVBoxLayout(self)
         textBox = QTextEdit()
-        text2 = open('dora\dashboard\credits.txt').read()
+        text2 = open('dora/dashboard/credits.txt').read()
         textBox.setPlainText(text2)
         textBox.setReadOnly(True)
         
@@ -137,13 +139,27 @@ class Window(QMainWindow):
         
     @pyqtSlot()
     def set_Depthmap(self):
+        if settings.value("Camera") == "Webcam":
+            settings.setValue("Camera", "Kinect")
+            self.tab_widget.cameraSelect.setCurrentIndex(1)
         settings.setValue("Window", "Depthmap")
         config_to_task(settings, task)
         print("Setting Display to " + task["Window"])
 
     @pyqtSlot()
     def set_dds(self):
+        if settings.value("Camera") == "Webcam":
+            settings.setValue("Camera", "Kinect")
+            self.tab_widget.cameraSelect.setCurrentIndex(1)
         settings.setValue("Window", "DDS")
+        config_to_task(settings, task)
+        
+    @pyqtSlot()
+    def set_registered(self):
+        if settings.value("Camera") == "Webcam":
+            settings.setValue("Camera", "Kinect")
+            self.tab_widget.cameraSelect.setCurrentIndex(1)
+        settings.setValue("Window", "Registered")
         config_to_task(settings, task)
         
         print("Setting Display to " + task["Window"])
@@ -233,6 +249,10 @@ class Window(QMainWindow):
         dds_act = QAction('Detect Drivable Surfaces', self)
         dds_act.triggered.connect(self.set_dds)
         windowMenu.addAction(dds_act)
+        
+        registered_act = QAction("Show Registered Image", self)
+        registered_act.triggered.connect(self.set_registered)
+        windowMenu.addAction(registered_act)
 
         self.setGeometry(960, 100, 960, 540)
         self.setWindowTitle('DORA')
@@ -245,7 +265,7 @@ class tabWidget(QWidget):
         super(QWidget, self).__init__(Window)
         self.layout = QVBoxLayout(self)
         self.layout.addStretch(1)
-
+        self.testVar = 11
         # Initialize tab screen
         self.tabs = QTabWidget()
         self.tab_tools = QWidget()
@@ -346,6 +366,8 @@ class tabWidget(QWidget):
 
     @pyqtSlot()
     def toggle_webcam(self):
+        if settings.value("Window") == "DDS" or settings.value("Window") == "Depthmap":
+            settings.setValue("Window", "RGB")
         settings.setValue("Camera","Webcam")
         config_to_task(settings, task)
 
@@ -375,9 +397,6 @@ class dataWidget(QWidget):
         
         self.data.setHorizontalHeaderLabels(hLabels)
         self.data.setVerticalHeaderLabels(vLabels)
-        self.data.setColumnWidth(0,40)
-        self.data.setColumnWidth(0,70)
-        self.data.setColumnWidth(0,70)
         self.data.setColumnWidth(0,40)
         self.data.setColumnWidth(4,95)
       
