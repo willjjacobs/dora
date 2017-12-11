@@ -1,8 +1,8 @@
 settings = {
-    'Camera' : 'Webcam',
-    'Window' : 'RGB',
-    'isolate_sports_ball' : False,
-    'overlay_edges' : False
+    'Camera': 'Webcam',
+    'Window': 'RGB',
+    'isolate_sports_ball': False,
+    'overlay_edges': False
 }
 
 core_server_address = '10.140.9.85'
