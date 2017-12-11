@@ -7,6 +7,7 @@ from pylibfreenect2 import FrameType, Registration, Frame
 from pylibfreenect2 import createConsoleLogger, setGlobalLogger
 from pylibfreenect2 import LoggerLevel
 from core.neuralnet.utils import visualization_utils as vis_util
+from PIL import ImageFont
 
 DEFAULT_RES = (240, 135)
 WEBCAM_PORT = 0
@@ -55,6 +56,8 @@ class Kinect(object):
         self.device.setColorFrameListener(self.listener)
         self.device.setIrAndDepthFrameListener(self.listener)
         self.device.start()
+        self.registration = Registration(self.device.getIrCameraParams(),
+                            self.device.getColorCameraParams())
         self.undistorted = Frame(512, 424, 4)
         self.registered = Frame(512, 424, 4)
 
@@ -73,6 +76,13 @@ class Kinect(object):
         depth = frame["depth"].asarray().copy()
         self.listener.release(frame)
         return depth / 4500.0
+    def get_registered(self):
+        frame = self.listener.waitForNewFrame()
+        depth = frame["depth"]
+        color = frame["color"]
+        self.registration.apply(color, depth, self.undistorted, self.registered)
+        self.listener.release(frame)
+        return self.registered.asarray(np.uint8).copy()
 
 #Class for webcam connection
 class Webcam(object):
@@ -341,7 +351,7 @@ def overlay_image(image, dto, overlay_edges=True, isolate_sports_ball=False):
         category_index,
         min_score_thresh = 0.15,
         use_normalized_coordinates=True,
-        line_thickness=4)
+        line_thickness=10)
     return new_image
 
 #TODO given boxes from dto, find distance at center of box
