@@ -57,11 +57,9 @@ class Core:
                 frame = self.cap.get_frame()
         
             self.dto = self.nn.run_inference(frame)
-
             print(config.settings['overlay_edges'])
-
             ret_frame = vision.overlay_image(frame, self.dto, 
-                                                   overlay_edges= config.settings['overlay_edges'],
+                                                   overlay_edges = config.settings['overlay_edges'],
                                                    isolate_sports_ball=config.settings['isolate_sports_ball'])
 
             if config.settings['Window'] == 'Greyscale' :
@@ -71,7 +69,6 @@ class Core:
             print("window Depth Map")
             if config.settings['Camera'] == 'Kinect':
                 ret_frame = self.cap.get_depth() * 500.0
-
         elif config.settings['Window'] == 'DDS':
             print("window DDS")
             if config.settings['Camera'] == 'Kinect':
@@ -79,6 +76,14 @@ class Core:
                 new_depth = depth.copy()
                 new_depth *= (255.0/depth.max())
                 ret_frame = vision.depth_drivable_surfaces(depth,new_depth,1)
+        elif config.settings['Window'] == 'Registered':
+            print("window Registered")
+            if config.settings['Camera'] == 'Kinect':
+                frame = self.cap.get_registered()
+                self.dto = self.nn.run_inference(frame)
+                ret_frame = vision.overlay_image(frame, self.dto, 
+                                                   overlay_edges = config.settings['overlay_edges'],
+                                                   isolate_sports_ball=config.settings['isolate_sports_ball'])
 
         # TODO: check retval
         retval, img_encoded = cv2.imencode('.jpg', ret_frame)
