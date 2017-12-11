@@ -7,7 +7,7 @@ class NeuralNetDTO:
         self.scores = scores
         self.depths = []
 
-    def as_dict(self, isolate_sports_ball, min_thresh = .15):
+    def as_list(self, isolate_sports_ball, min_thresh = .15):
         result = []
         if isolate_sports_ball:
             sports_ball_index = 37
@@ -21,9 +21,7 @@ class NeuralNetDTO:
             self.scores = np.squeeze(self.scores)
             self.classes = np.squeeze(self.classes)
 
-        print(self.boxes,self.scores,self.classes)
         for i in np.where(self.scores > min_thresh)[0]:
             class_name = self.category_index[self.classes[i]]["name"]
             result.append([class_name, str(self.scores[i])])
-        print(result)
         return result
