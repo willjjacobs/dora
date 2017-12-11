@@ -10,7 +10,7 @@ import cv2
 import json
 from time import sleep
 from PyQt5.QtWidgets import (
-    QMainWindow, QAction, QTabWidget, QVBoxLayout, QHBoxLayout, QGroupBox,
+    QMainWindow, QAction, QTableWidgetItem, QTabWidget, QVBoxLayout, QHBoxLayout, QGroupBox,
     QGridLayout, QDialog, qApp, QTextEdit, QApplication, QWidget, QLineEdit, QPushButton,
     QMessageBox, QLabel, QFrame, QTableWidget, QTableWidgetItem, QCheckBox, QComboBox)
 from PyQt5.QtCore import QCoreApplication, pyqtSlot, QSettings, QThread, pyqtSignal, Qt
@@ -399,6 +399,20 @@ class dataWidget(QWidget):
         self.data.setVerticalHeaderLabels(vLabels)
         self.data.setColumnWidth(0,40)
         self.data.setColumnWidth(4,95)
+        y = 0
+        itemArray = []
+        for x in range(0,4):
+            itemArray.append([])
+            
+        for x in range(0,4):
+            for y in range(0,8):
+                itemArray[x].append(QTableWidgetItem(str(x) + ", " + str(y), 0))
+                y = y + 1
+            y = 0
+            
+        self.data.setItem(1,1, itemArray[3][1])
+        self.data.setItem(1,2, itemArray[3][2])
+        
       
 
         self.layout.addWidget(self.data)
