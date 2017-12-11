@@ -80,9 +80,10 @@ class Kinect(object):
         frame = self.listener.waitForNewFrame()
         depth = frame["depth"]
         color = frame["color"]
+        new_depth = depth.asarray().copy() / 4500.0
         self.registration.apply(color, depth, self.undistorted, self.registered)
         self.listener.release(frame)
-        return self.registered.asarray(np.uint8).copy()
+        return cv2.cvtColor(self.registered.asarray(np.uint8).copy(), cv2.COLOR_BGRA2BGR), new_depth
 
 #Class for webcam connection
 class Webcam(object):
@@ -357,7 +358,9 @@ def overlay_image(image, dto, overlay_edges=True, isolate_sports_ball=False):
 #TODO given boxes from dto, find distance at center of box
 def add_depth_information(depth, dto):
     boxes = dto.boxes
-    x = (boxes[0] + boxes[1]) / 2
-    y = (boxes[2] + boxes[3]) / 2
-    depths = None
-    return depths
+    for i in range(0,len(boxes)):
+        box = boxes[i]
+        x = int((box[0] + box[1]) / 2)
+        y = int((box[2] + box[3]) / 2)
+        d = depth[x][y]
+        dto.depths.append(d)

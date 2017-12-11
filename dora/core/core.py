@@ -79,11 +79,12 @@ class Core:
         elif config.settings['Window'] == 'Registered':
             print("window Registered")
             if config.settings['Camera'] == 'Kinect':
-                frame = self.cap.get_registered()
+                frame, depth = self.cap.get_registered()
                 self.dto = self.nn.run_inference(frame)
                 ret_frame = vision.overlay_image(frame, self.dto, 
                                                    overlay_edges = config.settings['overlay_edges'],
                                                    isolate_sports_ball=config.settings['isolate_sports_ball'])
+                #vision.add_depth_information(depth, self.dto)
 
         # TODO: check retval
         retval, img_encoded = cv2.imencode('.jpg', ret_frame)
