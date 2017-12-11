@@ -1,4 +1,6 @@
 import numpy as np
+
+
 class NeuralNetDTO:
     def __init__(self, boxes, category_index, classes, scores):
         self.boxes = boxes
@@ -7,7 +9,7 @@ class NeuralNetDTO:
         self.scores = scores
         self.depths = []
 
-    def as_list(self, isolate_sports_ball, min_thresh = .15):
+    def as_list(self, isolate_sports_ball, min_thresh=.15):
         result = []
         if isolate_sports_ball:
             sports_ball_index = 37
