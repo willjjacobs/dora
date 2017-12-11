@@ -164,7 +164,7 @@ class Core:
     def get_latest_dto(self):
         if not hasattr(self, 'dto'):
             return None
-        return self.dto.as_dict()
+        return self.dto.as_dict(config.settings['isolate_sports_ball'])
 
     def main(self):
         print("in main")
