@@ -4,7 +4,7 @@ class NeuralNetDTO:
         self.category_index = category_index
         self.classes = classes
         self.scores = scores
-        self.depths = None
+        self.depths = []
 
     def as_dict(self):
         return self.scores
