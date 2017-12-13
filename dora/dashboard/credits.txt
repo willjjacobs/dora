@@ -1,6 +1,16 @@
-Project Leader: Cameron West
+Project Lead: Cameron West
+
 Project Manager: Will Jacobs
-Core Team: Darby Haller, Pranav Rajiv, Will Jacobs
-Object Detection Team: Cameron West, Yazeed 
-Vision Lead: Jason Mohoney
+-GitHub management, Component Integration and Networking
+
+Vision Lead: Jason Mahoney
+-Visual Input and Image Processing
+
+Neural Net Team: Yazeed Sabri and Cameron West
+-Object Identification and Neural Net Training
+
+Core Team: Pranav Rajiv and Darby Haller
+-Component Integration and Data Management
+
 Dashboard Lead: Will Liederbach
+-Front-End GUI
