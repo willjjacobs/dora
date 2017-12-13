@@ -373,25 +373,27 @@ class tabWidget(QWidget):
 
     @pyqtSlot()
     def on_command(self):
-        console_input = self.console_input.text()
+        line_in = self.console_input.text()
+        requests.post(core_server_url, line_in)
+        print(line_in)
         self.console_input.setText("")
-        if console_input.__eq__("print task"):
-            #print_task(Window.task)
-            print(console_input)
-        if console_input.__eq__("console to task"):
-            #config_to_task(config, task)
-            print(console_input)
+        # if console_input.__eq__("print task"):
+        #     #print_task(Window.task)
+        #     print(console_input)
+        # if console_input.__eq__("console to task"):
+        #     #config_to_task(config, task)
+        #     print(console_input)
 
 
 class dataWidget(QWidget):
     data = None # class variable
     NUM_ROWS = 10
-    NUM_COLS = 5
+    NUM_COLS = 4
 
     def __init__(self, Window):
         super(QWidget, self).__init__(Window)
-        vLabels = ["", "", "", "", "", "", "", "", "", ""]
-        hLabels = ["OBJ#", "Type", "Location", "Certainty", "Distance"]
+        vLabels = ["", "1", "2", "3", "4", "5", "6"]
+        hLabels = ["OBJ", "Certainty", "Box", "Depth"]
         self.layout = QVBoxLayout()
 
         data = QTableWidget()
@@ -425,8 +427,10 @@ class dataWidget(QWidget):
             # QTableWidgetItem name = dataWidget.data.item(row + 1, 0)
             dataWidget.data.setItem(row + 1, 0, QTableWidgetItem(dto[row][0]))
             dataWidget.data.setItem(row + 1, 1, QTableWidgetItem(dto[row][1]))
+            dataWidget.data.setItem(row + 1, 2, QTableWidgetItem(dto[row][2]))
+            dataWidget.data.setItem(row + 1, 3, QTableWidgetItem(dto[row][3]))
 
-        # dataWidget.data.update()
+        dataWidget.data.repaint()
 
 
 class vidWidgetL(QWidget):
