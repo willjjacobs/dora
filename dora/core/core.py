@@ -50,7 +50,8 @@ class Core:
                 frame,
                 self.dto,
                 overlay_edges=config.settings['overlay_edges'],
-                isolate_sports_ball=config.settings['isolate_sports_ball'])
+                isolate_sports_ball=config.settings['isolate_sports_ball'],
+                threshold = float(config.settings['network_thresh']))
 
             if config.settings['Window'] == 'Greyscale':
                 ret_frame = vision.convert_greyscale(ret_frame)
@@ -76,8 +77,9 @@ class Core:
                     frame,
                     self.dto,
                     overlay_edges=config.settings['overlay_edges'],
-                    isolate_sports_ball=config.settings['isolate_sports_ball'])
-                vision.add_depth_information(depth, self.dto)
+                    isolate_sports_ball=config.settings['isolate_sports_ball'],
+                    threshold = float(config.settings['network_thresh']))
+                #vision.add_depth_information(depth, self.dto)
 
             # TODO: check retval
         retval, img_encoded = cv2.imencode('.jpg', ret_frame)
@@ -108,7 +110,7 @@ class Core:
     def get_latest_dto(self):
         if not hasattr(self, 'dto'):
             return None
-        return self.dto.as_list(config.settings['isolate_sports_ball'])
+        return self.dto.as_list(config.settings['isolate_sports_ball'], float(config.settings['network_thresh']))
 
     def main(self):
         print("in main")

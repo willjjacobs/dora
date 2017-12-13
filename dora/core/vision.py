@@ -352,7 +352,7 @@ def depth_drivable_surfaces(color, depth, camera_height, fov=[70.6, 60]):
 
 
 # TODO get vis_util working for box overlay
-def overlay_image(image, dto, overlay_edges=True, isolate_sports_ball=False):
+def overlay_image(image, dto, overlay_edges=True, isolate_sports_ball=False, threshold = .15):
     '''given an array of objects, overlay object onto original image'''
     # overlay edge detection
     new_image = image.copy()
@@ -389,7 +389,7 @@ def overlay_image(image, dto, overlay_edges=True, isolate_sports_ball=False):
         classes.astype(np.int32),
         scores,
         category_index,
-        min_score_thresh=0.15,
+        min_score_thresh=threshold,
         use_normalized_coordinates=True,
         line_thickness=10)
     return new_image
