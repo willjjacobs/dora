@@ -3,7 +3,7 @@ Project Lead: Cameron West
 Project Manager: Will Jacobs
 -GitHub management, Component Integration and Networking
 
-Vision Lead: Jason Mahoney
+Vision Lead: Jason Mohoney
 -Visual Input and Image Processing
 
 Neural Net Team: Yazeed Sabri and Cameron West
