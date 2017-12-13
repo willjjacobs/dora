@@ -22,6 +22,7 @@ def setup_config():
     #config.setValue("Camera", "Webcam")
     #config.setValue("Camera", "Kinect")
     config.setValue("Window", configfile.settings["Window"])
+    config.setValue("network_thresh", configfile.settings["network_thresh"])
     config.setValue("overlay_edges", "False")
     print("First Time Setup Complete")
     return config
@@ -63,7 +64,8 @@ def config_to_task(config, task):
     data_to_send = {'Camera' : task['Camera'],
                     'isolate_sports_ball' : task['isolate_toggle'],
                     'Window' : task['Window'],
-                    'overlay_edges' : task['overlay_edges']}
+                    'overlay_edges' : task['overlay_edges'],
+                    'network_thresh': config.value('network_thresh')}
     print(task["isolate_toggle"])
     print(task["overlay_edges"])
 

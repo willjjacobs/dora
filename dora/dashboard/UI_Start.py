@@ -374,9 +374,15 @@ class tabWidget(QWidget):
     @pyqtSlot()
     def on_command(self):
         line_in = self.console_input.text()
-        requests.post(core_server_url, line_in)
         print(line_in)
         self.console_input.setText("")
+        try:
+          val = float(line_in)
+        except:
+          return
+
+        settings.setValue("network_thresh", line_in)
+        config_to_task(settings, task)
         # if console_input.__eq__("print task"):
         #     #print_task(Window.task)
         #     print(console_input)
