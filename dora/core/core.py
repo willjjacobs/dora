@@ -77,7 +77,7 @@ class Core:
                     self.dto,
                     overlay_edges=config.settings['overlay_edges'],
                     isolate_sports_ball=config.settings['isolate_sports_ball'])
-                # vision.add_depth_information(depth, self.dto)
+                vision.add_depth_information(depth, self.dto)
 
             # TODO: check retval
         retval, img_encoded = cv2.imencode('.jpg', ret_frame)

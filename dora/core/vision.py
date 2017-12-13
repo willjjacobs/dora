@@ -398,9 +398,10 @@ def overlay_image(image, dto, overlay_edges=True, isolate_sports_ball=False):
 # TODO given boxes from dto, find distance at center of box
 def add_depth_information(depth, dto):
     boxes = dto.boxes
+    dims = depth.shape
     for i in range(0, len(boxes)):
         box = boxes[i]
-        x = int((box[0] + box[1]) / 2)
-        y = int((box[2] + box[3]) / 2)
+        x = int(((box[0] + box[1])*dims[0])/2)
+        y = int(((box[2] + box[3])*dims[1])/2)
         d = depth[x][y]
-        dto.depths.append(d)
+        dto.depths[i] = d

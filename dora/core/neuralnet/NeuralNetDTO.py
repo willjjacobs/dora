@@ -24,6 +24,10 @@ class NeuralNetDTO:
             self.classes = np.squeeze(self.classes)
 
         for i in np.where(self.scores > min_thresh)[0]:
+            box = self.boxes[i]
             class_name = self.category_index[self.classes[i]]["name"]
-            result.append([class_name, str(self.scores[i])])
+            x = int((box[0] + box[1])/2.0)
+            y = int((box[2] + box[3])/2.0)
+            depth = 0
+            result.append([class_name, str(self.scores[i]), str(np.around(box,3)), str(depth)])
         return result
