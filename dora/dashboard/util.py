@@ -58,8 +58,8 @@ def config_to_task(config, task):
     task["Camera"] = config.value("Camera")
     task["Window"] = config.value("Window")
     task["overlay_edges"] = config.value("overlay_edges")
-    
-    
+
+
     data_to_send = {'Camera' : task['Camera'],
                     'isolate_sports_ball' : task['isolate_toggle'],
                     'Window' : task['Window'],
@@ -83,12 +83,12 @@ def close_event(config):
     open_value = config.value("openValue")
 
 
-def send_task(host, port):
-    server = Server(host, port)
-    server.accept()
-    data = server.recv()
-    server.send({'data': data}).close()
-    pass
+# def send_task(host, port):
+#     server = Server(host, port)
+#     server.accept()
+#     data = server.recv()
+#     server.send({'data': data}).close()
+#     pass
 
 
 #-------------------------------------
