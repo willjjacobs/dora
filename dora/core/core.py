@@ -25,15 +25,14 @@ class Core:
         '''get frame and overlay'''
 
         ret_frame = None
-
+        print(config.settings['Window'])
         if self.cap is None:
             self.cap = vision.Selector(config.settings['Camera'])
         elif self.cap.type != config.settings['Camera']:
             self.cap.close()
             self.cap = vision.Selector(config.settings['Camera'])
 
-        if (config.settings['Window'] == 'RGB' or
-                config.settings['Window'] == 'Greyscale'):
+        if (config.settings['Window'] == 'RGB' or config.settings['Window'] == 'Greyscale'):
             if config.settings['Camera'] == 'Kinect':
                 print("window RGB, camera Kinect")
                 frame = self.cap.get_frame()
@@ -92,41 +91,12 @@ class Core:
                 stg[k] = True
             elif stg[k] == 'False':
                 stg[k] = False
-
-            if stg[k] is not None and k not in need_to_check:
+            if (stg[k] is not None) and (k not in need_to_check):
                 print(k)
                 config.settings[k] = stg[k]
-
-        # if stg['Camera'] == 'Kinect' and self.kinect == None:
-        #     #TODO: return an error if no kinect
-        #     self.kinect = vision.Kinect()
-
-        if stg['Window'] == 'RGB':
-            if stg['Camera'] == 'Kinect':
-                config.settings['Window'] = 'RGB'
-                config.settings['Camera'] = 'Kinect'
-                return (200, "settings changed")
-            elif stg['Camera'] == 'Webcam':
-                config.settings['Window'] = 'RGB'
-                config.settings['Camera'] = 'Webcam'
-                return (200, "settings changed")
-        elif stg['Window'] == 'Depthmap':
-            if stg['Camera'] == 'Kinect':
-                config.settings['Window'] = 'Depthmap'
-                config.settings['Camera'] = 'Kinect'
-                return (200, "settings changed")
-            else:
-                return (400, "setting not changed")
-        elif stg['Window'] == 'Greyscale':
-            if stg['Camera'] == 'Kinect':
-                config.settings['Window'] = 'Greyscale'
-                config.settings['Camera'] = 'Kinect'
-                return (200, "settings changed")
-            elif stg['Camera'] == 'Webcam':
-                config.settings['Window'] = 'Greyscale'
-                config.settings['Camera'] = 'Webcam'
-                return (200, "settings changed")
-        return (400, "unimplemented")
+        config.settings['Window'] = stg['Window']
+        config.settings['Camera'] = stg['Camera']
+        return (200, "its fine")
 
     def settingPrinter(self):
         for k, v in config.settings.items():
