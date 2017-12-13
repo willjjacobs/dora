@@ -1,40 +1,6 @@
-Credits doc
-w
-w
-w
-w
-w
-w
-ww
-w
-w
-w
-w
-w
-w
-w
-w
-ww
-w
-w
-w
-w
-w
-w
-w
-w
-w
-w
-w
-w
-w
-w
-w
-w
-w
-w
-
-w
-w
-w
-ww
+Project Leader: Cameron West
+Project Manager: Will Jacobs
+Core Team: Darby Haller, Pranav Rajiv, Will Jacobs
+Object Detection Team: Cameron West, Yazeed 
+Vision Lead: Jason Mohoney
+Dashboard Lead: Will Liederbach

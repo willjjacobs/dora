@@ -1,1 +1,2 @@
-hardware doc
+User Webcam 
+Kinect v2
